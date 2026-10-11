@@ -81,3 +81,28 @@ Also fixed: provenance no longer treats untracked run outputs (runs/, results/) 
   - The control is still improving fast (68.7 at 1.6M → 80.8 at 2.0M). Measured against the control at T − 400k ("the deficit only cost lost time"), damage is about 0. A full-resolution check from curves.npz gives −2 to −7, i.e. the noisy agents still learned during the deficit.
   - At this budget and severity, obs_noise leaves **no lasting scar**: decision point 2 is *not* met for obs_noise.
 - **Methodological lesson:** raw "final return" damage is confounded with lost training time while the control is still improving. Delay-adjusted damage (now a standard readout) or training to a plateau is required.
+
+## 2026-10-11 — Phase 2 pilot: action_mask on SpaceInvaders (later = worse; no early critical period)
+
+- Run: `runs/20261011-p2-pilot-action_mask-ppo-SpaceInvaders-MinAtar-e9cecf7.json`.
+  - allowed_frac 0.5 (2 of 4 actions), duration 0.2, onsets 0–0.4. Wall-clock 1673 s.
+  - Control: shared with the obs_noise sweep (identical config with an empty window; the bit-identical determinism check above).
+- Combined figure: `figures/p2_pilot_spaceinvaders.png`.
+
+| window | final | raw damage [95% CI] | equal-recovery damage | delay-adjusted damage |
+|---|---|---|---|---|
+| on0 | 83.4 | -2.4 [-9.2, +3.0] | +1.4 [-10.1, +10.9] | -11.9 [-21.8, -5.3] |
+| on0.1 | 76.9 | +4.2 [-3.6, +13.0] | +10.0 [+4.6, +18.5] | -5.3 [-12.4, +5.1] |
+| on0.2 | 75.0 | +6.1 [-0.6, +11.6] | +7.2 [+4.2, +11.3] | -3.4 [-10.6, +3.6] |
+| on0.3 | 68.9 | +12.1 [+6.8, +17.4] | +12.6 [+7.5, +16.8] | +2.6 [-1.6, +6.9] |
+| on0.4 | 66.1 | +14.9 [+12.8, +17.1] | +9.7 [+6.8, +12.6] | +5.4 [+2.1, +9.0] |
+
+- **Interpretation:**
+  - The opposite of a critical period: masking at the start costs nothing (not even lost time). Damage grows with onset, and only the latest window exceeds the lost-time null (+5.4 [2.1, 9.0]).
+  - Late windows also have the least recovery time (0.6M steps for on0.4), so "slow re-adaptation" and "lasting scar" are not yet separable. A longer-recovery run is needed.
+- **Design flaw found:** the allowed-action subset is drawn per seed, so the deficit differs *in kind* across seeds.
+  - SpaceInvaders actions are [noop, left, right, fire].
+  - Seed 0 kept {left, right}: cannot fire, so it cannot score.
+  - Seed 1 kept {noop, left} and seed 2 kept {noop, right}: cannot fire.
+  - Seed 3 kept {noop, fire}: cannot move.
+  - Fix before any further action_mask runs: use a fixed, semantically chosen mask shared by all seeds (e.g. remove "fire", or remove movement), and report each as a separate deficit.

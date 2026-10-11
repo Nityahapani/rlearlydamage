@@ -1,0 +1,88 @@
+{
+  "allow_dirty": false,
+  "config": {
+    "CLIP_EPS": 0.2,
+    "DEFICIT": "action_mask",
+    "DEFICIT_END": 0,
+    "DEFICIT_PARAMS": {
+      "allowed_frac": 0.5
+    },
+    "DEFICIT_START": 0,
+    "ENT_COEF": 0.01,
+    "ENV_NAME": "SpaceInvaders-MinAtar",
+    "GAE_LAMBDA": 0.95,
+    "GAMMA": 0.99,
+    "HIDDEN": 128,
+    "LAYERNORM": false,
+    "LR": 0.0005,
+    "MAX_GRAD_NORM": 0.5,
+    "MINIBATCH_SIZE": 1024,
+    "NUM_ENVS": 64,
+    "NUM_MINIBATCHES": 8,
+    "NUM_STEPS": 128,
+    "NUM_UPDATES": 244,
+    "TOTAL_TIMESTEPS": 2000000,
+    "UPDATE_EPOCHS": 4,
+    "VF_COEF": 0.5,
+    "sweep": {
+      "deficit": "action_mask",
+      "duration": 0.2,
+      "onsets": [
+        0.0,
+        0.1,
+        0.2,
+        0.3,
+        0.4
+      ],
+      "params": {
+        "allowed_frac": 0.5
+      },
+      "recovery_frac": 0.4,
+      "windows": {
+        "on0.1_dur0.2": [
+          200000,
+          600000
+        ],
+        "on0.2_dur0.2": [
+          400000,
+          800000
+        ],
+        "on0.3_dur0.2": [
+          600000,
+          1000000
+        ],
+        "on0.4_dur0.2": [
+          800000,
+          1200000
+        ],
+        "on0_dur0.2": [
+          0,
+          400000
+        ]
+      }
+    }
+  },
+  "created_utc": "2026-10-11T10:56:08.473005+00:00",
+  "git": {
+    "commit": "e9cecf78077f86049166c25214ed715c932a96a3",
+    "dirty": false
+  },
+  "name": "p2-pilot-action_mask-ppo-SpaceInvaders-MinAtar",
+  "packages": {
+    "flax": "0.12.10",
+    "gymnax": "0.0.9",
+    "jax": "0.11.2",
+    "jaxlib": "0.11.2",
+    "numpy": "2.5.4",
+    "optax": "0.2.8",
+    "rliable": null
+  },
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.41",
+  "python": "3.13.16",
+  "seeds": [
+    0,
+    1,
+    2,
+    3
+  ]
+}
