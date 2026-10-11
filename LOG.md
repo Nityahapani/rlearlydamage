@@ -46,3 +46,16 @@ Run IDs refer to manifests in `runs/`.
 - Final returns: [7.0, 7.0, 14.7, 7.0]. Seed 2 escaped the plateau at about 3.5–4M steps; the others stayed at about 7.
 - Conclusion: gamma is not the cause. PPO on Breakout-MinAtar at this budget is bimodal (plateau at ~7, rare escape). gymnax issue #120 (2026-10-06) also reports "heavy seed-to-seed variance in untruncated Breakout".
 - Bimodal baselines would swamp deficit effects at a 4–10 seed budget. Next: pilot the other MinAtar games for smooth, seed-consistent learning.
+
+## 2026-10-11 — Phase 1 env pilot (PPO, 2M steps, 4 seeds, hidden 128, gamma 0.99)
+
+| env | return/seed at ~2M | wall-clock | shape |
+|---|---|---|---|
+| Asterix-MinAtar | 3.1 / 4.4 / 3.7 / 4.1 | 296 s | smooth, seed-consistent, still climbing, slow |
+| SpaceInvaders-MinAtar | 83.6 / 81.6 / 85.7 / 71.0 | 337 s | smooth, seed-consistent, steep: best signal per CPU-second |
+| Freeway-MinAtar | 42.2 / 43.9 / 46.5 / 45.9 | 412 s | smooth, but slowest and low variance across conditions likely |
+| Breakout-MinAtar (runs #1/#2) | plateau ~7, rare escape | ~530 s / 5M | bimodal: unsuitable as primary |
+
+Decision: primary env = **SpaceInvaders-MinAtar**, replication env = **Asterix-MinAtar**. Breakout is reported as a bimodal case.
+Caveat: gymnax SpaceInvaders dynamics differ from the original MinAtar (gymnax issue #120: enemy-bullet hit test uses the pre-move cannon position; first wave has 28 aliens). We study *relative* effects of deficits inside one fixed MDP, so this does not threaten validity. It must be disclosed, and absolute returns must not be compared with MinAtar papers.
+Also fixed: provenance no longer treats untracked run outputs (runs/, results/) as a dirty tree (commit 7e1f3f4).
