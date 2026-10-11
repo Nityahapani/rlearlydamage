@@ -48,3 +48,21 @@ pytest -q
 
 ## Status
 Phase 0: scaffold and literature review. See `LOG.md`.
+
+## Status and results so far (2026-10-11)
+
+Full details, tables and caveats are in [`LOG.md`](LOG.md). Every number traces to a manifest in `runs/` and a summary in `results/summary/`.
+
+**Phase 1: baselines (PPO, 2x128 MLP, CPU-only)**
+- Breakout-MinAtar is bimodal: most seeds plateau at about 7 (the gymnax reference is 28), and gamma 0.999 does not fix it. Not used as the primary env.
+- Primary env: **SpaceInvaders-MinAtar** (smooth and seed-consistent; about 81 at 2M steps). Replication env: Asterix-MinAtar.
+- Same-seed reruns are bit-identical (a prerequisite for state surgery).
+
+**Phase 2 pilot: deficit windows on SpaceInvaders** (duration 20% of 2M steps, onsets 0–40%, 4 seeds)
+
+![Phase 2 pilot](figures/p2_pilot_spaceinvaders.png)
+
+- `obs_noise` (sigma 1): about 10 points of raw damage at every onset, but about 0 once lost training time is accounted for. No lasting scar.
+- `action_mask` (2 of 4 actions): early masking is free; damage grows with onset. Only the latest window exceeds the lost-time null (+5.4 [2.1, 9.0]); a longer-recovery test is pending. The per-seed random mask was a design flaw, to be replaced with fixed "no fire" and "no movement" masks.
+- Decision point 2 (a peak-then-fall damage curve) is **not met yet**.
+- Methodological note: while the control is still improving, raw final-return damage is confounded with lost time, so we report delay-adjusted damage.
