@@ -1,0 +1,4 @@
+# High-level deficit (Achille "label permutation" analogue): misleading reward sign
+deficit:
+  type: reward_flip
+  params: {prob: 1.0}

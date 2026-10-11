@@ -1,0 +1,4 @@
+# Reward deficit: rewards withheld and released k steps later (credit-assignment deficit)
+deficit:
+  type: reward_delay
+  params: {delay: 20}

@@ -1,0 +1,4 @@
+# Behavioural deficit: restrict the action set during the window (limits exploration)
+deficit:
+  type: action_mask
+  params: {allowed_frac: 0.5}

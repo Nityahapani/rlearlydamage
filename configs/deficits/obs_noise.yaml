@@ -1,0 +1,4 @@
+# Perceptual deficit (Achille "blur" analogue): Gaussian noise / channel dropout on observations
+deficit:
+  type: obs_noise
+  params: {sigma: 1.0}

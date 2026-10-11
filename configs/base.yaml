@@ -1,0 +1,22 @@
+# Base config. Deficit configs override `deficit:`.
+env: MinAtar-Breakout          # gymnax id
+agent: pqn                     # pqn (off-policy) | ppo (on-policy)
+total_steps: 10_000_000
+num_envs: 128
+seeds: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]   # pilot; headline runs use 30
+optimizer:
+  name: adam
+  lr: 2.5e-4
+  lr_schedule: constant        # constant LR is required for critical-period sweeps
+network:
+  depth: 3
+  width: 256
+  layernorm: true
+deficit:
+  type: none
+  onset_frac: 0.0              # deficit window start (fraction of total_steps)
+  duration_frac: 0.0           # deficit window length (fraction of total_steps)
+  params: {}
+logging:
+  eval_every_frac: 0.02
+  metrics: [return, dormant_ratio, feature_rank, grad_norm]
