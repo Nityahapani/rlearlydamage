@@ -54,7 +54,7 @@ def main():
                                                U=np.array(s["eval_updates"]),
                                                window=d["window_updates"], manifest=s["manifest"], protocol=s["protocol"])
     L = ["# Phase 5 — PQN / PQN-R recovery replication (SpaceInvaders-MinAtar, movement restriction {noop, fire})", "",
-         "Deficit-free greedy eval (full action set, clean obs, true reward, common random numbers); paired t-CIs over seeds; "
+         "Deficit-free eval, greedy and eps 0.05 (primary metric chosen per variant below; full action set, clean obs, true reward, common random numbers); paired t-CIs over seeds; "
          "* = CI excludes 0. gap = control − arm (positive = damage); delay-adjusted = control(u − L) − arm(u).", ""]
     fig, axes = plt.subplots(1, len(data), figsize=(7 * len(data), 4.3), squeeze=False)
     for j, (v, arms) in enumerate(sorted(data.items())):

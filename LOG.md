@@ -275,3 +275,147 @@ Final eval at 3.6M (mean of seeds): control 112.6; move_early 114.9; fire_early 
 - the residual gap is lost training.
 
 This agrees with the delay-adjusted Phase 2 / recovery results. Caveats: 1 env, 1 deficit, 4 seeds, a single β and K. The freeze restores a0/a1 after each step, but Adam moments for a0/a1 still accumulate during the window.
+
+## 2026-10-11 — Phase 4 replication: fire restriction (SpaceInvaders, allowed {noop, left, right})
+
+**Run.**
+- Manifest: `runs/20261011-p4-phase4-fire-late-ppo-SpaceInvaders-MinAtar-8456a9b.json`.
+- Analysis: `results/summary/…fire-late…-analysis.md`.
+- Figures: `figures/phase4_fire_late_*.png`.
+- Same protocol as the movement run. D at removal is 15.2, equal to the Phase 2 fire_late value. Shared history and C fork are identical to the movement run.
+- (A first launch was OOM-killed when a PQN smoke test ran concurrently. The sandbox has ~2 GB RAM and one Phase 4 process uses ~1.2 GB, so all runs are now strictly sequential.)
+
+**Ablation 1 (AUC vs D_online).**
+- Actor reset: **−23.4 [−35.6, −11.1]**.
+- Actor + Adam reset vs actor reset: +0.5, n.s.
+- Transplant: **+12.9 [+1.3, +24.5]**.
+- Transplant vs C: −4.5 [−6.9, −2.1].
+- The reset arm again tracks learning from scratch: 28.1 at +50 vs 28.2.
+- → Replicates: keeping the learned policy matters, and removing damaged weights hurts.
+
+**Ablation 2.**
+- Clean behaviour: +9.6 [−6.0, +25.3] AUC, n.s.; at +10: +19.9 [+4.5, +35.3].
+- Frozen self: −2.7 n.s.
+- Cross-seed clean: +4.7 n.s.
+- Tempered: −4.1 n.s. on AUC; at +10: −18.7*.
+- Clean − tempered: +13.7 [+3.8, +23.7]*.
+- Cross-seed − tempered: +8.8 [+6.1, +11.5]*. Here unrelated good data helps more than in the movement run.
+- Clean − cross-seed: +4.9 n.s.
+- → Qualitatively replicates: no separable data scar, and transient guidance from good nearby data. The matched-vs-unrelated distinction is weaker here.
+
+**Ablation 3.**
+- Unlike movement, the masked action's own probability *does* fall (p(fire) 0.50 → 0.36). The critic's value collapses (8.9 → 1.5), because without fire there is no reward.
+- F/A prevent the drift: KL_onset −0.26*/−0.29*, p(fire) +0.15*.
+- They also halve the collapse: eval at removal +21.6*/+23.9*.
+- But AUC: +5.9 [−6.1, +17.9] and +4.7 [−9.3, +18.8], n.s. Both remain about −12 vs C.
+- Spearman(eval at removal, KL_onset) = −0.94.
+- → Replicates: drift causes the collapse, which is quickly reversible; the persistent gap is lost training.
+
+## 2026-10-11 — Phase 5: PQN recovery replication and replay-buffer surgery (SpaceInvaders, movement restriction {noop, fire})
+
+**Agents** (`src/rled/agents/pqn.py`, commit faf0917; tests in `tests/test_pqn.py`).
+- **PQN** (Gallici et al., ICLR 2025, purejaxql MinAtar config): LayerNorm Q-network, no target network, no replay buffer.
+  - Each update: 128 envs × 32 steps = 4096 transitions; Q(λ = 0.65) targets from the pre-update network.
+  - 2 epochs × 32 minibatches of 128 (64 gradient steps); RAdam, gradient clip 10.
+  - ε 1 → 0.05 over 1M env steps (244 updates).
+- **PQN-R** (the user chose to run both): identical network, exploration, collection and 64 gradient steps per update. Transitions go to a FIFO buffer of 100k (bit-packed obs; s′ is the next slot per env), and batches of 128 are sampled uniformly.
+  - 1-step targets with the online network (no target network).
+  - Replay ratio 2, equal to PQN's 2 epochs. Buffer turnover is 24.4 updates.
+- **Deviations from purejaxql:**
+  - MLP 2×128 torso instead of the CNN, matching our PPO and the CPU budget;
+  - constant LR 5e-4 instead of linear decay (critical-period design);
+  - the off-by-one bootstrap at step T−2 of the λ-recursion is corrected;
+  - action mask.
+- **Mask semantics:** while active, ε-greedy acts only over allowed actions (random draws included), and bootstrap maxima are over allowed actions.
+
+**Matching to PPO** (recorded in each manifest under `exposure`).
+- The window is matched in **env steps**: 409,600 = PPO 50 updates × 8192 = PQN 100 updates × 4096.
+- Training exposure differs:
+
+| Per window | PQN | PPO |
+|---|---|---|
+| Gradient steps | 6,400 | 1,600 |
+| Sample-gradients | 819k | 1.64M |
+| Exploration | ε-greedy schedule | Entropy-regularised stochastic policy |
+
+- **Late onset by meaning, rule fixed before the arms were run:** the first 10-update multiple at which (i) ε has reached its floor (≥ u245) and (ii) the control's mean eval is ≥ 40% of its final value. The 40% figure is PPO's control at u100: 45.4 / 112.6.
+  - Both variants reach 40% earlier (u180 / u190), so the ε condition binds: **late = [250, 350), early = [0, 100)**.
+  - At u250 the control is at ~58% (PQN) and ~46% (PQN-R) of its final level, a later stage than PPO's onset.
+- **Horizon:** 1000 updates (4.1M steps); 650 post-removal updates (2.66M steps; PPO used 2.38M).
+- The controls' curves flatten:
+  - PQN gains −1.1, −5.0, +0.8 per 100 updates over u700–1000;
+  - PQN-R +5.5, +1.1, +1.3.
+
+**Evaluation metric (protocol change, decided on the control only).**
+- Greedy (ε = 0) eval of PQN was very brittle from checkpoint to checkpoint. For example, one control scored [50, 27, 134, 26] at u800 and [151, 137, 143, 147] at u900. With common random numbers, all 64 episodes flip together when the argmax flips.
+- Every checkpoint now records greedy *and* ε = 0.05 eval (the training floor).
+- Prespecified rule: primary = the metric with the lower control checkpoint-to-checkpoint noise after the ε floor.
+
+| Variant | ε = 0.05 noise | Greedy noise | Primary |
+|---|---|---|---|
+| PQN | 0.156 | 0.379 | ε = 0.05 |
+| PQN-R | 0.176 | 0.508 | ε = 0.05 |
+
+- Greedy results are reported as secondary.
+
+**Recovery** (`results/summary/p5_recovery_move-analysis.md`, `figures/p5_recovery_move.png`; 4 seeds; t-CIs; readouts are 3-checkpoint means; gap = control − arm, positive = damage; delay-adjusted = control(u − 100) − arm(u)).
+
+| Variant / arm | At removal | +10 gap (delay-adj.) | AUC gap | AUC delay-adjusted |
+|---|---|---|---|---|
+| PQN early [0, 100) | 4.0 vs 23.0 | +17.4* (−1.8) | +0.5 [−3.5, +4.5] | **−6.4 [−10.5, −2.4]*** (catches up faster than a delayed control) |
+| PQN late [250, 350) | **3.6 vs 61.8** | +25.0* (+12.8 n.s.) | +4.6 [+2.0, +7.2]* | **+1.4 [−0.7, +3.5]** |
+| PQN-R early | 4.4 vs 11.8 | +12.2* (−1.0) | +2.7 [+0.1, +5.2]* | −2.7 [−5.5, +0.2] |
+| PQN-R late | **3.2 vs 26.7** | +26.4* (+15.3*) | +8.6 [+5.6, +11.6]* | **+4.3 [+1.6, +7.0]*** |
+
+- The PPO pattern replicates in both variants:
+  - early restriction = pure delay;
+  - late restriction = *unlearning during the mask* (the agent collapses to ~3, the score of a noop/fire-only policy).
+- **PQN:** the residual gap is consistent with lost time; the gap is closed by +100.
+- **PQN-R:** a small excess beyond lost time, concentrated in the first ~100 post-removal updates; delay-adjusted +5.7 n.s. at +100 and ≈ 0 at +500. This is what motivated the surgery.
+
+**Params × replay-buffer surgery** (PQN-R, at u350).
+- Run: `runs/20261011-p5-surgery-late-pqnr-SpaceInvaders-MinAtar-77afd57.json`, `figures/p5_surgery_pqnr.png`.
+- **Saved state** (`results/<stem>/states_removal.pkl`, git-ignored), for C and D: params, RAdam state, buffer (obs / actions / rewards / dones / pointer / size), env state, obs, RNG, update counter.
+- **Prespecified assignment rule:**
+  - network carrier = params + optimizer state, together;
+  - buffer carrier = all buffer arrays; pointer and size are identical in C and D;
+  - env state, obs, RNG, update counter (hence the ε schedule, already at its floor) and deficit bounds come from C;
+  - no target network exists.
+- **Checks:** the C/D forks reproduce the recovery-run control/late eval curves exactly. 100% of D's buffer was written under the restriction at removal.
+
+| Contrast | AUC +10..+650 | +10 | +30 | +100 |
+|---|---|---|---|---|
+| Total damage DD − CC | **−7.0 [−9.4, −4.7]*** | −20.8* | −16.6* | −13.3* |
+| **Parameter transfer DC − CC** | **−5.0 [−8.9, −1.1]*** | −20.5* | −13.0* | −10.6* |
+| **Data transfer CD − CC** | **−0.1 [−1.7, +1.6]** | −5.4 n.s. | −4.1 n.s. | +6.9 n.s. |
+| Network main effect | −6.0 [−7.7, −4.2]* (85% of total) | | | |
+| Buffer main effect | −1.1 [−3.6, +1.4] (15%, n.s.) | | | |
+| Interaction | −1.9 n.s. | | | |
+| Rescue by clean network (CD − DD) | +6.9 [+4.7, +9.2]* | | | |
+| Rescue by clean buffer (DC − DD) | +2.0 n.s. | | | |
+
+- TD loss over the first 30 updates:
+
+| Arm | CC | DC | CD | DD |
+|---|---|---|---|---|
+| TD loss | 0.156 | **0.541** | 0.132 | 0.226 |
+
+  The damaged network's Q-values are miscalibrated for the clean policy's data.
+- Greedy eval (secondary, very noisy): parameter transfer −13.0 [−31.8, +5.8]; data transfer −8.4 [−23.3, +6.4]; network 62% of total. Same ordering, CIs include 0.
+
+**Answers.**
+- *Parameter transfer:* yes. The damaged network impairs recovery even with clean replay, early and over the full horizon.
+- *Data transfer:* no detectable effect. A damaged buffer paired with clean parameters does not impair recovery (AUC −0.1 [−1.7, +1.6]); at most a transient, n.s. dip in the first ~30 updates.
+- Main caveat: with 4096 new transitions per update, a 100k buffer is fully replaced in 24 updates. The buffer can only act briefly, so this design cannot detect a data carrier that needs a long-lived buffer. A larger buffer or lower collection throughput (e.g. 1M, or fewer envs) is the obvious stronger test.
+- Across PPO (Phase 3/4), PQN and PQN-R, the late-restriction damage lives in the network.
+
+**Process notes.**
+- The sandbox restarted once while waiting on a user question. The venv and `.git/config` (the remote) were recreated, and package versions match the earlier manifests exactly.
+- The first fire launch was OOM-killed, as noted above.
+
+## 2026-10-11 — Phase 4 replication on Asterix: aborted (window not "late" on Asterix)
+
+- Run `runs/20261011-p4-phase4-asterix-move-late-ppo-Asterix-MinAtar-208a6f2.json` (allowed {noop, up, down}, window [100, 150)) was stopped after the forks and one arm. No summary was written.
+- On Asterix, PPO at update 100 scores only ~2 (Phase 1: ~4 at 2M steps, still climbing). The restriction caused no collapse: D 1.8 vs C 2.2 at removal, so there is nothing to ablate.
+- PPO's u100 is "late" on SpaceInvaders (40% of final competence) but not on Asterix.
+- A meaning-matched Asterix replication needs a long control to locate the 40%-of-final point (likely ≫ 2M steps). Alternatively, use PQN, which learns Asterix faster (purejaxql default env). Pending user decision.

@@ -1,6 +1,6 @@
 # Phase 5 — PQN / PQN-R recovery replication (SpaceInvaders-MinAtar, movement restriction {noop, fire})
 
-Deficit-free greedy eval (full action set, clean obs, true reward, common random numbers); paired t-CIs over seeds; * = CI excludes 0. gap = control − arm (positive = damage); delay-adjusted = control(u − L) − arm(u).
+Deficit-free eval, greedy and eps 0.05 (primary metric chosen per variant below; full action set, clean obs, true reward, common random numbers); paired t-CIs over seeds; * = CI excludes 0. gap = control − arm (positive = damage); delay-adjusted = control(u − L) − arm(u).
 
 ## PQN  (manifests: 20261011-p5-recovery-pqn-control-SpaceInvaders-MinAtar-3bc24c1.json, 20261011-p5-recovery-pqn-early-late-SpaceInvaders-MinAtar-fd9d190.json)
 
