@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rled"
+version = "0.0.1"
+description = "Where Does Early Damage Live? Weight, Optimizer, and Data Scars in RL"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "jax>=0.4.30",
+  "flax>=0.8",
+  "optax>=0.2",
+  "chex>=0.1.86",
+  "distrax>=0.1.5",
+  "gymnax>=0.0.8",
+  "numpy",
+  "pandas",
+  "pyyaml",
+  "matplotlib",
+  "rliable",
+]
+
+[project.optional-dependencies]
+gpu = ["jax[cuda12]"]
+dev = ["pytest", "ruff"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100

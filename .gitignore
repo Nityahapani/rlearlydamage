@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+.venv/
+.env
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.ipynb_checkpoints/
+# large experiment outputs
+results/*
+!results/summary/
+!results/.gitkeep
+*.npz
+*.ckpt
+wandb/
