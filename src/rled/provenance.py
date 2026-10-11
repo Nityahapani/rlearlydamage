@@ -16,9 +16,21 @@ def _git(*args: str) -> str:
     return subprocess.check_output(["git", *args], text=True).strip()
 
 
+OUTPUT_DIRS = ("runs/", "results/")  # run outputs; untracked files here do not make code state dirty
+
+
+def _dirty() -> bool:
+    for line in _git("status", "--porcelain").splitlines():
+        status, path = line[:2], line[3:]
+        if status == "??" and path.startswith(OUTPUT_DIRS):
+            continue
+        return True
+    return False
+
+
 def git_state() -> dict:
     try:
-        return {"commit": _git("rev-parse", "HEAD"), "dirty": bool(_git("status", "--porcelain"))}
+        return {"commit": _git("rev-parse", "HEAD"), "dirty": _dirty()}
     except Exception:
         return {"commit": None, "dirty": None}
 
