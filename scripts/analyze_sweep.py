@@ -67,6 +67,8 @@ def main():
                 continue
             fin = np.array(w["final_return"], float)
             eq = np.array([np.nan if v is None else v for v in w["equal_recovery_return"]], float)
+            if np.all(np.isnan(eq)) and w["equal_recovery_step"] <= s["curve_steps"][-1] + 100_000:
+                eq = fin  # older summaries: measurement point fell on the final step
             d_f = ctrl_final - fin
             d_e = control_at(cs, w["equal_recovery_step"]) - eq
             onset = w["bounds"][0] / s["curve_steps"][-1]

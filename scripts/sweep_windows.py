@@ -42,6 +42,8 @@ def summarize_window(er: np.ndarray, steps: np.ndarray, end_step: int, total: in
     final = np.nanmean(er[:, -last:], axis=1)
     t_eq = end_step + int(RECOVERY_FRAC * total)
     i = int(np.searchsorted(steps, t_eq))
+    if i >= n and t_eq <= total:  # measurement point is the very end of training
+        i = n - 1
     lo, hi = max(0, i - last // 2), min(n, i + last // 2 + 1)
     eq = np.nanmean(er[:, lo:hi], axis=1) if i < n else np.full(er.shape[0], np.nan)
     r3 = lambda x: [None if np.isnan(v) else round(float(v), 3) for v in x]
