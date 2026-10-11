@@ -39,12 +39,16 @@ def control_at(ctrl: dict, step: int) -> np.ndarray:
 
 
 def boot_ci(x, n=5000, seed=0):
-    rng = np.random.default_rng(seed)
+    """95% CI for the mean: paired t-interval when < 10 seeds (bootstrap is anti-conservative at n=4)."""
     x = np.asarray(x, float)
     x = x[~np.isnan(x)]
     if len(x) < 2:
         return (np.nan, np.nan)
-    m = rng.choice(x, (n, len(x))).mean(1)
+    if len(x) < 10:
+        from scipy import stats
+        h = stats.t.ppf(0.975, len(x) - 1) * x.std(ddof=1) / np.sqrt(len(x))
+        return (x.mean() - h, x.mean() + h)
+    m = np.random.default_rng(seed).choice(x, (n, len(x))).mean(1)
     return tuple(np.percentile(m, [2.5, 97.5]))
 
 

@@ -155,3 +155,48 @@ Final eval at 3.6M (mean of seeds): control 112.6; move_early 114.9; fire_early 
 4. **Fire vs movement:** fire restriction is more destructive *during* the mask (0 vs ~3 reward). But its recovery profile is nearly indistinguishable from movement restriction at both onsets.
 
 **Caveats:** 4 seeds (crude bootstrap); one game; PPO with constant LR; stochastic-policy eval only; Q3/Q4 use 3-checkpoint smoothing.
+
+## 2026-10-11 — Phase 3 pilot: state surgery at removal of the late movement restriction
+
+**Design**
+- Run: `runs/20261011-p3-surgery-move-late-ppo-SpaceInvaders-MinAtar-365cf2b.json`, `scripts/surgery_ppo.py`. Wall-clock 2477 s.
+- **Fork:** a shared history to update 100. Then clean C trains to 150 with no mask; damaged D trains to 150 with the movement restriction (allowed {noop, fire}). States at removal are saved in `results/<stem>/states_w1.pkl` (git-ignored).
+- **Carriers for PPO.** PPO has no replay buffer, so the 2^3 factorial is over **actor weights × critic weights × optimizer state** (Adam moments and count). The actor and critic are separate towers, so the split is clean.
+  - The **data** carrier is tested with 2 extra arms: for the first 10 post-surgery updates, rollouts are collected by the *other* run's frozen actor. The learner's own critic is used, and PPO's ratio uses the behaviour log-prob.
+  - **This deviates from the original plan and must be stated in the paper.**
+- Every arm continues 150 updates (1.23M steps) with no deficit. Env state, obs, RNG and update counter all come from C (identical future randomness).
+- Evaluation follows the recovery-test protocol (deficit-free, same eval key).
+- **Sanity checks passed:**
+  - (a) The fork reproduces the recovery-test evals at removal (max abs diff 0.0004, i.e. rounding of stored values).
+  - (b) The CCC arm reproduces the original control's continuation exactly.
+  - (c) At +0, the eval depends only on the actor.
+- Analysis: `scripts/analyze_surgery.py` → `results/summary/20261011-p3-surgery-move-late-analysis.md`, `figures/surgery_move_late.png`. The primary readout is the recovery AUC (mean eval over +10..+150).
+
+**Results** (paired by seed; 95% paired t-interval, 4 seeds)
+- Total damage (DDD − CCC), AUC: -14.3 [-17.5, -11.2].
+
+| carrier | main effect, AUC | share of total | at +50 | at +150 |
+|---|---|---|---|---|
+| **actor** | **-12.7 [-13.8, -11.6]** (all 4 seeds -12.1 to -13.6) | **89%** | -15.2 [-16.4, -13.9] | -7.8 [-18.1, +2.5] |
+| critic | -2.3 [-6.2, +1.7] | 16% (n.s.) | -3.2 [-7.9, +1.6] | -2.3 [-8.6, +3.9] |
+| optimizer state | -0.1 [-2.8, +2.6] | ~0% | +0.1 | +1.9 |
+
+- Transplants:
+  - Damaged actor alone in a clean agent (DCC − CCC): -13.0 [-19.5, -6.4].
+  - Clean actor alone rescues a damaged agent (CDD − DDD): +10.9 [+7.6, +14.2].
+  - Critic and optimizer transplants: all CIs include 0. Interactions are small (|AUC| ≤ 1.3).
+- **Data arms (10 updates of behaviour swap):**
+  - Damaged data into a clean agent (CCC+bD − CCC): **-6.6 [-8.9, -4.3]**. Eval drops from 58.7 to 33.0 at +10.
+  - Clean data into a damaged agent (DDD+bC − DDD): **+8.3 [+5.6, +11.0]** (58% of total damage). Eval goes from 18.5 to 47.1 at +10, vs 34.2 for DDD.
+
+**Interpretation**
+- The late-mask damage lives in the **actor weights**: the policy drift accumulated under the mask.
+- It does **not** live in the optimizer state, despite Xu (2608.20442)'s first-moment carry-over in supervised settings. Constant LR and short Adam memory (beta1 0.9, beta2 0.999 → ~1000 steps vs 150 updates × 32 minibatch steps after surgery) are a plausible reason. To test: a long-beta2 or low-LR variant.
+- The critic carries little or nothing.
+- In on-policy RL, the "weight" and "data" carriers are **entangled**: the damaged actor harms recovery partly by *collecting poor experience*. Only 10 updates of clean-actor data recover ~58% of the total damage.
+  - Caveat: the behaviour swap is also an importance-weighted off-policy PPO update from a different policy, so part of the effect may be implicit policy guidance rather than "data" per se. A cleaner control (e.g. same-quality data from an unrelated policy) is needed before calling it a data scar.
+
+**Correction to earlier entries (CI method).** The earlier tables used a percentile bootstrap over 4 seeds, which is anti-conservative. All analysis scripts now use paired t-intervals when n < 10, and the figures and tables were regenerated. Changed conclusions:
+- Recovery test, fire_late at +2.05M: +6.9 [-4.1, +17.9], now **includes 0**. move_late stays significant at +7.2 [+1.3, +13.2]; its delay-adjusted value is -2.0 [-4.1, +0.1].
+- Phase 2 pilot, action_mask on0.4 delay-adjusted: +5.4 [-0.8, +11.6], now **includes 0**. obs_noise on0.3 delay-adjusted: +2.8 [-1.1, +6.8], now **includes 0**.
+- So no Phase 2 window shows significant damage beyond lost time.

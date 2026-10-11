@@ -4,7 +4,7 @@ Scores per arm and seed (deficit-free eval, see recovery_test.py):
   AUC  : mean eval over all post-surgery checkpoints +E..+R (primary readout)
   +0   : eval at surgery (depends on the actor only, a sanity check)
   +50, +100 : mean of the 3 checkpoints centred on the horizon; +R: mean of the last 2
-Effects (paired by seed; CI = percentile bootstrap over seeds):
+Effects (paired by seed; CI = paired t-interval over seeds when n < 10, else bootstrap):
   main effect of carrier X  = mean(arms with X=D) - mean(arms with X=C)   (negative = X carries harm)
   share of total damage     = main effect / (DDD - CCC)
   transplant (harm)         = XCC-type arm - CCC: the damaged carrier alone, in an otherwise clean agent
@@ -30,7 +30,13 @@ CARR = ("actor", "critic", "opt")
 
 
 def boot(x, n=5000, seed=0):
+    """95% CI for the mean. Paired t-interval when fewer than 10 seeds (a percentile bootstrap is
+    anti-conservative at n = 4); percentile bootstrap otherwise."""
     x = np.asarray(x, float)
+    if len(x) < 10:
+        from scipy import stats
+        h = stats.t.ppf(0.975, len(x) - 1) * x.std(ddof=1) / np.sqrt(len(x))
+        return np.array([x.mean() - h, x.mean() + h])
     m = np.random.default_rng(seed).choice(x, (n, len(x))).mean(1)
     return np.percentile(m, [2.5, 97.5])
 
@@ -132,7 +138,7 @@ def main():
     ax.axhline(0, color="k", lw=0.8)
     ax.set_xticks(np.arange(len(keys))); ax.set_xticklabels(keys)
     ax.set_ylabel("main effect on eval return (D - C)")
-    ax.set_title("which carrier holds the damage? (negative = harm; 95% bootstrap CI over seeds)", fontsize=9)
+    ax.set_title("which carrier holds the damage? (negative = harm; 95% t-interval over seeds)", fontsize=9)
     ax.legend(fontsize=8)
     fig.suptitle(f"State surgery at removal of late movement restriction ({len(s['seeds'])} seeds)")
     fig.tight_layout()
