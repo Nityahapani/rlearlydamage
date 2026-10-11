@@ -7,6 +7,7 @@ deficit-removal step, we can operate on the state, and training can resume.
 Carriers in the runner state:
   params    -> runner_state["train_state"].params
   opt_state -> runner_state["train_state"].opt_state
+  deficit   -> runner_state["deficit_bounds"] = [start, end) env steps (overridable after init)
   data      -> on-policy: the behaviour policy. Swapping it is handled by `run(..., behaviour_params=...)`
                (Phase 3).
 
@@ -120,12 +121,14 @@ def make(config: dict):
             update=jnp.array(0, jnp.int32),
             reward_bank=jnp.zeros((cfg["NUM_ENVS"],)),
             action_mask=action_mask,
+            # deficit window [start, end) in env steps; a traced array so one compile serves a whole sweep
+            deficit_bounds=jnp.array([d_start, d_end], jnp.int32),
         )
 
-    def _is_active(t):
-        if dtype == "none" or d_end <= d_start:
+    def _is_active(t, bounds):
+        if dtype == "none":
             return jnp.array(False)
-        return (t >= d_start) & (t < d_end)
+        return (t >= bounds[0]) & (t < bounds[1])
 
     def _update(rs, _):
         ts = rs["train_state"]
@@ -133,7 +136,7 @@ def make(config: dict):
         def env_step(carry, step_idx):
             env_state, obs, rng, bank = carry
             t = rs["update"] * steps_per_update + step_idx * cfg["NUM_ENVS"]
-            active = _is_active(t)
+            active = _is_active(t, rs["deficit_bounds"])
             rng, k_noise, k_act, k_step, k_flip = jax.random.split(rng, 5)
             obs_in = obs
             if dtype == "obs_noise":
@@ -168,7 +171,7 @@ def make(config: dict):
         rng, k_noise = jax.random.split(rng)
         obs_last = obs
         if dtype == "obs_noise":
-            obs_last = obs + _is_active(t_next) * dp.get("sigma", 1.0) * jax.random.normal(k_noise, obs.shape)
+            obs_last = obs + _is_active(t_next, rs["deficit_bounds"]) * dp.get("sigma", 1.0) * jax.random.normal(k_noise, obs.shape)
         _, last_val = net.apply(ts.params, obs_last)
 
         def gae_fn(carry, tr):
@@ -220,7 +223,7 @@ def make(config: dict):
         metrics = dict(
             step=(rs["update"] + 1) * steps_per_update,
             episode_return=ep_ret,
-            deficit_active=_is_active(rs["update"] * steps_per_update).astype(jnp.float32),
+            deficit_active=_is_active(rs["update"] * steps_per_update, rs["deficit_bounds"]).astype(jnp.float32),
             loss=losses.mean(),
             grad_norm=gnorms.mean(),
         )
