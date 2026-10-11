@@ -54,6 +54,9 @@ DEFAULT_CONFIG = dict(
     DEFICIT_START=0,
     DEFICIT_END=0,
     DEFICIT_PARAMS={},
+    # Phase 4 drift interventions, active only inside the deficit window (static; off by default)
+    ANCHOR_COEF=0.0,          # beta * KL(pi_anchor || pi_theta) on unmasked policies (anchor = runner_state["anchor_actor"])
+    FREEZE_ACTOR_REPR=False,  # freeze actor hidden layers a0, a1 (logits head still trains)
 )
 
 
@@ -136,6 +139,8 @@ def make(config: dict):
             # the learner's). PPO's ratio uses the behaviour log-prob, i.e. importance-weighted updates.
             behaviour_actor={k: v for k, v in params["params"].items() if k in ACTOR_KEYS},
             behaviour_until=jnp.array(0, jnp.int32),
+            behaviour_temp=jnp.array(1.0, jnp.float32),  # behaviour logits / temp while use_b
+            anchor_actor={k: v for k, v in params["params"].items() if k in ACTOR_KEYS},
         )
 
     def _is_active(t, bounds):
@@ -161,9 +166,15 @@ def make(config: dict):
             p_act = {"params": {k: (jax.tree.map(lambda b, q: jnp.where(use_b, b, q), rs["behaviour_actor"][k], v)
                                     if k in ACTOR_KEYS else v) for k, v in ts.params["params"].items()}}
             logits, value = net.apply(p_act, obs_in)
+            logits = logits / jnp.where(use_b, rs["behaviour_temp"], 1.0)  # exact no-op unless use_b
             pi = distrax.Categorical(logits=jnp.where(mask, logits, -1e9))
             action = pi.sample(seed=k_act)
             log_prob = pi.log_prob(action)
+            # behaviour-policy KL(pi_b || pi_learner) under the training-time mask (0 when not swapping)
+            logits_l, _ = net.apply(ts.params, obs_in)
+            lb = jax.nn.log_softmax(jnp.where(mask, logits, -1e9))
+            ll = jax.nn.log_softmax(jnp.where(mask, logits_l, -1e9))
+            b_kl = jnp.sum(jnp.where(mask, jnp.exp(lb) * (lb - ll), 0.0), -1).mean()
             obs2, env_state, reward, done, info = jax.vmap(env.step, in_axes=(0, 0, 0, None))(
                 jax.random.split(k_step, cfg["NUM_ENVS"]), env_state, action, env_params
             )
@@ -177,9 +188,9 @@ def make(config: dict):
                 r = jnp.where(release, bank, 0.0)
                 bank = jnp.where(release, 0.0, bank)
             tr = Transition(done, action, value, r, log_prob, obs_in, mask, info)
-            return (env_state, obs2, rng, bank), tr
+            return (env_state, obs2, rng, bank), (tr, b_kl)
 
-        (env_state, obs, rng, bank), traj = jax.lax.scan(
+        (env_state, obs, rng, bank), (traj, b_kls) = jax.lax.scan(
             env_step, (rs["env_state"], rs["obs"], rs["rng"], rs["reward_bank"]), jnp.arange(cfg["NUM_STEPS"])
         )
         # bootstrap value (deficit view at the next step, for consistency)
@@ -218,19 +229,38 @@ def make(config: dict):
                     lp = pi.log_prob(tr.action)
                     v_clip = tr.value + (v - tr.value).clip(-cfg["CLIP_EPS"], cfg["CLIP_EPS"])
                     v_loss = 0.5 * jnp.maximum((v - tgt) ** 2, (v_clip - tgt) ** 2).mean()
-                    ratio = jnp.exp(lp - tr.log_prob)
+                    logr = lp - tr.log_prob
+                    ratio = jnp.exp(logr)
                     an = (a - a.mean()) / (a.std() + 1e-8)
                     pg = -jnp.minimum(ratio * an, ratio.clip(1 - cfg["CLIP_EPS"], 1 + cfg["CLIP_EPS"]) * an).mean()
                     ent = pi.entropy().mean()
-                    return pg + cfg["VF_COEF"] * v_loss - cfg["ENT_COEF"] * ent, (v_loss, pg, ent)
+                    loss = pg + cfg["VF_COEF"] * v_loss - cfg["ENT_COEF"] * ent
+                    anchor_kl = jnp.array(0.0)
+                    if cfg["ANCHOR_COEF"] > 0:  # static switch: no extra ops when off
+                        pa = {"params": {**p["params"], **rs["anchor_actor"]}}
+                        la = jax.lax.stop_gradient(jax.nn.log_softmax(net.apply(pa, tr.obs)[0]))
+                        lt = jax.nn.log_softmax(logits)  # unmasked
+                        anchor_kl = jnp.sum(jnp.exp(la) * (la - lt), -1).mean()
+                        loss = loss + cfg["ANCHOR_COEF"] * active_u * anchor_kl
+                    stats = dict(ratio_mean=ratio.mean(), ratio_absdev=jnp.abs(ratio - 1).mean(),
+                                 clip_frac=(jnp.abs(ratio - 1) > cfg["CLIP_EPS"]).mean(),
+                                 approx_kl=((ratio - 1) - logr).mean(), entropy=ent, anchor_kl=anchor_kl)
+                    return loss, stats
 
-                (loss, aux), g = jax.value_and_grad(loss_fn, has_aux=True)(ts.params)
-                return ts.apply_gradients(grads=g), (loss, optax.global_norm(g))
+                (loss, stats), g = jax.value_and_grad(loss_fn, has_aux=True)(ts.params)
+                new_ts = ts.apply_gradients(grads=g)
+                if cfg["FREEZE_ACTOR_REPR"]:  # static switch
+                    keep = {k: (jax.tree.map(lambda o, n: jnp.where(active_u, o, n), ts.params["params"][k],
+                                             new_ts.params["params"][k]) if k in ("a0", "a1") else v)
+                            for k, v in new_ts.params["params"].items()}
+                    new_ts = new_ts.replace(params={"params": keep})
+                return new_ts, (loss, optax.global_norm(g), stats)
 
-            ts, (losses, gnorms) = jax.lax.scan(mb_step, ts, mbs)
-            return (ts, rng), (losses, gnorms)
+            ts, (losses, gnorms, stats) = jax.lax.scan(mb_step, ts, mbs)
+            return (ts, rng), (losses, gnorms, stats)
 
-        (ts, rng), (losses, gnorms) = jax.lax.scan(epoch, (ts, rng), None, cfg["UPDATE_EPOCHS"])
+        active_u = _is_active(rs["update"] * steps_per_update, rs["deficit_bounds"])
+        (ts, rng), (losses, gnorms, stats) = jax.lax.scan(epoch, (ts, rng), None, cfg["UPDATE_EPOCHS"])
         info = traj.info
         done_mask = info["returned_episode"]
         ep_ret = jnp.where(done_mask.sum() > 0,
@@ -242,6 +272,8 @@ def make(config: dict):
             deficit_active=_is_active(rs["update"] * steps_per_update, rs["deficit_bounds"]).astype(jnp.float32),
             loss=losses.mean(),
             grad_norm=gnorms.mean(),
+            behaviour_kl=b_kls.mean(),
+            **{k: v.mean() for k, v in stats.items()},
         )
         new_rs = dict(rs, train_state=ts, env_state=env_state, obs=obs, rng=rng,
                       update=rs["update"] + 1, reward_bank=bank)
