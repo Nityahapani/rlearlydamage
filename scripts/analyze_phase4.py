@@ -20,7 +20,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy import stats
 
-MASKED = (1, 2)  # SpaceInvaders-MinAtar actions: 0 noop, 1 left, 2 right, 3 fire; the mask removes 1 and 2
 # Phase 2 recovery-test control (fresh agent, no deficit): eval at update 50 and 150 (from-scratch reference)
 FROM_SCRATCH = {50: 28.2, 150: 58.7}
 
@@ -59,6 +58,10 @@ def main():
     arms = s["arms"]
     forks = s["forks"]
     ev = {k: np.array(v["eval_return_mean"], float) for k, v in arms.items()}
+    n_act = np.array(forks["D"]["drift"]["probs"]).shape[-1]
+    allowed = s["protocol"]["allowed"]
+    MASKED = tuple(i for i in range(n_act) if i not in allowed)  # network action indices removed by the mask
+    is_si = "SpaceInvaders" in s["manifest"]
 
     def readouts(M):
         return {"AUC": M[:, 1:].mean(1), "+0": M[:, 0], "+10": M[:, idx[10]], "+20": M[:, idx[20]],
@@ -95,7 +98,7 @@ def main():
         ("actor reset - C_cont", "D_actor_reset", "C_cont"),
         ("transplant - C_cont", "D_actor_transplant", "C_cont"),
     ])
-    if "D_actor_reset" in ev:
+    if "D_actor_reset" in ev and is_si:
         M = ev["D_actor_reset"]
         L += ["", "From-scratch reference (Phase 2 recovery-test control, fresh agent): eval "
               + ", ".join(f"{v} at update {u}" for u, v in FROM_SCRATCH.items())
@@ -133,7 +136,8 @@ def main():
     fe = {k: np.array(f["eval_return_mean"], float) for k, f in forks.items()}
     dm = ("kl_from_onset", "entropy", "value", "repr_drift_a0", "repr_drift_a1", "dead_a1")
     L += ["", "## Ablation 3 — policy drift during the mask (fixed onset bank)", "",
-          f"State at removal (update {w1}); KL = KL(pi_onset || pi_t) on the bank; p(masked) = mean prob of left+right; "
+          f"State at removal (update {w1}); KL = KL(pi_onset || pi_t) on the bank; p(masked) = summed prob of the masked actions " + f"{list(MASKED)}; "
+          " "
           "repr drift = 1 - linear CKA vs onset; dead_a1 = fraction of a1 units never active on the bank.", "",
           "| fork | eval | p(masked) | " + " | ".join(dm) + " |", "|---" * (len(dm) + 3) + "|"]
     pm = {k: fd[k]["probs"][:, :, list(MASKED)].sum(-1) for k in fd}
@@ -234,7 +238,7 @@ def main():
     f, ax = plt.subplots(1, 5, figsize=(23, 4.2))
     for k in fd:
         for j, (y, t) in enumerate(((fe[k], "eval (deficit-free)"), (fd[k]["kl_from_onset"], "KL(onset || t) on bank"),
-                                    (pm[k], "p(left)+p(right) on bank"), (fd[k]["repr_drift_a1"], "1 − CKA(a1) vs onset"))):
+                                    (pm[k], "p(masked actions) on bank"), (fd[k]["repr_drift_a1"], "1 − CKA(a1) vs onset"))):
             ax[j].plot(FU, y.mean(0), "o-", color=fc[k], label=k)
             ax[j].set_title(t); ax[j].set_xlabel("update (mask window)")
     ax[0].legend()

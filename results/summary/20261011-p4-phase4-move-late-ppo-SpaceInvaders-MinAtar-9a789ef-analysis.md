@@ -69,7 +69,7 @@ Training rollouts are collected by the behaviour policy (masked logits never app
 
 ## Ablation 3 — policy drift during the mask (fixed onset bank)
 
-State at removal (update 150); KL = KL(pi_onset || pi_t) on the bank; p(masked) = mean prob of left+right; repr drift = 1 - linear CKA vs onset; dead_a1 = fraction of a1 units never active on the bank.
+State at removal (update 150); KL = KL(pi_onset || pi_t) on the bank; p(masked) = summed prob of the masked actions [1, 2];  repr drift = 1 - linear CKA vs onset; dead_a1 = fraction of a1 units never active on the bank.
 
 | fork | eval | p(masked) | kl_from_onset | entropy | value | repr_drift_a0 | repr_drift_a1 | dead_a1 |
 |---|---|---|---|---|---|---|---|---|
