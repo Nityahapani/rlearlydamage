@@ -5,6 +5,9 @@ Two readouts:
   final     : return over the last 10% of training (late windows get less recovery time)
   equal-rec : return a fixed time (recovery_frac * total) after deficit removal, compared with the
               control at that same step (equal recovery time for every window)
+  delay-adj : control at (T - deficit duration) minus deficit final return. This is the null "the deficit
+              only cost lost training time". Positive values mean damage beyond delay (a lasting scar);
+              this is the readout that matters while the control is still improving.
 
 Usage:
   python scripts/analyze_sweep.py --control <summary.json with a 'control' entry> --sweeps <summary.json> ...
@@ -54,14 +57,14 @@ def main():
 
     cs = load(a.control)
     ctrl_final = np.array(cs["windows"]["control"]["final_return"], float)
-    fig, axes = plt.subplots(1, 2, figsize=(10, 3.8))
-    lines = ["| deficit | window | final (mean) | damage final [95% CI] | damage equal-rec [95% CI] |",
-             "|---|---|---|---|---|"]
-    lines.append(f"| control | - | {ctrl_final.mean():.1f} | - | - |")
+    fig, axes = plt.subplots(1, 3, figsize=(14, 3.8))
+    lines = ["| deficit | window | final (mean) | damage final [95% CI] | damage equal-rec [95% CI] | damage delay-adj [95% CI] |",
+             "|---|---|---|---|---|---|"]
+    lines.append(f"| control | - | {ctrl_final.mean():.1f} | - | - | - |")
     for sp in a.sweeps:
         s = load(sp)
         dname = s["sweep"]["deficit"]
-        xs, dfin, deq = [], [], []
+        xs, dfin, deq, ddel = [], [], [], []
         for lab, w in s["windows"].items():
             if lab == "control":
                 continue
@@ -71,13 +74,18 @@ def main():
                 eq = fin  # older summaries: measurement point fell on the final step
             d_f = ctrl_final - fin
             d_e = control_at(cs, w["equal_recovery_step"]) - eq
-            onset = w["bounds"][0] / s["curve_steps"][-1]
-            xs.append(onset); dfin.append(d_f); deq.append(d_e)
-            cf, ce = boot_ci(d_f), boot_ci(d_e)
+            T = s["curve_steps"][-1]
+            dur = w["bounds"][1] - w["bounds"][0]
+            d_d = control_at(cs, T - dur) - control_at(cs, T) + d_f  # control(T-dur) - deficit(T)
+            onset = w["bounds"][0] / T
+            xs.append(onset); dfin.append(d_f); deq.append(d_e); ddel.append(d_d)
+            cf, ce, cd = boot_ci(d_f), boot_ci(d_e), boot_ci(d_d)
             lines.append(f"| {dname} | {lab} | {fin.mean():.1f} | {np.nanmean(d_f):+.1f} [{cf[0]:+.1f}, {cf[1]:+.1f}] "
-                         f"| {np.nanmean(d_e):+.1f} [{ce[0]:+.1f}, {ce[1]:+.1f}] |")
-        for ax, d, title in ((axes[0], dfin, "damage at end of training"),
-                             (axes[1], deq, "damage at equal recovery time")):
+                         f"| {np.nanmean(d_e):+.1f} [{ce[0]:+.1f}, {ce[1]:+.1f}] "
+                         f"| {np.nanmean(d_d):+.1f} [{cd[0]:+.1f}, {cd[1]:+.1f}] |")
+        for ax, d, title in ((axes[0], dfin, "raw damage at end of training"),
+                             (axes[1], deq, "damage at equal recovery time"),
+                             (axes[2], ddel, "damage beyond lost time (delay-adjusted)")):
             m = [np.nanmean(v) for v in d]
             ax.plot(xs, m, "o-", label=dname)
             for x, v in zip(xs, d):

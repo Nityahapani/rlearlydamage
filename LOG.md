@@ -59,3 +59,25 @@ Run IDs refer to manifests in `runs/`.
 Decision: primary env = **SpaceInvaders-MinAtar**, replication env = **Asterix-MinAtar**. Breakout is reported as a bimodal case.
 Caveat: gymnax SpaceInvaders dynamics differ from the original MinAtar (gymnax issue #120: enemy-bullet hit test uses the pre-move cannon position; first wave has 28 aliens). We study *relative* effects of deficits inside one fixed MDP, so this does not threaten validity. It must be disclosed, and absolute returns must not be compared with MinAtar papers.
 Also fixed: provenance no longer treats untracked run outputs (runs/, results/) as a dirty tree (commit 7e1f3f4).
+
+## 2026-10-11 — Phase 2 pilot: obs_noise on SpaceInvaders (no critical period; damage = lost time)
+
+- Run: `runs/20261011-p2-pilot-obs_noise-ppo-SpaceInvaders-MinAtar-86ccb44.json`.
+  - obs_noise sigma 1.0, duration 0.2 (400k steps), onsets 0/0.1/0.2/0.3/0.4, plus a control. 2M steps, seeds 0–3, wall-clock 2216 s.
+- **Reproducibility:** the control is bit-identical to the Phase 1 envpilot SpaceInvaders run (same seeds and config; max abs diff 0.0). Same-seed determinism on CPU holds, which state surgery relies on.
+- Analysis: `scripts/analyze_sweep.py` → `figures/p2_pilot_obs_noise.png`.
+
+| window | final | raw damage [95% CI] | equal-recovery damage | delay-adjusted damage |
+|---|---|---|---|---|
+| control | 81.0 | – | – | – |
+| on0 | 72.7 | +8.4 [-4.5, +19.0] | +16.5 [+5.4, +25.8] | -1.1 [-13.8, +11.6] |
+| on0.1 | 71.4 | +9.6 [-3.0, +23.4] | +15.6 [+3.4, +30.2] | +0.1 [-12.3, +14.7] |
+| on0.2 | 71.5 | +9.6 [+5.8, +15.3] | +6.9 [-1.2, +14.6] | +0.1 [-5.8, +7.6] |
+| on0.3 | 68.7 | +12.3 [+8.2, +16.7] | +14.9 [+11.1, +18.4] | +2.8 [+0.3, +4.5] |
+| on0.4 | 70.9 | +10.1 [+7.9, +12.3] | +7.9 [+4.7, +10.5] | +0.6 [-1.0, +3.4] |
+
+- **Interpretation:**
+  - Every window costs about 10 points at T = 2M, with no dependence on onset.
+  - The control is still improving fast (68.7 at 1.6M → 80.8 at 2.0M). Measured against the control at T − 400k ("the deficit only cost lost time"), damage is about 0. A full-resolution check from curves.npz gives −2 to −7, i.e. the noisy agents still learned during the deficit.
+  - At this budget and severity, obs_noise leaves **no lasting scar**: decision point 2 is *not* met for obs_noise.
+- **Methodological lesson:** raw "final return" damage is confounded with lost training time while the control is still improving. Delay-adjusted damage (now a standard readout) or training to a plateau is required.
