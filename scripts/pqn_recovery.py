@@ -31,6 +31,7 @@ from rled.agents.pqn import make, make_eval
 from rled.provenance import build_manifest, write_manifest
 
 warnings.filterwarnings("ignore")
+EVAL_EPS2 = 0.05  # second eval: epsilon-greedy at the training floor (greedy eval is brittle)
 METRICS = ("episode_return", "eps", "loss", "q_mean", "grad_norm", "deficit_active")
 PPO_REF = dict(steps_per_update=8192, grad_steps_per_update=32, minibatch=1024, epochs=4, window_updates=50,
                window_env_steps=409_600, early=[0, 50], late=[100, 150], total_env_steps=3_604_480,
@@ -83,7 +84,7 @@ def main():
                     eps_at_window={k: [float(max(cfg["EPS_FINISH"], 1 - (1 - cfg["EPS_FINISH"]) * w[0] * spu / cfg["EPS_DECAY_STEPS"])),
                                        float(max(cfg["EPS_FINISH"], 1 - (1 - cfg["EPS_FINISH"]) * w[1] * spu / cfg["EPS_DECAY_STEPS"]))]
                                    for k, w in windows.items()},
-                    updates=a.updates, eval_every=E, eval_envs=a.eval_envs, eval_seed=a.eval_seed, eval_eps=0.0,
+                    updates=a.updates, eval_every=E, eval_envs=a.eval_envs, eval_seed=a.eval_seed, eval_eps=[0.0, EVAL_EPS2],
                     allowed=a.allowed, arms=a.arms, exposure=exposure)
     tag = a.tag or f"{a.variant}-{'-'.join(a.arms)}"
     manifest = build_manifest(f"p5-recovery-{tag}-{a.env}", {**cfg, "protocol": protocol}, a.seeds, allow_dirty=a.allow_dirty)
@@ -96,9 +97,11 @@ def main():
     n = len(a.seeds)
     init_v = jax.jit(jax.vmap(init))
     run_v = jax.jit(jax.vmap(lambda rs: run(rs, E)))
-    eval_v = jax.jit(jax.vmap(make_eval(cfg, num_envs=a.eval_envs), in_axes=(0, None)))
+    eval_g = jax.jit(jax.vmap(make_eval(cfg, num_envs=a.eval_envs, eps=0.0), in_axes=(0, None)))
+    eval_e = jax.jit(jax.vmap(make_eval(cfg, num_envs=a.eval_envs, eps=EVAL_EPS2), in_axes=(0, None)))
     ek = jax.random.PRNGKey(a.eval_seed)
-    ev = lambda rs: np.asarray(jax.device_get(eval_v(rs["train_state"].params, ek)["ret"])).mean(1)
+    ev2 = lambda rs: (np.asarray(jax.device_get(eval_g(rs["train_state"].params, ek)["ret"])).mean(1),
+                      np.asarray(jax.device_get(eval_e(rs["train_state"].params, ek)["ret"])).mean(1))
     summary = dict(manifest=mpath.name, protocol=protocol, seeds=a.seeds,
                    eval_updates=list(range(0, a.updates + 1, E)), arms={})
     t0 = time.time()
@@ -106,17 +109,20 @@ def main():
         w = windows[arm]
         rs = init_v(keys)
         rs["deficit_bounds"] = jnp.tile(jnp.array([w[0] * spu, w[1] * spu], jnp.int32), (n, 1))
-        evals, train = [ev(rs)], []
+        g, e = ev2(rs)
+        evals, evals_e, train = [g], [e], []
         for i in range(a.updates // E):
             rs, m = run_v(rs)
-            evals.append(ev(rs))
+            g, e = ev2(rs)
+            evals.append(g); evals_e.append(e)
             train.append({k: np.asarray(m[k]) for k in METRICS})
             if (i + 1) % 10 == 0:
-                print(f"  {arm} u{(i + 1) * E}: eval {np.round(evals[-1], 1)} train-ret "
+                print(f"  {arm} u{(i + 1) * E}: eval greedy {np.round(evals[-1], 1)} eps.05 {np.round(evals_e[-1], 1)} train-ret "
                       f"{np.round(train[-1]['episode_return'][:, -1], 1)} eps {train[-1]['eps'][0, -1]:.3f} "
                       f"elapsed={time.time() - t0:.0f}s", flush=True)
         r4 = lambda x: np.round(np.asarray(x, float), 4).tolist()
         summary["arms"][arm] = dict(window_updates=list(w), eval_return_mean=r4(np.stack(evals, 1)),
+                                    eval_eps05_return_mean=r4(np.stack(evals_e, 1)),
                                     train={k: r4(np.concatenate([t[k] for t in train], 1)) for k in METRICS})
         summary["wallclock_s"] = round(time.time() - t0, 1)
         summ_path.write_text(json.dumps(summary))

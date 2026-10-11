@@ -33,6 +33,7 @@ from rled.agents.pqn import make, make_eval
 from rled.provenance import build_manifest, write_manifest
 
 warnings.filterwarnings("ignore")
+EVAL_EPS2 = 0.05  # second eval: epsilon-greedy at the training floor (greedy eval is brittle)
 METRICS = ("episode_return", "eps", "loss", "q_mean", "grad_norm", "deficit_active")
 
 
@@ -61,7 +62,7 @@ def main():
                                DEFICIT_PARAMS={"allowed_actions": a.allowed}, DEFICIT_START=0, DEFICIT_END=0))
     spu = cfg["STEPS_PER_UPDATE"]
     protocol = dict(variant=a.variant, window_updates=[l0, l1], recovery=a.recovery, eval_every=E, eval_envs=a.eval_envs,
-                    eval_seed=a.eval_seed, eval_eps=0.0, allowed=a.allowed, arms=a.arms,
+                    eval_seed=a.eval_seed, eval_eps=[0.0, EVAL_EPS2], allowed=a.allowed, arms=a.arms,
                     assignment_rule="network = params + optimizer state (together); buffer = all buffer arrays; "
                                     "env state, obs, RNG, update counter, exploration schedule, deficit bounds from C; "
                                     "no target network",
@@ -76,9 +77,11 @@ def main():
     n = len(a.seeds)
     keys = jnp.stack([jax.random.PRNGKey(s) for s in a.seeds])
     run_v = jax.jit(jax.vmap(lambda rs: run(rs, E)))
-    eval_v = jax.jit(jax.vmap(make_eval(cfg, num_envs=a.eval_envs), in_axes=(0, None)))
+    eval_g = jax.jit(jax.vmap(make_eval(cfg, num_envs=a.eval_envs, eps=0.0), in_axes=(0, None)))
+    eval_e = jax.jit(jax.vmap(make_eval(cfg, num_envs=a.eval_envs, eps=EVAL_EPS2), in_axes=(0, None)))
     ek = jax.random.PRNGKey(a.eval_seed)
-    ev = lambda rs: np.asarray(jax.device_get(eval_v(rs["train_state"].params, ek)["ret"])).mean(1)
+    ev2 = lambda rs: (np.asarray(jax.device_get(eval_g(rs["train_state"].params, ek)["ret"])).mean(1),
+                      np.asarray(jax.device_get(eval_e(rs["train_state"].params, ek)["ret"])).mean(1))
     bounds = lambda b0, b1: jnp.tile(jnp.array([b0 * spu, b1 * spu], jnp.int32), (n, 1))
     t0 = time.time()
 
@@ -89,11 +92,13 @@ def main():
     forks, fork_eval = {}, {}
     for name, b in (("C", bounds(0, 0)), ("D", bounds(l0, l1))):
         r = dict(rs, deficit_bounds=b)
-        e = [ev(r)]
+        g, x = ev2(r)
+        e, ee = [g], [x]
         for _ in range(a.duration // E):
             r, _ = run_v(r)
-            e.append(ev(r))
-        forks[name], fork_eval[name] = r, np.stack(e, 1)
+            g, x = ev2(r)
+            e.append(g); ee.append(x)
+        forks[name], fork_eval[name], fork_eval[name + "_eps05"] = r, np.stack(e, 1), np.stack(ee, 1)
         print(f"fork {name}: eval at onset {np.round(e[0], 1)} removal {np.round(e[-1], 1)} elapsed={time.time() - t0:.0f}s", flush=True)
     C, D = forks["C"], forks["D"]
     keep = ("env_state", "obs", "rng", "update", "buffer")
@@ -111,10 +116,10 @@ def main():
         rsum = json.loads(Path(a.recovery_summary).read_text())
         U = rsum["eval_updates"]
         i0, i1 = U.index(l0), U.index(l1)
-        rc = np.array(rsum["arms"]["control"]["eval_return_mean"])[:, i0:i1 + 1]
-        rl = np.array(rsum["arms"]["late"]["eval_return_mean"])[:, i0:i1 + 1]
-        check = dict(C_fork_matches_recovery_control=bool(np.allclose(rc, fork_eval["C"], atol=1e-3)),
-                     D_fork_matches_recovery_late=bool(np.allclose(rl, fork_eval["D"], atol=1e-3)))
+        rc = np.array(rsum["arms"]["control"]["eval_eps05_return_mean"])[:, i0:i1 + 1]
+        rl = np.array(rsum["arms"]["late"]["eval_eps05_return_mean"])[:, i0:i1 + 1]
+        check = dict(C_fork_matches_recovery_control=bool(np.allclose(rc, fork_eval["C_eps05"], atol=1e-3)),
+                     D_fork_matches_recovery_late=bool(np.allclose(rl, fork_eval["D_eps05"], atol=1e-3)))
         print("consistency vs recovery run:", check, flush=True)
 
     def compose(code):
@@ -129,17 +134,19 @@ def main():
     r4 = lambda x: np.round(np.asarray(x, float), 4).tolist()
     for code in a.arms:
         r = compose(code)
-        evals, train = [ev(r)], []
+        g, x = ev2(r)
+        evals, evals_e, train = [g], [x], []
         for _ in range(a.recovery // E):
             r, m = run_v(r)
-            evals.append(ev(r))
+            g, x = ev2(r)
+            evals.append(g); evals_e.append(x)
             train.append({k: np.asarray(m[k]) for k in METRICS})
-        summary["arms"][code] = dict(eval_return_mean=r4(np.stack(evals, 1)),
+        summary["arms"][code] = dict(eval_return_mean=r4(np.stack(evals, 1)), eval_eps05_return_mean=r4(np.stack(evals_e, 1)),
                                      train={k: r4(np.concatenate([t[k] for t in train], 1)) for k in METRICS})
         summary["wallclock_s"] = round(time.time() - t0, 1)
         summ_path.write_text(json.dumps(summary))
-        e = np.stack(evals, 1)
-        print(f"arm {code}: +0 {e[:, 0].mean():5.1f} +{E} {e[:, 1].mean():5.1f} +50 {e[:, min(5, e.shape[1] - 1)].mean():5.1f} "
+        e = np.stack(evals_e, 1)
+        print(f"arm {code} (eps .05 eval): +0 {e[:, 0].mean():5.1f} +{E} {e[:, 1].mean():5.1f} +50 {e[:, min(5, e.shape[1] - 1)].mean():5.1f} "
               f"end {e[:, -1].mean():5.1f} AUC {e[:, 1:].mean():5.1f} elapsed={time.time() - t0:.0f}s", flush=True)
     print("summary:", summ_path, flush=True)
 
