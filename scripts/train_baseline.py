@@ -11,6 +11,7 @@ import warnings
 from pathlib import Path
 
 import jax
+import yaml
 import numpy as np
 
 from rled.agents.ppo import make
@@ -28,9 +29,14 @@ def main():
     ap.add_argument("--chunks", type=int, default=10)
     ap.add_argument("--tag", default="baseline")
     ap.add_argument("--allow-dirty", action="store_true")
+    ap.add_argument("--set", nargs="*", default=[], metavar="KEY=VALUE",
+                    help="extra PPO config overrides, e.g. GAMMA=0.999 LAYERNORM=True")
     a = ap.parse_args()
 
     overrides = dict(ENV_NAME=a.env, TOTAL_TIMESTEPS=a.steps, HIDDEN=a.hidden)
+    for kv in a.set:
+        k, v = kv.split("=", 1)
+        overrides[k] = yaml.safe_load(v)
     cfg, init, run = make(overrides)
     name = f"p1-{a.tag}-ppo-{a.env}"
     manifest = build_manifest(name, {k: v for k, v in cfg.items()}, a.seeds, allow_dirty=a.allow_dirty)
