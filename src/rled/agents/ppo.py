@@ -13,7 +13,8 @@ Carriers in the runner state:
 
 Deficits (applied on the agent side; LogWrapper still records the *true* episode return):
   obs_noise    : obs + sigma * N(0, 1)
-  action_mask  : only a fixed random subset of actions is available
+  action_mask  : only `allowed_actions` (fixed list, same for all seeds) are available
+                 [legacy: `allowed_frac` draws a random subset per seed]
   reward_flip  : r -> -r with probability p
   reward_delay : rewards are banked and paid out every `delay` steps (or at episode end)
 """
@@ -110,9 +111,12 @@ def make(config: dict):
         tx = optax.chain(optax.clip_by_global_norm(cfg["MAX_GRAD_NORM"]), optax.adam(cfg["LR"], eps=1e-5))
         ts = TrainState.create(apply_fn=net.apply, params=params, tx=tx)
         obs, env_state = jax.vmap(env.reset, in_axes=(0, None))(jax.random.split(k_env, cfg["NUM_ENVS"]), env_params)
-        n_allowed = max(1, int(round(dp.get("allowed_frac", 1.0) * n_actions)))
-        perm = jax.random.permutation(k_mask, n_actions)
-        action_mask = jnp.zeros((n_actions,), bool).at[perm[:n_allowed]].set(True)
+        if "allowed_actions" in dp:  # fixed, semantically chosen set, identical for every seed
+            action_mask = jnp.zeros((n_actions,), bool).at[jnp.array(dp["allowed_actions"])].set(True)
+        else:  # legacy: random subset drawn per seed (differs in kind across seeds; avoid)
+            n_allowed = max(1, int(round(dp.get("allowed_frac", 1.0) * n_actions)))
+            perm = jax.random.permutation(k_mask, n_actions)
+            action_mask = jnp.zeros((n_actions,), bool).at[perm[:n_allowed]].set(True)
         return dict(
             train_state=ts,
             env_state=env_state,
@@ -235,3 +239,40 @@ def make(config: dict):
         return jax.lax.scan(_update, runner_state, None, n_updates)
 
     return cfg, init, run
+
+
+def make_eval(config: dict, num_envs: int = 64):
+    """Deficit-free evaluation: full action set, clean observations, true env reward.
+
+    `evaluate(params, key)` runs `num_envs` episodes (first episode per env, capped at the env's
+    max_steps_in_episode) with actions sampled from the *unmasked* policy, and returns per-episode
+    returns and lengths. Pass the same `key` to every agent and checkpoint (common random numbers).
+    """
+    cfg = {**DEFAULT_CONFIG, **config}
+    env, env_params = gymnax.make(cfg["ENV_NAME"])
+    env = FlattenObservationWrapper(env)
+    n_actions = env.action_space(env_params).n
+    net = ActorCritic(n_actions, cfg["HIDDEN"], cfg["LAYERNORM"])
+    T = int(env_params.max_steps_in_episode) + 1
+
+    def evaluate(params, key):
+        k_reset, k_run = jax.random.split(key)
+        obs, st = jax.vmap(env.reset, in_axes=(0, None))(jax.random.split(k_reset, num_envs), env_params)
+
+        def step(carry, k):
+            obs, st, alive, ret, length = carry
+            k_a, k_s = jax.random.split(k)
+            logits, _ = net.apply(params, obs)
+            a = distrax.Categorical(logits=logits).sample(seed=k_a)
+            obs, st, r, d, _ = jax.vmap(env.step, in_axes=(0, 0, 0, None))(
+                jax.random.split(k_s, num_envs), st, a, env_params)
+            ret = ret + alive * r
+            length = length + alive
+            alive = alive & ~d
+            return (obs, st, alive, ret, length), None
+
+        init = (obs, st, jnp.ones((num_envs,), bool), jnp.zeros((num_envs,)), jnp.zeros((num_envs,), jnp.int32))
+        (_, _, alive, ret, length), _ = jax.lax.scan(step, init, jax.random.split(k_run, T))
+        return dict(ret=ret, length=length, unfinished=alive)
+
+    return evaluate
