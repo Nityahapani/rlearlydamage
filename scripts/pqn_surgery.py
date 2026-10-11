@@ -50,7 +50,7 @@ def main():
     ap.add_argument("--eval-seed", type=int, default=10_000)
     ap.add_argument("--seeds", type=int, nargs="+", default=[0, 1, 2, 3])
     ap.add_argument("--arms", nargs="+", default=["CC", "DC", "CD", "DD"])
-    ap.add_argument("--recovery-summary", default=None, help="p5 recovery summary with control + late arms (consistency check)")
+    ap.add_argument("--recovery-summary", nargs="*", default=None, help="p5 recovery summaries containing the control and late arms (consistency check)")
     ap.add_argument("--tag", default="surgery-late")
     ap.add_argument("--allow-dirty", action="store_true")
     a = ap.parse_args()
@@ -113,7 +113,10 @@ def main():
 
     check = {}
     if a.recovery_summary:
-        rsum = json.loads(Path(a.recovery_summary).read_text())
+        rsum = {"arms": {}}
+        for f in a.recovery_summary:
+            d = json.loads(Path(f).read_text())
+            rsum["arms"].update(d["arms"]); rsum["eval_updates"] = d["eval_updates"]
         U = rsum["eval_updates"]
         i0, i1 = U.index(l0), U.index(l1)
         rc = np.array(rsum["arms"]["control"]["eval_eps05_return_mean"])[:, i0:i1 + 1]
