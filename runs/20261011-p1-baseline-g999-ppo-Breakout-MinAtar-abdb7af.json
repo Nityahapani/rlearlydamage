@@ -1,0 +1,49 @@
+{
+  "allow_dirty": false,
+  "config": {
+    "CLIP_EPS": 0.2,
+    "DEFICIT": "none",
+    "DEFICIT_END": 0,
+    "DEFICIT_PARAMS": {},
+    "DEFICIT_START": 0,
+    "ENT_COEF": 0.01,
+    "ENV_NAME": "Breakout-MinAtar",
+    "GAE_LAMBDA": 0.95,
+    "GAMMA": 0.999,
+    "HIDDEN": 128,
+    "LAYERNORM": false,
+    "LR": 0.0005,
+    "MAX_GRAD_NORM": 0.5,
+    "MINIBATCH_SIZE": 1024,
+    "NUM_ENVS": 64,
+    "NUM_MINIBATCHES": 8,
+    "NUM_STEPS": 128,
+    "NUM_UPDATES": 610,
+    "TOTAL_TIMESTEPS": 5000000,
+    "UPDATE_EPOCHS": 4,
+    "VF_COEF": 0.5
+  },
+  "created_utc": "2026-10-11T09:40:44.781904+00:00",
+  "git": {
+    "commit": "abdb7afeafdff0b7d00d9fea3bb8eb39b9aacd09",
+    "dirty": false
+  },
+  "name": "p1-baseline-g999-ppo-Breakout-MinAtar",
+  "packages": {
+    "flax": "0.12.10",
+    "gymnax": "0.0.9",
+    "jax": "0.11.2",
+    "jaxlib": "0.11.2",
+    "numpy": "2.5.4",
+    "optax": "0.2.8",
+    "rliable": null
+  },
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.41",
+  "python": "3.13.16",
+  "seeds": [
+    0,
+    1,
+    2,
+    3
+  ]
+}
