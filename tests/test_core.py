@@ -44,3 +44,24 @@ def test_metrics():
     assert dormant_ratio(a) == pytest.approx(0.3)
     f = np.zeros((50, 8)); f[:, 0] = 1.0
     assert effective_rank(f) == 1
+
+
+def test_compose_ppo_takes_each_carrier_from_the_right_run():
+    import jax
+    import jax.numpy as jnp
+    from rled.agents.ppo import make
+    from rled.surgery import compose_ppo
+
+    cfg, init, run = make(dict(ENV_NAME="SpaceInvaders-MinAtar", HIDDEN=8, NUM_ENVS=4, NUM_STEPS=8,
+                               NUM_MINIBATCHES=2, TOTAL_TIMESTEPS=64))
+    c, d = init(jax.random.PRNGKey(0)), init(jax.random.PRNGKey(1))
+    h = compose_ppo(c, d, "DCD")
+    P = lambda s, k: s["train_state"].params["params"][k]["kernel"]
+    assert jnp.array_equal(P(h, "a0"), P(d, "a0")) and jnp.array_equal(P(h, "Dense_0"), P(d, "Dense_0"))
+    assert jnp.array_equal(P(h, "c0"), P(c, "c0")) and jnp.array_equal(P(h, "Dense_1"), P(c, "Dense_1"))
+    same = lambda x, y: all(jnp.array_equal(a, b) for a, b in zip(jax.tree.leaves(x), jax.tree.leaves(y)))
+    d2 = run(d, 1)[0]  # make the optimizer state non-trivial
+    h2 = compose_ppo(c, d2, "CCD")
+    assert same(h2["train_state"].opt_state, d2["train_state"].opt_state)
+    assert not same(h2["train_state"].opt_state, c["train_state"].opt_state)
+    assert same(h2["env_state"], c["env_state"]) and same(h2["rng"], c["rng"])  # future randomness from clean

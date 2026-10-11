@@ -79,6 +79,10 @@ class ActorCritic(nn.Module):
         return logits, jnp.squeeze(v, -1)
 
 
+ACTOR_KEYS = ("a0", "a1", "Dense_0")   # actor tower + logits head
+CRITIC_KEYS = ("c0", "c1", "Dense_1")  # critic tower + value head
+
+
 class Transition(NamedTuple):
     done: jnp.ndarray
     action: jnp.ndarray
@@ -127,6 +131,11 @@ def make(config: dict):
             action_mask=action_mask,
             # deficit window [start, end) in env steps; a traced array so one compile serves a whole sweep
             deficit_bounds=jnp.array([d_start, d_end], jnp.int32),
+            # behaviour-policy swap (surgery "data" carrier): while update < behaviour_until, rollouts
+            # are collected with `behaviour_actor` instead of the learner's actor (the critic is always
+            # the learner's). PPO's ratio uses the behaviour log-prob, i.e. importance-weighted updates.
+            behaviour_actor={k: v for k, v in params["params"].items() if k in ACTOR_KEYS},
+            behaviour_until=jnp.array(0, jnp.int32),
         )
 
     def _is_active(t, bounds):
@@ -148,7 +157,10 @@ def make(config: dict):
             mask = jnp.ones((cfg["NUM_ENVS"], n_actions), bool)
             if dtype == "action_mask":
                 mask = jnp.where(active, jnp.broadcast_to(rs["action_mask"], mask.shape), mask)
-            logits, value = net.apply(ts.params, obs_in)
+            use_b = rs["update"] < rs["behaviour_until"]
+            p_act = {"params": {k: (jax.tree.map(lambda b, q: jnp.where(use_b, b, q), rs["behaviour_actor"][k], v)
+                                    if k in ACTOR_KEYS else v) for k, v in ts.params["params"].items()}}
+            logits, value = net.apply(p_act, obs_in)
             pi = distrax.Categorical(logits=jnp.where(mask, logits, -1e9))
             action = pi.sample(seed=k_act)
             log_prob = pi.log_prob(action)
