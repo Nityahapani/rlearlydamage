@@ -64,5 +64,8 @@ Full details, tables and caveats are in [`LOG.md`](LOG.md). Every number traces 
 
 - `obs_noise` (sigma 1): about 10 points of raw damage at every onset, but about 0 once lost training time is accounted for. No lasting scar.
 - `action_mask` (2 of 4 actions): early masking is free; damage grows with onset. Only the latest window exceeds the lost-time null (+5.4 [2.1, 9.0]); a longer-recovery test is pending. The per-seed random mask was a design flaw, to be replaced with fixed "no fire" and "no movement" masks.
+- **Recovery test** (fixed masks shared by all seeds, deficit-free evaluation, 3.6M steps; `figures/recovery_all.png`):
+  - Early movement or fire restriction acts as pure delay and recovers fully.
+  - Late restriction causes *unlearning during the mask* (eval falls from 45 to 15–19). Recovery leaves a 6–7% gap at 2M post-removal steps, consistent with lost time rather than a lasting scar.
 - Decision point 2 (a peak-then-fall damage curve) is **not met yet**.
 - Methodological note: while the control is still improving, raw final-return damage is confounded with lost time, so we report delay-adjusted damage.

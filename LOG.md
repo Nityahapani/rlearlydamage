@@ -106,3 +106,52 @@ Also fixed: provenance no longer treats untracked run outputs (runs/, results/) 
   - Seed 1 kept {noop, left} and seed 2 kept {noop, right}: cannot fire.
   - Seed 3 kept {noop, fire}: cannot move.
   - Fix before any further action_mask runs: use a fixed, semantically chosen mask shared by all seeds (e.g. remove "fire", or remove movement), and report each as a separate deficit.
+
+## 2026-10-11 — Recovery test: fixed action masks, deficit-free evaluation (SpaceInvaders)
+
+**Design (fixes the per-seed-mask flaw)**
+- Allowed-action sets are fixed and identical for every seed. SpaceInvaders action indices: 0 noop, 1 left, 2 right, 3 fire.
+- Two interventions:
+  - **movement restriction**: allowed {noop, fire}.
+  - **fire restriction**: allowed {noop, left, right}. Reward is essentially unobtainable, so this is analyzed as a *different intervention*, not a matched-severity replicate.
+- Windows, in updates (1 update = 8192 steps):
+  - early [0, 50) = 0–0.41M steps.
+  - late [100, 150) = 0.82–1.23M steps.
+  - All runs: 440 updates (3.6M steps), seeds 0–3.
+- **Evaluation protocol:**
+  - Every 10 updates, every agent is evaluated by `make_eval`: full action set (no training mask), clean observations, true reward, 64 episodes, stochastic policy.
+  - The *same* eval key is used for every agent and checkpoint (common random numbers).
+  - Mask boundaries coincide with eval checkpoints. The as-experienced (masked) training return is also logged.
+- Runs:
+  - `runs/20261011-p2-recovery-move-ppo-SpaceInvaders-MinAtar-fea755e.json` (control, move_early, move_late; 1883 s).
+  - `runs/20261011-p2-recovery-fire-ppo-SpaceInvaders-MinAtar-806d05a.json` (fire_early, fire_late; 1254 s).
+  - Control shared; late runs are bit-identical to the control before their mask, as expected.
+- Analysis: `scripts/analyze_recovery.py`. Figures: `figures/recovery_move.png`, `figures/recovery_fire.png`, `figures/recovery_all.png`.
+
+**Results.** Gap = control − deficit, paired by seed, with a 95% bootstrap CI over 4 seeds. Delay-adjusted gap = control(u − 50) − deficit(u).
+
+| config | Q1a during mask (unmasked eval) | Q1b during mask (as experienced) | Q2 at removal | Q3 +0.41M | Q3 +0.82M | Q4 +2.05M | delay-adj at Q4 |
+|---|---|---|---|---|---|---|---|
+| move_early | 5.6 vs 15.7 | 3.0 vs 15.6 | 5.4 vs 28.2 (+22.8) | +17.0 [+13.6, +21.5] | +4.5 [-6.8, +15.7] | **-6.6 [-15.3, +1.9]** | -16.4 |
+| fire_early | 4.2 vs 15.7 | 0.0 vs 15.6 | 4.5 vs 28.2 (+23.7) | +18.0 [+13.7, +22.3] | +12.9 [+5.0, +19.9] | **+5.5 [-2.0, +11.1]** | -4.3 |
+| move_late | 24.5 vs 50.8 | 3.1 vs 49.3 | 18.5 vs 58.7 (+40.1) | +13.6 [+9.2, +20.7] | +10.9 [+8.2, +13.7] | **+7.2 [+3.9, +10.7]** (7%) | -2.0 [-3.1, -0.9] |
+| fire_late | 22.6 vs 50.8 | 0.9 vs 49.3 | 15.2 vs 58.7 (+43.4) | +17.4 [+8.3, +26.6] | +16.1 [+9.7, +22.5] | **+6.9 [+2.6, +13.6]** (6%) | -2.4 [-5.4, +0.7] |
+
+Final eval at 3.6M (mean of seeds): control 112.6; move_early 114.9; fire_early 113.7; move_late 106.2; fire_late 105.8.
+
+**Interpretation**
+1. **Early masks behave as pure delay.**
+   - At removal, both early agents score like an untrained agent (delay-adjusted Q2 about -1). Fire restriction gives zero reward for 0.41M steps, i.e. no learning signal.
+   - Both then catch up completely. move_early even ends slightly *above* the control (Q4 -6.6, CI includes 0).
+   - No critical-period signature.
+2. **Late masks cause active unlearning during the mask.**
+   - Deficit-free eval *falls* from 45.4 (update 100, mask onset) to 18.5 (movement) / 15.2 (fire) at removal.
+   - Delay-adjusted Q2 is +27 / +30: the agents end the mask worse than they were before it.
+   - Hypothesis to test: masked-action logits get no gradient while allowed-action logits and shared features are re-optimized for the restricted game, so the unmasked policy drifts.
+3. **The late-mask gap shrinks but has not closed by 2.05M post-removal steps.** It goes about +40 → +11/+16 → **+7 (6–7%)**, with CIs excluding 0.
+   - However, the delay-adjusted gap at Q4 is about -2, and the control is still improving at about +15 per 100 updates. So the residual gap equals about 0.37M steps of lag, i.e. roughly the window length.
+   - **No evidence of a lasting scar beyond lost (and relearned) time.**
+   - A decisive "does it close" answer needs a longer horizon or a plateaued control, plus more seeds.
+4. **Fire vs movement:** fire restriction is more destructive *during* the mask (0 vs ~3 reward). But its recovery profile is nearly indistinguishable from movement restriction at both onsets.
+
+**Caveats:** 4 seeds (crude bootstrap); one game; PPO with constant LR; stochastic-policy eval only; Q3/Q4 use 3-checkpoint smoothing.
