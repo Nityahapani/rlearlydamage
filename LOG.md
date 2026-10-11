@@ -200,3 +200,78 @@ Final eval at 3.6M (mean of seeds): control 112.6; move_early 114.9; fire_early 
 - Recovery test, fire_late at +2.05M: +6.9 [-4.1, +17.9], now **includes 0**. move_late stays significant at +7.2 [+1.3, +13.2]; its delay-adjusted value is -2.0 [-4.1, +0.1].
 - Phase 2 pilot, action_mask on0.4 delay-adjusted: +5.4 [-0.8, +11.6], now **includes 0**. obs_noise on0.3 delay-adjusted: +2.8 [-1.1, +6.8], now **includes 0**.
 - So no Phase 2 window shows significant damage beyond lost time.
+
+## 2026-10-11 — Phase 4: causal ablations at removal of the late movement mask
+
+**Run.** `scripts/phase4_ablations.py`, manifest `runs/20261011-p4-phase4-move-late-ppo-SpaceInvaders-MinAtar-9a789ef.json`, commit 9a789ef, 2818 s CPU.
+- Summary: `results/summary/20261011-p4-phase4-move-late-ppo-SpaceInvaders-MinAtar-9a789ef.json`.
+- Analysis: `…-analysis.md` (`scripts/analyze_phase4.py`).
+- Figures: `figures/phase4_move_late_{reset_transplant,behaviour,drift}.png`.
+- Setup: 4 seeds; mask on updates [100, 150) with allowed actions {noop, fire}; recovery 150 updates; deficit-free eval every 10 updates with common random numbers; K = 10 behaviour updates; anchor β = 1.
+
+**Checks passed.**
+- The C/D forks are bit-identical to the Phase 3 saved states (params and optimizer state).
+- D_online AUC 65.0 equals Phase 3 DDD, D_actor_transplant 75.9 equals CDD, and D_beh_clean 73.2 equals DDD+bC.
+- The tempered-T bisection hits the KL target exactly (T = 2.7–4.6).
+
+**Ablation 1: actor reset vs transplant** (AUC, paired difference vs D_online, 95% t-CI)
+- Actor reset (critic and optimizer kept): **−27.2 [−39.4, −15.1]**.
+  - Its recovery curve matches a from-scratch agent: 26.9 at +50 vs 28.2 for the Phase 2 control at update 50, and 59.9 vs 58.7 at 150 (cross-run comparison, no CI).
+  - So the trained critic and optimizer give a fresh actor nothing.
+- Actor + full Adam reset: −24.5 [−26.8, −22.1]. Compared with the actor reset alone: +2.8 [−7.6, +13.1], n.s.
+- Clean actor transplant: +10.9 [+7.6, +14.2]. Compared with C_cont: −3.4 [−7.5, +0.7], n.s.
+- **Answer:** recovery is about *preserving a good learned policy*, not removing damaged parameters. The damaged actor is far better than a fresh one, so it keeps most of its competence. We see no sign of a "toxic" weight state that blocks learning.
+
+**Ablation 2: breaking the actor–experience loop** (learner = D; the first K = 10 updates are collected by the behaviour policy; AUC vs D_online)
+
+| Behaviour policy | AUC vs D_online | +10 | Behaviour KL | Clip fraction |
+|---|---|---|---|---|
+| Matched clean actor | **+8.3 [+5.6, +11.0]** | +12.9* | 0.145 | 0.35 |
+| Frozen self (fixed pre-intervention data distribution) | −1.9 [−6.3, +2.4] n.s. | −10.6, borderline | 0.024 | 0.16 |
+| Cross-seed clean actor (good but unrelated) | +2.4 [−5.6, +10.4] n.s. | | 0.46 | 0.54 |
+| Tempered self (KL-matched to clean, low quality) | −5.1 [−14.3, +4.1] n.s. | −22.1* | 0.094 | 0.25 |
+
+- Clean − tempered: **+13.4 [+3.4, +23.4]**.
+- Clean − cross-seed: +5.9 [−3.4, +15.1] on AUC (n.s.) but +14.7* at +10.
+- Clean behaviour − actor transplant: −2.6 [−6.2, +0.9].
+- **Answer:**
+  - The off-policy update itself is roughly neutral: frozen self ≈ online.
+  - Mismatch alone is not the benefit: the tempered and cross-seed arms do not help.
+  - High-return experience from an *unrelated* good policy helps little, because the large ratios get clipped (clip fraction 0.54).
+  - The benefit needs experience from a good policy that is *close to the learner*. This is consistent with implicit policy guidance through the clipped ratio (behaviour cloning of a nearby good policy), not with a distinct data carrier.
+  - The effects are transient: all behaviour-arm differences at +150 include 0.
+  - **No evidence for a data scar separable from the actor.** In on-policy PPO, experience is a mediator of the actor's state, not an independent carrier.
+- Caveat: the tempered arm also changes exploration (entropy 0.95 vs 0.49).
+
+**Ablation 3: drift as the mechanism** (fixed onset bank, about 2000 obs per seed)
+
+| At removal | C | D | F (a0/a1 frozen) | A (anchor) |
+|---|---|---|---|---|
+| Eval | 58.7 | 18.5 | 38.7 | 39.6 |
+| KL(onset‖t) | 0.24 | 0.38 | 0.04 | 0.02 |
+| 1 − CKA(a1) | 0.18 | 0.25 | 0 | 0.02 |
+| p(left+right) | 0.46 | 0.38 | 0.42 | 0.44 |
+| Mean V on bank | 10.6 | 4.2 | 4.0 | 4.1 |
+
+- The manipulation worked:
+  - repr drift (1 − CKA(a1)): F − D −0.25 [−0.44, −0.05], A − D −0.23 [−0.43, −0.02];
+  - eval at removal: F − D **+20.1 [+8.2, +32.0]**, A − D **+21.1 [+13.1, +29.0]**.
+- KL_onset differences have wide CIs: one D seed has KL 0.79 and eval 4.3.
+- Across D/F/A × seeds, Spearman(eval at removal, KL_onset) = −0.80 (descriptive).
+- **Drift suppression prevents about half of the collapse.** F/A hold the onset level (45 → 39) but miss the improvement C made during the window (45 → 59).
+- **But recovery AUC is unchanged:**
+  - F_cont − D_online: +1.1 [−3.4, +5.7];
+  - A_cont − D_online: −0.0 [−1.8, +1.7];
+  - both remain about 13–14 AUC below C_cont, about the same as D.
+  - D regains the drift-lost competence within about 10–20 updates.
+- The masked actions' probabilities barely move (masked logits get no direct gradient). The drift is a redistribution among the allowed actions plus representation change, not suppression of the masked actions.
+- The critic's value on the bank falls by the same amount in D/F/A: it tracks the restricted policy.
+- **Answer:** drift causes the collapse *at removal*, but it is quickly reversible. The persistent recovery gap is the learning missed during the window (lost time), not drift.
+
+**Overall revision of the story.** The late-mask damage is real and lives in the actor, but it behaves as *lost and temporarily overwritten competence*, not as a scar:
+- resets hurt;
+- drift is fast-reversible;
+- data effects are transient guidance;
+- the residual gap is lost training.
+
+This agrees with the delay-adjusted Phase 2 / recovery results. Caveats: 1 env, 1 deficit, 4 seeds, a single β and K. The freeze restores a0/a1 after each step, but Adam moments for a0/a1 still accumulate during the window.

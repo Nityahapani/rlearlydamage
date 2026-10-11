@@ -47,7 +47,7 @@ pytest -q
 ```
 
 ## Status
-Phase 0: scaffold and literature review. See `LOG.md`.
+Phases 0–4 done (scaffold, baselines, deficit pilots, state surgery, causal ablations). See `LOG.md`.
 
 ## Status and results so far (2026-10-11)
 
@@ -71,6 +71,10 @@ Full details, tables and caveats are in [`LOG.md`](LOG.md). Every number traces 
   - The **actor weights carry 89%** of the recovery damage: -12.7 [-13.8, -11.6] eval-return AUC, consistent across all 4 seeds.
   - The critic effect is not significant, and the optimizer state carries about 0.
   - Swapping just 10 updates of *experience* (behaviour policy) moves recovery by -6.6 / +8.3. In on-policy RL, weight and data scars are entangled.
+- **Phase 4 causal ablations** (`figures/phase4_move_late_*.png`, LOG):
+  - Resetting the damaged actor is far worse than keeping it (−27 AUC; recovery equals learning from scratch). A clean-actor transplant restores C. The damage is lost competence, not a toxic weight state.
+  - 10 updates of clean-actor experience help (+8.3 AUC) only when the behaviour policy is good *and* close to the learner. KL-matched degraded data and good-but-unrelated (cross-seed) data do not help, and frozen self-data ≈ online. This looks like implicit policy guidance, not a separable data scar.
+  - Freezing the actor representation or anchoring to the onset policy halves the collapse at removal (+20 eval) but leaves recovery AUC unchanged. Drift is fast-reversible; the residual gap is lost training time.
 - Decision point 2 (a peak-then-fall damage curve) is **not met yet**.
 - CIs are paired t-intervals over seeds (earlier bootstrap CIs were too narrow at n=4 and were corrected; see LOG).
 - Methodological note: while the control is still improving, raw final-return damage is confounded with lost time, so we report delay-adjusted damage.
