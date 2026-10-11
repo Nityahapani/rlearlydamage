@@ -1,0 +1,158 @@
+{
+  "allow_dirty": false,
+  "config": {
+    "BUFFER_LEN": 781,
+    "BUFFER_SIZE": 100000,
+    "DEFICIT": "action_mask",
+    "DEFICIT_END": 0,
+    "DEFICIT_PARAMS": {
+      "allowed_actions": [
+        0,
+        3
+      ]
+    },
+    "DEFICIT_START": 0,
+    "ENV_NAME": "SpaceInvaders-MinAtar",
+    "EPS_DECAY_STEPS": 1000000,
+    "EPS_FINISH": 0.05,
+    "EPS_START": 1.0,
+    "GAMMA": 0.99,
+    "GRAD_STEPS_PER_UPDATE": 64,
+    "HIDDEN": 128,
+    "LAMBDA": 0.65,
+    "LAYERNORM": true,
+    "LR": 0.0005,
+    "MAX_GRAD_NORM": 10.0,
+    "MINIBATCH_SIZE": 128,
+    "NUM_ENVS": 128,
+    "NUM_EPOCHS": 2,
+    "NUM_MINIBATCHES": 32,
+    "NUM_STEPS": 32,
+    "NUM_UPDATES": 2441,
+    "REPLAY": false,
+    "REPLAY_BATCH": 128,
+    "REPLAY_RATIO": 2.0,
+    "STEPS_PER_UPDATE": 4096,
+    "TOTAL_TIMESTEPS": 10000000,
+    "protocol": {
+      "allowed": [
+        0,
+        3
+      ],
+      "arms": [
+        "early",
+        "late"
+      ],
+      "eps_at_window": {
+        "control": [
+          1.0,
+          1.0
+        ],
+        "early": [
+          1.0,
+          0.61088
+        ],
+        "late": [
+          0.05,
+          0.05
+        ]
+      },
+      "eval_envs": 64,
+      "eval_eps": [
+        0.0,
+        0.05
+      ],
+      "eval_every": 10,
+      "eval_seed": 10000,
+      "exposure": {
+        "ppo_reference": {
+          "early": [
+            0,
+            50
+          ],
+          "epochs": 4,
+          "exploration": "stochastic policy, entropy bonus 0.01",
+          "grad_steps_per_update": 32,
+          "late": [
+            100,
+            150
+          ],
+          "minibatch": 1024,
+          "post_removal_env_steps_late": 2375680,
+          "steps_per_update": 8192,
+          "total_env_steps": 3604480,
+          "window_env_steps": 409600,
+          "window_grad_steps": 1600,
+          "window_sample_gradients": 1638400,
+          "window_updates": 50
+        },
+        "pqn": {
+          "batch": 128,
+          "buffer_transitions": 0,
+          "buffer_turnover_updates": 0,
+          "eps_schedule": "linear 1.0 -> 0.05 over 1000000 env steps (244 updates), then constant",
+          "grad_steps_per_update": 64,
+          "lr": "0.0005 constant (RAdam, grad clip 10.0)",
+          "replay_ratio": 2.0,
+          "steps_per_update": 4096,
+          "window_env_steps": 409600,
+          "window_grad_steps": 6400,
+          "window_sample_gradients": 819200
+        }
+      },
+      "updates": 1000,
+      "variant": "pqn",
+      "windows_env_steps": {
+        "control": [
+          0,
+          0
+        ],
+        "early": [
+          0,
+          409600
+        ],
+        "late": [
+          1024000,
+          1433600
+        ]
+      },
+      "windows_updates": {
+        "control": [
+          0,
+          0
+        ],
+        "early": [
+          0,
+          100
+        ],
+        "late": [
+          250,
+          350
+        ]
+      }
+    }
+  },
+  "created_utc": "2026-10-11T17:01:57.897563+00:00",
+  "git": {
+    "commit": "fd9d190b6580af1b5bc0ecb2391d63616cb3b219",
+    "dirty": false
+  },
+  "name": "p5-recovery-pqn-early-late-SpaceInvaders-MinAtar",
+  "packages": {
+    "flax": "0.12.10",
+    "gymnax": "0.0.9",
+    "jax": "0.11.2",
+    "jaxlib": "0.11.2",
+    "numpy": "2.5.4",
+    "optax": "0.2.8",
+    "rliable": null
+  },
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.41",
+  "python": "3.13.16",
+  "seeds": [
+    0,
+    1,
+    2,
+    3
+  ]
+}
