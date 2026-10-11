@@ -415,7 +415,7 @@ This agrees with the delay-adjusted Phase 2 / recovery results. Caveats: 1 env, 
 
 ## 2026-10-11 — Phase 4 replication on Asterix: aborted (window not "late" on Asterix)
 
-- Run `runs/20261011-p4-phase4-asterix-move-late-ppo-Asterix-MinAtar-208a6f2.json` (allowed {noop, up, down}, window [100, 150)) was stopped after the forks and one arm. No summary was written.
+- Run `runs/20261011-p4-phase4-asterix-move-late-ppo-Asterix-MinAtar-208a6f2.json` (allowed {noop, up, down}, window [100, 150)) was stopped after the forks and one arm (partial summary with forks + C_cont committed for transparency).
 - On Asterix, PPO at update 100 scores only ~2 (Phase 1: ~4 at 2M steps, still climbing). The restriction caused no collapse: D 1.8 vs C 2.2 at removal, so there is nothing to ablate.
 - PPO's u100 is "late" on SpaceInvaders (40% of final competence) but not on Asterix.
 - A meaning-matched Asterix replication needs a long control to locate the 40%-of-final point (likely ≫ 2M steps). Alternatively, use PQN, which learns Asterix faster (purejaxql default env). Pending user decision.
