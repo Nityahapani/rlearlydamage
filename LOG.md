@@ -625,3 +625,42 @@ Summaries `results/summary/20261012-p6b-tpurge-s{0..11}-pqnr-1000k-…json` (see
   - B − Cp ≈ 0 with residence main effect > 0 → the Phase 6b gap is better explained by residence. This weakens the identity claim but does not prove no identity effect: Cp's restricted data is resident for less time than in A/C.
   - Residence main effect is reported either way. A, D are drawn for reference only.
 - Budget: ~6.5 min per seed (2 arms), seed 0 ~9 min; ~80 min total, sequential, 1 seed per process.
+
+## 2026-10-12 — Phase 6c identity x residence 2x2: RESULTS (n = 12; pre-registered analysis)
+
+Summaries `results/summary/20261012-p6c-res2x2-s{0..11}-pqnr-1000k-…json`. Filenames carry launch commits 2559f2e / eb35453 / 3ddb28f / 5ca0172, because seed summaries were committed while the queue ran (to protect against restarts). Those intermediate commits contain result files only: `git diff 2559f2e 5ca0172 -- src scripts` is empty. Analysis `results/summary/p6c_2x2-analysis.md`; figure `figures/p6c_2x2.png`. The middle panel was changed, before writing this entry, from residence curves (which coincide by design and hid each other) to a cumulative-exposure map. Display only; no numbers changed.
+- Reuse guard: for all 12 seeds, the forks, pool stats and row blocks match Phase 6b. Seed 0 reruns B_targeted bit-identically. In-script layout asserts pass. Replacement curves of the residence-matched pairs are identical (max difference 0.0000). Seams: 384 per new-cell buffer.
+
+| cell | removed | replacement | AUC | early | middle | late |
+|---|---|---|---|---|---|---|
+| B_targeted | R | long | 36.7 | 25.2 | 29.7 | 42.4 |
+| Bp_targeted_short | R | short | 35.2 | 25.9 | 28.7 | 40.0 |
+| Cp_sham_long | P | long | 35.5 | 24.5 | 29.0 | 41.0 |
+| C_sham | P | short | 34.1 | 23.6 | 27.9 | 39.2 |
+| (A_retain, ref) | — | — | 33.1 | 24.2 | 27.6 | 37.6 |
+| (D_cleannet, ref) | R | long | 39.5 | 28.3 | 32.5 | 45.2 |
+
+**Primary (Holm across three): none significant.**
+- Identity at matched long residence, B − Cp: **+1.1 [−0.2, +2.5]**, p = 0.090, Holm 0.180 (sign-flip 0.097; 8/12). Early window +0.7*, middle +0.7, late +1.4.
+- Identity at matched short residence, Bp − C: **+1.1 [−0.8, +3.0]**, p = 0.226, Holm 0.226 (8/12). Early +2.2*, middle +0.9, late +0.7.
+- Residence main effect: **+1.5 [+0.2, +2.7]**, p = 0.024, Holm 0.073 (sign-flip 0.027; 8/12). Early +0.0, middle +1.1*, late +2.1*.
+
+**Secondary (descriptive):**
+- Identity main effect +1.1 [+0.0, +2.2] (sign-flip 0.048; 9/12).
+- Interaction +0.0 [−2.3, +2.4] (early −1.5*).
+- Residence given R removed (B − Bp) +1.5 [−0.1, +3.1]; given P removed (Cp − C) +1.5 [−0.4, +3.3].
+- **Decomposition of Phase 6b B − C (+2.6*) = identity at long residence (+1.1) + residence given P removed (+1.5).**
+- Exposure (cumulative expected sampled, M): B 0 restricted / 0.65 replacement; Bp 0 / 0.31; Cp 0.31 / 0.65; C 0.65 / 0.31.
+
+**Reading (against the pre-registered rules).**
+- Neither pre-registered outcome is clearly met. B − Cp is not significant, but the residence main effect also misses Holm (0.073).
+- The point estimates split the Phase 6b gap about evenly: roughly 40% identity and 60% residence (+1.1 vs +1.5). With 12 seeds, neither component on its own is established.
+- **Consequences for the claim:**
+  - The Phase 6b result does not support a strong data-identity claim: a good part of B − C is plausibly explained by the replacement data staying in the buffer longer.
+  - What survives:
+    - In the early window, removing restriction-era data helps at both residence levels (+0.7*, +2.2*). This matches the exposure-matched window in Phase 6b (+2.5*).
+    - The pooled identity main effect is borderline (+1.1, CI lower bound 0.0).
+  - Supported wording: "the restriction-era data carries a modest, mainly early cost; how long the replacement data stays contributes comparably to later recovery".
+  - Not supported: "the damage lives in the restricted data" as the explanation for the full targeted-purge benefit.
+- Unchanged: the network carrier. B − D −2.9* (Phase 6b) is not affected by this design.
+- Power note (descriptive): with SD ≈ 2.1 for B − Cp, detecting +1.1 at 80% power (two-sided, α = 0.05) would need about 30 seeds.

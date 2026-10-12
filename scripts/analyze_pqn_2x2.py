@@ -142,10 +142,16 @@ def main():
         if not ref:
             ax[0].fill_between(h, mu - se, mu + se, color=COL[k], alpha=0.10)
     ax[0].set_xlabel(f"updates after removal (u{w1})"); ax[0].set_ylabel(a.metric); ax[0].legend(fontsize=7); ax[0].set_title("Identity x residence 2x2")
-    for k in CELLS:
-        ax[1].plot(h, sr[k].mean(0), color=COL[k], lw=2.2, alpha=0.7, label=f"{k} restricted-era")
-        ax[1].plot(h, sp[k].mean(0), color=COL[k], lw=1.2, ls="--", label=f"{k} replacement")
-    ax[1].set_xlim(0, 300); ax[1].set_xlabel("updates after removal"); ax[1].set_ylabel("share of buffer"); ax[1].legend(fontsize=6)
+    # exposure map (residence curves coincide by design, so plot cumulative exposure per cell instead)
+    for k in CELLS + REF:
+        x_, y_ = cum(sp[k]), cum(sr[k])
+        if k in REF:
+            ax[1].scatter(x_, y_, s=260, facecolors="none", edgecolors=COL[k], lw=1.5, zorder=2, marker="s")
+        else:
+            ax[1].scatter(x_, y_, s=90, color=COL[k], zorder=3)
+        ax[1].annotate(f"{k}\nAUC {sc[k]['AUC'].mean():.1f}", (x_, y_), textcoords="offset points", xytext=(10, -4 if k != "D_cleannet" else -20), fontsize=7)
+    ax[1].set_xlabel("cumulative sampled replacement transitions (M)"); ax[1].set_ylabel("cumulative sampled restriction-era transitions (M)")
+    ax[1].set_xlim(-0.05, 0.95); ax[1].set_ylim(-0.08, 0.78); ax[1].set_title("Exposure map (+1..+650; D = clean net)", fontsize=9)
     names = list(allc)
     for j, nm in enumerate(names):
         x = allc[nm]["AUC"]; m, lo, hi, _ = tci(x)
