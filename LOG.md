@@ -479,3 +479,28 @@ Run `runs/20261012-p2-asterix-long-control-ppo-Asterix-MinAtar-f12598d.json` (12
 - Final (last 50 updates) 14.0 (per-seed sd 3.5); 40% = 5.6; mean crosses at u390 (per seed 270–470) → **meaning-matched onset u390** (43% of final).
 - Plateau is weak: only the last ~120 updates are flat (−0.18, −0.25 per 100). If the true asymptote is higher, the 40% point moves later (e.g. final 18 → ~u550). The onset is provisional.
 - Proposed PPO Asterix replication (not run): restriction [390, 440) (50 updates = 409,600 steps), recovery 290 updates (u730; within the observed control) — or a longer control first to confirm the plateau.
+
+## 2026-10-12 — Phase 6 (cont.): replay-purge experiment — PRE-REGISTRATION (written and committed before any real run)
+
+**Question (user):** does replay data leave a scar after it is removed? Setting: SpaceInvaders-MinAtar movement restriction ({noop, fire}), PQN-R, 1M buffer, late window [250, 350) (prespecified onset rule, unchanged), recovery 650 updates, seeds 0–7 (same as the Phase 6 1M surgery), ε = 0.05 deficit-free eval primary (greedy secondary). Script `scripts/pqn_purge.py`, analysis `scripts/analyze_pqn_purge.py`; one seed per process (memory).
+
+**Arms at removal (u350):**
+- **A_retain:** damaged agent continues with its own 1M buffer (restriction-era data, 41% at removal, overwritten by normal collection by ~+245).
+- **B_purge:** damaged agent; the entire buffer is replaced at u350 by the replacement buffer.
+- **C_delay50:** damaged agent keeps its buffer for 50 updates (bit-identical to A up to u400), then the entire buffer is replaced by the same replacement buffer.
+- **D_clean:** clean agent continues with its own buffer (= the 1M control run; checked for bit-identity against the control summaries).
+- **E_clean_purge (secondary, added by me):** clean agent with the same purge at u350. B − A mixes "remove restriction-era data" with "replace a mixed-age buffer by fresh clean-actor data"; E − D measures the latter on a clean network, and (B − A) − (E − D) isolates the damage-specific purge benefit.
+- Non-buffer state (params, RAdam state, env state, current obs, RNG, update counter) is the arm's own fork state (A/B/C from the restricted fork, D/E from the clean fork).
+
+**Replacement buffer (fixed protocol; one per seed, identical for B, C and E):** real transitions, not relabelled old data. A **frozen clean actor** (the clean fork's parameters at u350; it does not keep learning) acts ε-greedy with ε = 0.05 (training floor) over the full action set in 128 fresh unrestricted envs (same wrappers), key `fold_in(PRNGKey(seed), 2026)`, separate from every agent's env state and RNG; 7,812 × 128 transitions (fills the buffer) in the PQN-R schema, time-ordered, ptr = 0, size = full (FIFO overwrites the oldest replacement data first); slot tags = purge update. Splice: after any swap 128 of 1M transitions (0.013%) have the agent's next obs as successor (as in all surgery arms).
+
+**Primary estimands** (paired by seed, 95% t-CI; Holm correction across the three primary AUC tests):
+1. Purge rescue **B − A**. 2. Delayed-purge effect **B − C**. 3. Residual impairment after purge **B − D**.
+
+**Windows** (post-removal updates; AUC as in Phase 5 = mean over +10..+650): early +10..+150 (A's restricted share flat), mid +160..+240 (draining), late +250..+650 (A's restricted data gone), post-delay +60..+150; readouts +10, +100 (3-checkpoint means). Restriction-era share of every buffer logged at every eval checkpoint.
+
+**Secondary:** E − D; (B − A) − (E − D); C − A; A − D. Seed-robustness block (SD, #seeds < 0, prediction interval) for all.
+
+**Interpretation rule (user):** most diagnostic = B > A, C between them, B < D → old data actively harms recovery while consumed, and impairment remains after removal. B ≈ A weakens the active replay-data claim (does not affect the network-transfer result). E − D ≠ 0 means part of B − A is a replacement-data-quality effect, read through (B − A) − (E − D).
+
+**Expectation (from the Phase 6 phase analysis; not a hypothesis test):** small B − A (≈ +1–2 AUC, possibly n.s. at n = 8), clearly negative B − D (network damage).

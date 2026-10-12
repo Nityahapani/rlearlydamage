@@ -274,3 +274,38 @@ def make_eval(config: dict, num_envs: int = 64, eps: float = 0.0):
         return dict(ret=ret, length=length, unfinished=alive)
 
     return evaluate
+
+
+def make_collector(config: dict, eps: float = 0.05):
+    """Replay-buffer replacement data (Phase 6 purge): a FROZEN policy collects BUFFER_LEN steps in NUM_ENVS fresh,
+    unrestricted envs (full action set, epsilon-greedy with `eps`), returning arrays in the PQN-R buffer schema
+    (packed obs, uint8 action, reward, done), time-ordered along axis 0. The training env wrappers are the same as in
+    `make`; the collection envs and RNG are separate from any agent's env state and RNG."""
+    cfg = {**DEFAULT_CONFIG, **config}
+    env, env_params = gymnax.make(cfg["ENV_NAME"])
+    env = LogWrapper(FlattenObservationWrapper(env))
+    n_actions = env.action_space(env_params).n
+    net = QNet(n_actions, cfg["HIDDEN"], cfg["LAYERNORM"])
+    N = cfg["NUM_ENVS"]
+    L = cfg["BUFFER_SIZE"] // N
+    pack = lambda o: jnp.packbits(o > 0.5, axis=-1)
+
+    def collect(params, key):
+        k_reset, k_run = jax.random.split(key)
+        obs, st = jax.vmap(env.reset, in_axes=(0, None))(jax.random.split(k_reset, N), env_params)
+
+        def step(carry, _):
+            st, obs, rng = carry
+            rng, k_r, k_e, k_s = jax.random.split(rng, 4)
+            q = net.apply(params, obs)
+            rand = jax.random.randint(k_r, (N,), 0, n_actions)
+            a = jnp.where(jax.random.uniform(k_e, (N,)) < eps, rand, jnp.argmax(q, -1))
+            obs2, st, r, d, info = jax.vmap(env.step, in_axes=(0, 0, 0, None))(jax.random.split(k_s, N), st, a, env_params)
+            ep = (info["returned_episode_returns"] * info["returned_episode"]).sum(), info["returned_episode"].sum()
+            return (st, obs2, rng), (pack(obs), a.astype(jnp.uint8), r, d, ep)
+
+        _, (o, a, r, d, (ret_sum, n_ep)) = jax.lax.scan(step, (st, obs, k_run), None, L)
+        stats = dict(episodes=n_ep.sum(), mean_return=ret_sum.sum() / jnp.maximum(n_ep.sum(), 1))
+        return dict(obs=o, action=a, reward=r, done=d), stats
+
+    return collect
