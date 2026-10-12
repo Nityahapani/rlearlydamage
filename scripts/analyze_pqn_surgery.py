@@ -113,14 +113,15 @@ def main():
         h = stats.t.ppf(0.975, n - 1) * sd * np.sqrt(1 + 1 / n) if n > 1 else float("nan")
         L.append(f"| {name} | {x.mean():+.1f} | {sd:.1f} | {(x < 0).sum()}/{n} | [{x.mean() - h:+.1f}, {x.mean() + h:+.1f}] | "
                  + ", ".join(f"{v:+.1f}" for v in x) + " |")
-    if "buf_frac_window" in s["arms"]["DD"]["train"]:
-        L += ["", "## Overwrite of restriction-era data after removal (mean over seeds)", "",
+    ST = [t for t in S if "buf_frac_window" in t["arms"]["DD"]["train"]]
+    if ST:
+        L += ["", f"## Overwrite of restriction-era data after removal (mean over tagged seeds {sum((t['seeds'] for t in ST), [])})", "",
               "buf = share of valid buffer slots written during the window; samp = share of sampled replay transitions from it. "
               "Arms with the D buffer carry restricted data; arms with the C buffer carry the control's same-era data.", "",
               "| arm | +1 buf | +1 samp | first update buf < 50% | < 10% | = 0 | AUC-window mean samp |", "|---|---|---|---|---|---|---|"]
         for k in ("CC", "CD", "DD", "DC"):
-            B = np.concatenate([np.array(t["arms"][k]["train"]["buf_frac_window"], float) for t in S]).mean(0)
-            P = np.concatenate([np.array(t["arms"][k]["train"]["sample_frac_window"], float) for t in S]).mean(0)
+            B = np.concatenate([np.array(t["arms"][k]["train"]["buf_frac_window"], float) for t in ST]).mean(0)
+            P = np.concatenate([np.array(t["arms"][k]["train"]["sample_frac_window"], float) for t in ST]).mean(0)
             first = lambda c: next((i + 1 for i, v in enumerate(B) if c(v)), None)
             L.append(f"| {k} | {B[0]:.2f} | {P[0]:.2f} | {first(lambda v: v < .5)} | {first(lambda v: v < .1)} | {first(lambda v: v <= 0)} | {P.mean():.3f} |")
     tr = {k: np.concatenate([np.array(t["arms"][k]["train"]["loss"], float) for t in S]) for k in s["arms"]}
