@@ -8,6 +8,14 @@ Primary contrasts (paired by seed; 95% t-CI; Holm across the three primary AUC t
   residual network impairment B_targeted - D_cleannet  (identical buffer, start state and pool; only params+optimizer differ)
 Secondary (descriptive): C_sham - A_retain (refresh without removing restricted data); share of B - A explained by
 targeting = (B - C) / (B - A); sign-flip permutation p for the primary AUC contrasts (exact, 2^n).
+ADDENDUM (user note, committed before any Phase 6b result was viewed; primary contrasts unchanged): B and C replace
+equal numbers of slots with the same pool, but the sham's replacement data is overwritten ~100 updates earlier, so a
+positive B - C may reflect removal of restriction-era data, longer residence of the replacement data, or both. Added
+descriptive sections: (i) replacement residence curve and expected sampled replacement share per checkpoint (uniform
+sampling over loss-weighted slots: expected share = (replacement slots - replacement seam slots) / (valid slots -
+seam slots), equal to the buffer share up to 128/1M; realised per-update share is binomial around it with n = 64 x 128
+samples, SD <= 0.0055); (ii) cumulative sampled replacement transitions, B vs C; (iii) B - C over the exposure-matched
+period (checkpoints where both arms have so far had identical replacement exposure).
 Usage: python scripts/analyze_pqn_targeted.py results/summary/<p6b>.json [...] --tag p6b_targeted
 """
 from __future__ import annotations
@@ -113,6 +121,28 @@ def main():
     expo = {k: sp[k][:, 1:].mean() for k in ARMS}
     L += ["", "Mean replacement share over the AUC window (sampling is uniform, so = expected sampled share): "
           + ", ".join(f"{k} {v:.3f}" for k, v in expo.items()) + "."]
+    # ---- ADDENDUM: replacement exposure (descriptive; does not change the primary contrasts)
+    spg = 64 * 128  # loss-weighted replay samples per update (GRAD_STEPS_PER_UPDATE x REPLAY_BATCH)
+    up = np.arange(0, R + 1)
+    per_up = {k: np.interp(up, h, sp[k].mean(0)) for k in ("B_targeted", "C_sham", "D_cleannet")}
+    cum = {k: per_up[k][1:].sum() * spg for k in per_up}
+    same = np.isclose(per_up["B_targeted"], per_up["C_sham"], atol=1e-3)
+    first_diff = int(up[np.argmax(~same)]) if (~same).any() else R
+    L += ["", "## Addendum: replacement-data exposure (descriptive; added after the user's note, before viewing results)", "",
+          "Expected sampled replacement share = buffer replacement share (uniform sampling; seam correction <= 128/1M; "
+          "realised per-update share is binomial around it, SD <= 0.0055).", "",
+          "| checkpoint | " + " | ".join(f"+{m}" for m in range(0, 270, 20)) + " |", "|---" * 15 + "|"]
+    for k in ("B_targeted", "C_sham", "D_cleannet"):
+        L.append(f"| {k} | " + " | ".join(f"{sp[k][:, list(h).index(m)].mean():.2f}" for m in range(0, 270, 20)) + " |")
+    L += ["", f"Cumulative sampled replacement transitions over +1..+{R} (mean over seeds): "
+          + ", ".join(f"{k} {v / 1e6:.2f}M" for k, v in cum.items())
+          + f"; ratio B/C = {cum['B_targeted'] / max(cum['C_sham'], 1):.2f}. Exposure identical in B and C up to ~+{first_diff}."]
+    mw = [c for c in h if 0 < c < first_diff]
+    if mw:
+        idx = [list(h).index(c) for c in mw]
+        x = (ev["B_targeted"] - ev["C_sham"])[:, idx].mean(1)
+        L.append(f"B - C over the exposure-matched checkpoints +{min(mw)}..+{max(mw)} (descriptive): {fmt(x)} "
+                 f"({(x > 0).sum()}/{n} seeds > 0). Later B - C differences combine data identity with the residence mismatch.")
     tr = {k: np.concatenate([np.array(t["arms"][k]["train"]["loss"], float) for t in S]) for k in ARMS}
     L += ["", "TD loss, first 30 post-removal updates (mean): " + ", ".join(f"{k} {tr[k][:, :30].mean():.3f}" for k in ARMS)]
     out = Path("results/summary") / f"{a.tag}-analysis.md"
