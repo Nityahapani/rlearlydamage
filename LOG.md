@@ -504,3 +504,33 @@ Run `runs/20261012-p2-asterix-long-control-ppo-Asterix-MinAtar-f12598d.json` (12
 **Interpretation rule (user):** most diagnostic = B > A, C between them, B < D → old data actively harms recovery while consumed, and impairment remains after removal. B ≈ A weakens the active replay-data claim (does not affect the network-transfer result). E − D ≠ 0 means part of B − A is a replacement-data-quality effect, read through (B − A) − (E − D).
 
 **Expectation (from the Phase 6 phase analysis; not a hypothesis test):** small B − A (≈ +1–2 AUC, possibly n.s. at n = 8), clearly negative B − D (network damage).
+
+## 2026-10-12 — Phase 6 replay purge: RESULTS (n = 8, analysis exactly as pre-registered in 864697e)
+
+Summaries `results/summary/20261012-p6-purge-s{0..7}-pqnr-1000k-SpaceInvaders-MinAtar-864697e.json`; analysis `results/summary/p6_purge-analysis.md`; post-hoc `results/summary/p6_purge-posthoc.md`; figure `figures/p6_purge.png`.
+- Checks: D_clean bit-identical to the 1M control run and both forks bit-identical to the Phase 6 1M surgery, all 8 seeds. Replacement-buffer collection returns 26.3–30.4 per episode (frozen clean actor, ε 0.05).
+
+| arm | AUC | early +10..150 | mid +160..240 | late +250..650 | +10 |
+|---|---|---|---|---|---|
+| A_retain | 33.3 | 24.3 | 27.8 | 37.8 | 18.0 |
+| B_purge | 37.8 | 24.2 | 31.2 | 44.3 | 9.5 |
+| C_delay50 | 36.8 | 24.3 | 29.3 | 43.0 | 18.0 |
+| D_clean | 37.9 | 28.0 | 30.6 | 43.2 | 27.3 |
+| E_clean_purge | 39.7 | 27.1 | 33.5 | 45.7 | 26.0 |
+
+**Primary (AUC; Holm across the three):**
+- **Purge rescue B − A: +4.6 [+2.2, +6.9]*** (p = 0.002, Holm 0.007; 0/8 seeds negative; PI [−2.4, +11.5]). Early −0.1 (an immediate purge shock, +10 −8.5*, cancels later gains), mid +3.3*, **late +6.5 [+3.1, +10.0]***.
+- **Delayed-purge effect B − C: +1.0 [−0.1, +2.1]** (p = 0.075, Holm 0.149; n.s.). Post-delay window +2.1*. C − A = +3.5* (secondary): purging after 50 updates recovers ~78% of the purge benefit.
+- **Residual impairment B − D: −0.1 [−2.5, +2.3]** (Holm 0.906). Early −3.8*, +100 −1.5*, late +1.1 (n.s.).
+
+**Secondary:** E − D +1.8 [−1.2, +4.8] (replacement data mildly better than the clean agent's own mixed-age buffer, n.s.; one seed +9.3). Damage-specific purge benefit (B − A) − (E − D) +2.8 [−0.2, +5.7] (late +4.0 [−0.0, +8.1], +100 +4.7*). A − D −4.7* (8/8; late −5.5*).
+
+**Post-hoc (labelled, not pre-registered):** B − E (damaged vs clean network on the identical buffer) −1.9 [−3.0, −0.8]* AUC (early −2.9*, late −1.4 n.s.), matching the surgery's parameter transfer (−2.6*). Purge shock: B − A at +10 = −14.8* (single checkpoint), gone by +20; C's purge at u400 causes no significant dip (+60/+70: −1.1, −3.0 n.s.), nor does E's purge of a clean agent (−2.0 n.s.). TD loss (first 30 updates): A 0.885, B 0.696, D 0.074, E 0.121.
+
+**Reading against the pre-registered rule.** The pattern holds descriptively: B > A (significant), A ≤ C ≤ B (C close to B; B − C n.s.), B < D only by −0.1 (n.s.).
+1. **Replay data leaves a scar after it is removed.** In A the restriction-era data is completely overwritten by +245, yet over +250..+650 A trails B by +6.5* and D by −5.5*. Up to ~40% of B − A could be replacement-data quality (E − D +1.8, n.s.); the damage-specific part is +2.8 AUC (late +4.0), borderline at n = 8. This is the persistent data→network effect seen in the Phase 6 phase analysis, now shown causally by removing the data.
+2. **Most of the harm comes from consuming the old data after the first 50 updates:** delaying the purge by 50 updates costs only +1.0 (n.s.), while letting the data drain naturally (~245 updates) costs +4.6.
+3. **No residual impairment after an immediate purge on AUC (B ≈ D).** This is not "no network damage": on the identical buffer the damaged network trails the clean one (B − E −1.9*). B matches D because the fresh replacement data is slightly better than D's own buffer.
+4. **Purge shock:** swapping the whole buffer right at removal makes the damaged agent briefly much worse (+10: −14.8*). The same swap 50 updates later, or applied to a clean agent, does not. The just-damaged Q-function is fragile to an abrupt data shift.
+
+Caveats: one game and restriction; n = 8; the replacement policy is a frozen clean actor (a learning or self-collected replacement was not tested); E − D shows the replacement data is not neutral.
