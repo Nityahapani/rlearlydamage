@@ -44,6 +44,7 @@ def main():
     ap.add_argument("--env", default="SpaceInvaders-MinAtar")
     ap.add_argument("--allowed", type=int, nargs="+", default=[0, 3])
     ap.add_argument("--arms", nargs="+", default=["control"])
+    ap.add_argument("--buffer-size", type=int, default=100_000, help="PQN-R replay capacity (transitions)")
     ap.add_argument("--duration", type=int, default=100, help="window length in updates (100 x 4096 = PPO's 409,600 steps)")
     ap.add_argument("--early-onset", type=int, default=0)
     ap.add_argument("--late-onset", type=int, default=None)
@@ -60,7 +61,8 @@ def main():
     E = a.eval_every
     assert a.updates % E == 0
 
-    base = dict(ENV_NAME=a.env, REPLAY=a.variant == "pqnr", DEFICIT="action_mask",
+    label = a.variant if (a.variant == "pqn" or a.buffer_size == 100_000) else f"pqnr-{a.buffer_size // 1000}k"
+    base = dict(ENV_NAME=a.env, REPLAY=a.variant == "pqnr", BUFFER_SIZE=a.buffer_size, DEFICIT="action_mask",
                 DEFICIT_PARAMS={"allowed_actions": a.allowed}, DEFICIT_START=0, DEFICIT_END=0)
     cfg, init, run = make(base)
     spu = cfg["STEPS_PER_UPDATE"]
@@ -79,14 +81,14 @@ def main():
                  window_sample_gradients=a.duration * cfg["GRAD_STEPS_PER_UPDATE"] *
                  (cfg["REPLAY_BATCH"] if cfg["REPLAY"] else cfg["MINIBATCH_SIZE"])),
         ppo_reference=dict(PPO_REF, window_grad_steps=50 * 32, window_sample_gradients=409_600 * 4))
-    protocol = dict(variant=a.variant, windows_updates=windows,
+    protocol = dict(variant=label, windows_updates=windows,
                     windows_env_steps={k: [w[0] * spu, w[1] * spu] for k, w in windows.items()},
                     eps_at_window={k: [float(max(cfg["EPS_FINISH"], 1 - (1 - cfg["EPS_FINISH"]) * w[0] * spu / cfg["EPS_DECAY_STEPS"])),
                                        float(max(cfg["EPS_FINISH"], 1 - (1 - cfg["EPS_FINISH"]) * w[1] * spu / cfg["EPS_DECAY_STEPS"]))]
                                    for k, w in windows.items()},
                     updates=a.updates, eval_every=E, eval_envs=a.eval_envs, eval_seed=a.eval_seed, eval_eps=[0.0, EVAL_EPS2],
                     allowed=a.allowed, arms=a.arms, exposure=exposure)
-    tag = a.tag or f"{a.variant}-{'-'.join(a.arms)}"
+    tag = a.tag or f"{label}-{'-'.join(a.arms)}"
     manifest = build_manifest(f"p5-recovery-{tag}-{a.env}", {**cfg, "protocol": protocol}, a.seeds, allow_dirty=a.allow_dirty)
     mpath = write_manifest(manifest)
     print("manifest:", mpath, flush=True)
@@ -96,7 +98,7 @@ def main():
     keys = jnp.stack([jax.random.PRNGKey(s) for s in a.seeds])
     n = len(a.seeds)
     init_v = jax.jit(jax.vmap(init))
-    run_v = jax.jit(jax.vmap(lambda rs: run(rs, E)))
+    run_v = jax.jit(jax.vmap(lambda rs: run(rs, E)), donate_argnums=0)  # rs is always reassigned
     eval_g = jax.jit(jax.vmap(make_eval(cfg, num_envs=a.eval_envs, eps=0.0), in_axes=(0, None)))
     eval_e = jax.jit(jax.vmap(make_eval(cfg, num_envs=a.eval_envs, eps=EVAL_EPS2), in_axes=(0, None)))
     ek = jax.random.PRNGKey(a.eval_seed)

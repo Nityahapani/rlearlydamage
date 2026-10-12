@@ -34,7 +34,7 @@ from rled.provenance import build_manifest, write_manifest
 
 warnings.filterwarnings("ignore")
 EVAL_EPS2 = 0.05  # second eval: epsilon-greedy at the training floor (greedy eval is brittle)
-METRICS = ("episode_return", "eps", "loss", "q_mean", "grad_norm", "deficit_active")
+METRICS = ("episode_return", "eps", "loss", "q_mean", "grad_norm", "deficit_active", "buf_frac_window", "sample_frac_window")
 
 
 def main():
@@ -43,6 +43,9 @@ def main():
     ap.add_argument("--env", default="SpaceInvaders-MinAtar")
     ap.add_argument("--allowed", type=int, nargs="+", default=[0, 3])
     ap.add_argument("--late-onset", type=int, required=True)
+    ap.add_argument("--buffer-size", type=int, default=100_000)
+    ap.add_argument("--save-states", choices=["auto", "full", "nobuffer", "none"], default="auto",
+                    help="auto = full for buffers <= 200k transitions, else params/optimizer/counters only")
     ap.add_argument("--duration", type=int, default=100)
     ap.add_argument("--recovery", type=int, default=580)
     ap.add_argument("--eval-every", type=int, default=10)
@@ -58,16 +61,19 @@ def main():
     l0, l1 = a.late_onset, a.late_onset + a.duration
     assert l0 % E == 0 and a.duration % E == 0 and a.recovery % E == 0
 
-    cfg, init, run = make(dict(ENV_NAME=a.env, REPLAY=True, DEFICIT="action_mask",
+    label = "pqnr" if a.buffer_size == 100_000 else f"pqnr-{a.buffer_size // 1000}k"
+    cfg, init, run = make(dict(ENV_NAME=a.env, REPLAY=True, BUFFER_SIZE=a.buffer_size, DEFICIT="action_mask",
                                DEFICIT_PARAMS={"allowed_actions": a.allowed}, DEFICIT_START=0, DEFICIT_END=0))
     spu = cfg["STEPS_PER_UPDATE"]
-    protocol = dict(variant=a.variant, window_updates=[l0, l1], recovery=a.recovery, eval_every=E, eval_envs=a.eval_envs,
+    protocol = dict(variant=label, window_updates=[l0, l1], recovery=a.recovery, eval_every=E, eval_envs=a.eval_envs,
                     eval_seed=a.eval_seed, eval_eps=[0.0, EVAL_EPS2], allowed=a.allowed, arms=a.arms,
                     assignment_rule="network = params + optimizer state (together); buffer = all buffer arrays; "
                                     "env state, obs, RNG, update counter, exploration schedule, deficit bounds from C; "
                                     "no target network",
-                    buffer_turnover_updates=cfg["BUFFER_SIZE"] / spu)
-    manifest = build_manifest(f"p5-{a.tag}-{a.variant}-{a.env}", {**cfg, "protocol": protocol}, a.seeds, allow_dirty=a.allow_dirty)
+                    buffer_turnover_updates=cfg["BUFFER_SIZE"] / spu, buffer_size=cfg["BUFFER_SIZE"],
+                    overwrite_diagnostics="tag_window = [l0, l1): buf_frac_window = share of buffer slots written during the "
+                                          "restriction window; sample_frac_window = share of sampled replay transitions from it")
+    manifest = build_manifest(f"p5-{a.tag}-{label}-{a.env}", {**cfg, "protocol": protocol}, a.seeds, allow_dirty=a.allow_dirty)
     mpath = write_manifest(manifest)
     print("manifest:", mpath, flush=True)
     out_dir = Path("results") / mpath.stem
@@ -76,7 +82,8 @@ def main():
 
     n = len(a.seeds)
     keys = jnp.stack([jax.random.PRNGKey(s) for s in a.seeds])
-    run_v = jax.jit(jax.vmap(lambda rs: run(rs, E)))
+    run_v = jax.jit(jax.vmap(lambda rs: run(rs, E)), donate_argnums=0)
+    fresh = lambda r: jax.tree.map(jnp.copy, r)  # donation invalidates inputs: always run on a private copy
     eval_g = jax.jit(jax.vmap(make_eval(cfg, num_envs=a.eval_envs, eps=0.0), in_axes=(0, None)))
     eval_e = jax.jit(jax.vmap(make_eval(cfg, num_envs=a.eval_envs, eps=EVAL_EPS2), in_axes=(0, None)))
     ek = jax.random.PRNGKey(a.eval_seed)
@@ -87,11 +94,12 @@ def main():
 
     rs = jax.jit(jax.vmap(init))(keys)
     rs["deficit_bounds"] = bounds(0, 0)
+    rs["tag_window"] = jnp.tile(jnp.array([l0, l1], jnp.int32), (n, 1))  # diagnostics only
     for _ in range(l0 // E):
         rs, _ = run_v(rs)
     forks, fork_eval = {}, {}
     for name, b in (("C", bounds(0, 0)), ("D", bounds(l0, l1))):
-        r = dict(rs, deficit_bounds=b)
+        r = fresh(dict(rs, deficit_bounds=b))
         g, x = ev2(r)
         e, ee = [g], [x]
         for _ in range(a.duration // E):
@@ -100,29 +108,40 @@ def main():
             e.append(g); ee.append(x)
         forks[name], fork_eval[name], fork_eval[name + "_eps05"] = r, np.stack(e, 1), np.stack(ee, 1)
         print(f"fork {name}: eval at onset {np.round(e[0], 1)} removal {np.round(e[-1], 1)} elapsed={time.time() - t0:.0f}s", flush=True)
+    del rs
     C, D = forks["C"], forks["D"]
-    keep = ("env_state", "obs", "rng", "update", "buffer")
-    states = {k: jax.device_get(dict(params=f["train_state"].params, opt_state=f["train_state"].opt_state,
-                                     **{x: f[x] for x in keep})) for k, f in forks.items()}
-    with open(out_dir / "states_removal.pkl", "wb") as fh:
-        pickle.dump(states, fh)
-    same_buf_meta = bool(np.array_equal(states["C"]["buffer"]["ptr"], states["D"]["buffer"]["ptr"]) and
-                         np.array_equal(states["C"]["buffer"]["size"], states["D"]["buffer"]["size"]))
+    mode = a.save_states if a.save_states != "auto" else ("full" if cfg["BUFFER_SIZE"] <= 200_000 else "nobuffer")
+    if mode != "none":
+        keep = ("env_state", "obs", "rng", "update") + (("buffer",) if mode == "full" else ())
+        states = {k: jax.device_get(dict(params=f["train_state"].params, opt_state=f["train_state"].opt_state,
+                                         **{x: f[x] for x in keep})) for k, f in forks.items()}
+        with open(out_dir / "states_removal.pkl", "wb") as fh:
+            pickle.dump(states, fh)
+        del states
+    same_buf_meta = bool(np.array_equal(np.asarray(C["buffer"]["ptr"]), np.asarray(D["buffer"]["ptr"])) and
+                         np.array_equal(np.asarray(C["buffer"]["size"]), np.asarray(D["buffer"]["size"])))
     # how much of D's buffer was written under the restriction (slots written during [l0, l1))
-    in_window = min(a.duration * cfg["NUM_STEPS"], cfg["BUFFER_LEN"]) / cfg["BUFFER_LEN"]
+    tg = np.asarray(D["buffer"]["tag"])
+    in_window = float(((tg >= l0) & (tg < l1)).sum() / max((tg >= 0).sum(), 1))  # share of valid D-buffer slots
 
     check = {}
     if a.recovery_summary:
-        rsum = {"arms": {}}
+        arms_by = {}
         for f in a.recovery_summary:
             d = json.loads(Path(f).read_text())
-            rsum["arms"].update(d["arms"]); rsum["eval_updates"] = d["eval_updates"]
-        U = rsum["eval_updates"]
-        i0, i1 = U.index(l0), U.index(l1)
-        rc = np.array(rsum["arms"]["control"]["eval_eps05_return_mean"])[:, i0:i1 + 1]
-        rl = np.array(rsum["arms"]["late"]["eval_eps05_return_mean"])[:, i0:i1 + 1]
-        check = dict(C_fork_matches_recovery_control=bool(np.allclose(rc, fork_eval["C_eps05"], atol=1e-3)),
-                     D_fork_matches_recovery_late=bool(np.allclose(rl, fork_eval["D_eps05"], atol=1e-3)))
+            for arm, v in d["arms"].items():
+                arms_by[arm] = (d["seeds"], d["eval_updates"], np.array(v["eval_eps05_return_mean"]))
+        for arm, fk, key in (("control", "C_eps05", "C_fork_matches_recovery_control"), ("late", "D_eps05", "D_fork_matches_recovery_late")):
+            if arm not in arms_by:
+                continue
+            sd, U, M = arms_by[arm]
+            both = [s_ for s_ in a.seeds if s_ in sd]
+            if not both:
+                continue
+            i0, i1 = U.index(l0), U.index(l1)
+            mine = fork_eval[fk][[a.seeds.index(s_) for s_ in both]]
+            theirs = M[[sd.index(s_) for s_ in both], i0:i1 + 1]
+            check[key] = dict(seeds=both, identical=bool(np.allclose(mine, theirs, atol=1e-3)))
         print("consistency vs recovery run:", check, flush=True)
 
     def compose(code):
@@ -136,7 +155,7 @@ def main():
                    forks={k: np.round(v, 4).tolist() for k, v in fork_eval.items()}, arms={})
     r4 = lambda x: np.round(np.asarray(x, float), 4).tolist()
     for code in a.arms:
-        r = compose(code)
+        r = fresh(compose(code))
         g, x = ev2(r)
         evals, evals_e, train = [g], [x], []
         for _ in range(a.recovery // E):

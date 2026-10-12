@@ -119,9 +119,12 @@ def make(config: dict):
                   action_mask=jnp.zeros((n_actions,), bool).at[jnp.array(allowed)].set(True),
                   deficit_bounds=jnp.array([cfg["DEFICIT_START"], cfg["DEFICIT_END"]], jnp.int32))
         if cfg["REPLAY"]:
-            rs["buffer"] = dict(obs=jnp.zeros((L, N, n_packed), jnp.uint8), action=jnp.zeros((L, N), jnp.int32),
+            rs["buffer"] = dict(obs=jnp.zeros((L, N, n_packed), jnp.uint8), action=jnp.zeros((L, N), jnp.uint8),
                                 reward=jnp.zeros((L, N), jnp.float32), done=jnp.zeros((L, N), bool),
+                                tag=jnp.full((L, N), -1, jnp.int16),  # update index at which each slot was written
                                 ptr=jnp.array(0, jnp.int32), size=jnp.array(0, jnp.int32))
+            # diagnostics only: report the share of the buffer / of sampled batches written in updates [w0, w1)
+            rs["tag_window"] = jnp.array([0, 0], jnp.int32)
         return rs
 
     def _is_active(t, bounds):
@@ -165,6 +168,7 @@ def make(config: dict):
             return ts.apply_gradients(grads=g), (l, qm, optax.global_norm(g))
 
         new_rs = dict(rs)
+        extra = {}
         if not cfg["REPLAY"]:
             # Q(lambda) targets, purejaxql recursion, with the pre-update network
             last_q = masked_max(net.apply(ts.params, obs), u_mask) * (1 - traj.done[-1])
@@ -196,9 +200,12 @@ def make(config: dict):
             T = cfg["NUM_STEPS"]
             idx = (b["ptr"] + jnp.arange(T)) % L
             pack = lambda o: jnp.packbits(o > 0.5, axis=-1)
-            b = dict(obs=b["obs"].at[idx].set(pack(traj.obs)), action=b["action"].at[idx].set(traj.action),
+            b = dict(obs=b["obs"].at[idx].set(pack(traj.obs)), action=b["action"].at[idx].set(traj.action.astype(jnp.uint8)),
                      reward=b["reward"].at[idx].set(traj.reward), done=b["done"].at[idx].set(traj.done),
+                     tag=b["tag"].at[idx].set(rs["update"].astype(jnp.int16)),
                      ptr=(b["ptr"] + T) % L, size=jnp.minimum(b["size"] + T, L))
+            tw = rs["tag_window"]
+            in_w = lambda tg: ((tg >= tw[0]) & (tg < tw[1])).astype(jnp.float32)
             unpack = lambda o: jnp.unpackbits(o, axis=-1, count=obs_dim).astype(jnp.float32)
             newest = (b["ptr"] - 1) % L
             # obs for the slot after `newest` is the current env obs (not yet written): patch on read
@@ -215,17 +222,18 @@ def make(config: dict):
                 x, x2 = unpack(b["obs"][ti, ei]), unpack(o2p)
                 q2 = masked_max(net.apply(ts.params, x2), u_mask)
                 tgt = jax.lax.stop_gradient(b["reward"][ti, ei] + cfg["GAMMA"] * (1 - b["done"][ti, ei]) * q2)
-                ts, out = sgd(ts, (x, b["action"][ti, ei], tgt))
-                return (ts, rng), out
+                ts, out = sgd(ts, (x, b["action"][ti, ei].astype(jnp.int32), tgt))
+                return (ts, rng), (*out, in_w(b["tag"][ti, ei]).mean())
 
-            (ts, rng), (losses, qms, gns) = jax.lax.scan(replay_step, (ts, rng), None, cfg["GRAD_STEPS_PER_UPDATE"])
+            (ts, rng), (losses, qms, gns, sw) = jax.lax.scan(replay_step, (ts, rng), None, cfg["GRAD_STEPS_PER_UPDATE"])
             new_rs["buffer"] = b
+            extra = dict(buf_frac_window=in_w(b["tag"]).sum() / jnp.maximum(b["size"] * N, 1), sample_frac_window=sw.mean())
 
         info = traj.info
         ep_ret = jnp.sum(info["returned_episode_returns"] * info["returned_episode"]) / jnp.maximum(jnp.sum(info["returned_episode"]), 1)
         metrics = dict(step=(rs["update"] + 1) * spu, episode_return=ep_ret, eps=eps_at(t0),
                        deficit_active=_is_active(t0, rs["deficit_bounds"]).astype(jnp.float32),
-                       loss=losses.mean(), q_mean=qms.mean(), grad_norm=gns.mean())
+                       loss=losses.mean(), q_mean=qms.mean(), grad_norm=gns.mean(), **extra)
         new_rs.update(train_state=ts, env_state=env_state, obs=obs, rng=rng, update=rs["update"] + 1)
         return new_rs, metrics
 
