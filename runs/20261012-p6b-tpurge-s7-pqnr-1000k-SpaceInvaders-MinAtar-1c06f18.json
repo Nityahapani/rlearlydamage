@@ -1,0 +1,104 @@
+{
+  "allow_dirty": false,
+  "config": {
+    "BUFFER_LEN": 7812,
+    "BUFFER_SIZE": 1000000,
+    "DEFICIT": "action_mask",
+    "DEFICIT_END": 0,
+    "DEFICIT_PARAMS": {
+      "allowed_actions": [
+        0,
+        3
+      ]
+    },
+    "DEFICIT_START": 0,
+    "ENV_NAME": "SpaceInvaders-MinAtar",
+    "EPS_DECAY_STEPS": 1000000,
+    "EPS_FINISH": 0.05,
+    "EPS_START": 1.0,
+    "GAMMA": 0.99,
+    "GRAD_STEPS_PER_UPDATE": 64,
+    "HIDDEN": 128,
+    "LAMBDA": 0.65,
+    "LAYERNORM": true,
+    "LR": 0.0005,
+    "MAX_GRAD_NORM": 10.0,
+    "MINIBATCH_SIZE": 128,
+    "NUM_ENVS": 128,
+    "NUM_EPOCHS": 2,
+    "NUM_MINIBATCHES": 32,
+    "NUM_STEPS": 32,
+    "NUM_UPDATES": 2441,
+    "REPLAY": true,
+    "REPLAY_BATCH": 128,
+    "REPLAY_RATIO": 2.0,
+    "SEAM_MASK": true,
+    "STEPS_PER_UPDATE": 4096,
+    "TOTAL_TIMESTEPS": 10000000,
+    "protocol": {
+      "allowed": [
+        0,
+        3
+      ],
+      "arms": [
+        "D_cleannet",
+        "B_targeted",
+        "C_sham",
+        "A_retain"
+      ],
+      "buffer_size": 1000000,
+      "buffer_turnover_updates": 244.140625,
+      "eval_envs": 64,
+      "eval_eps": [
+        0.0,
+        0.05
+      ],
+      "eval_every": 10,
+      "eval_seed": 10000,
+      "pool": {
+        "actions": "full action set",
+        "envs": "128 fresh unrestricted envs, key fold_in(PRNGKey(seed), 2026)",
+        "eps": 0.05,
+        "frozen_before_branching": true,
+        "policy": "frozen clean actor (fork C params at removal)",
+        "shared": "identical pool in B, C, D",
+        "steps": 3200
+      },
+      "recovery": 650,
+      "replaced_rows": {
+        "B_targeted": "newest 3200 rows (written u250-349)",
+        "C_sham": "adjacent older 3200 rows (written u150-249)",
+        "share": 0.409626216077829,
+        "transitions": 409600
+      },
+      "replacement_tag": 32000,
+      "seam_rule": "2 rows x NUM_ENVS successor links invalidated per spliced block -> valid_next=False, zero loss weight",
+      "start_state": "all arms: restricted fork D at removal; D_cleannet swaps in params + optimizer state of clean fork C",
+      "variant": "pqnr-1000k",
+      "window_updates": [
+        250,
+        350
+      ]
+    }
+  },
+  "created_utc": "2026-10-12T11:54:00.753520+00:00",
+  "git": {
+    "commit": "1c06f18899473051062895a9e8594ed2ca31d3f2",
+    "dirty": false
+  },
+  "name": "p6b-tpurge-s7-pqnr-1000k-SpaceInvaders-MinAtar",
+  "packages": {
+    "flax": "0.12.10",
+    "gymnax": "0.0.9",
+    "jax": "0.11.2",
+    "jaxlib": "0.11.2",
+    "numpy": "2.5.4",
+    "optax": "0.2.8",
+    "rliable": null
+  },
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.41",
+  "python": "3.13.16",
+  "seeds": [
+    7
+  ]
+}

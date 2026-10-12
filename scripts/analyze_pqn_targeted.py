@@ -71,7 +71,7 @@ def main():
     ap.add_argument("--metric", default="eval_eps05_return_mean")
     ap.add_argument("--tag", default="p6b_targeted")
     a = ap.parse_args()
-    S = [json.loads(Path(f).read_text()) for f in a.summaries]
+    S = sorted((json.loads(Path(f).read_text()) for f in a.summaries), key=lambda t: t["seeds"][0])  # display order only
     for t in S[1:]:
         assert t["eval_updates"] == S[0]["eval_updates"] and t["blocks"]["K_rows"] == S[0]["blocks"]["K_rows"], "protocol mismatch"
     seeds = sum((t["seeds"] for t in S), []); n = len(seeds)
@@ -153,9 +153,12 @@ def main():
         mu = ev[k].mean(0); se = ev[k].std(0, ddof=1) / np.sqrt(n)
         ax[0].plot(h, mu, color=COL[k], label=k, lw=1.4); ax[0].fill_between(h, mu - se, mu + se, color=COL[k], alpha=0.12)
     ax[0].set_xlabel(f"updates after removal (u{w1})"); ax[0].set_ylabel(a.metric); ax[0].legend(fontsize=8); ax[0].set_title("Targeted vs sham purge")
-    for k, ls in (("A_retain", "-"), ("B_targeted", "-"), ("C_sham", "-")):
-        ax[1].plot(h, sr[k].mean(0), color=COL[k], ls=ls, label=f"{k} restricted")
-        ax[1].plot(h, sp[k].mean(0), color=COL[k], ls=":", label=f"{k} replacement")
+    # several curves coincide (A restricted = C restricted = B replacement): draw wide-to-narrow so all stay visible
+    for k, lw in (("C_sham", 6), ("A_retain", 3.5)):
+        ax[1].plot(h, sr[k].mean(0), color=COL[k], lw=lw, alpha=0.6, label=f"{k} restricted-era")
+    ax[1].plot(h, sp["B_targeted"].mean(0), color=COL["B_targeted"], lw=1.6, ls="--", label="B_targeted replacement (= D)")
+    ax[1].plot(h, sp["C_sham"].mean(0), color=COL["C_sham"], lw=1.6, ls="--", label="C_sham replacement")
+    ax[1].plot(h, sr["B_targeted"].mean(0), color=COL["B_targeted"], lw=1.2, label="B_targeted restricted-era (= 0)")
     ax[1].set_xlim(0, 300); ax[1].set_xlabel("updates after removal"); ax[1].set_ylabel("share of buffer"); ax[1].legend(fontsize=7)
     names = list(prim) + list(sec)
     for j, nm in enumerate(names):

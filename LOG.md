@@ -561,3 +561,34 @@ Caveats: one game and restriction; n = 8; the replacement policy is a frozen cle
 - **Pre-registered primary contrasts unchanged.** Added descriptive reporting to `analyze_pqn_targeted.py`: replacement residence curves and the expected sampled replacement share per checkpoint for B, C and D; cumulative sampled replacement transitions (B vs C ratio); and B − C over the exposure-matched period. Until the sham's block starts being overwritten (~+44), both arms have had identical replacement exposure.
 - **If B − C > 0:** the next step is an exposure-matched follow-up (controlling the replacement pool's residence time or sampling contribution) before any strong data-identity claim.
 - **Process:** the sandbox restarted during the queue. Seeds 0–4 completed (all checks True; summaries committed here unviewed); seed 5 was interrupted after 3 of 4 arms. The partial seed-5 summary was lost while being set aside (same filename as its manifest), so seed 5 is rerun from scratch at the same commit; the deterministic rerun is still checked against the Phase 6 purge A_retain and the Phase 6 surgery forks. Seeds 5–11 relaunched.
+
+## 2026-10-12 — Phase 6b targeted vs sham purge: RESULTS (n = 12; pre-registered analysis + pre-results addendum)
+
+Summaries `results/summary/20261012-p6b-tpurge-s{0..11}-pqnr-1000k-…json` (seeds 0–4 at 250cec4, 5–11 at 1c06f18; experiment code identical); analysis `results/summary/p6b_targeted-analysis.md`; figure `figures/p6b_targeted.png`.
+- Checks: A_retain bit-identical to the Phase 6 purge A_retain and both forks bit-identical to the Phase 6 surgery for seeds 0–7 (no earlier runs exist for seeds 8–11). Pool collection mean return 24.7–30.1. Seam flags 256 per spliced buffer.
+
+| arm | AUC | early +10..150 | middle +160..240 | late +250..650 |
+|---|---|---|---|---|
+| A_retain | 33.1 | 24.2 | 27.6 | 37.6 |
+| B_targeted | 36.7 | 25.2 | 29.7 | 42.4 |
+| C_sham | 34.1 | 23.6 | 27.9 | 39.2 |
+| D_cleannet | 39.5 | 28.3 | 32.5 | 45.2 |
+
+**Primary (AUC; Holm across three; exact sign-flip p in brackets):**
+- **Targeted vs sham B − C: +2.6 [+0.9, +4.3]*, Holm p = 0.006** (sign-flip 0.009; 9/12 seeds > 0; SD 2.7). Early +1.5*, middle +1.9*, late +3.2*.
+- **Targeted vs retain B − A: +3.5 [+1.9, +5.2]*, Holm p = 0.001** (10/12). Early +1.0*, middle +2.2*, late +4.8*.
+- **Residual network impairment B − D: −2.9 [−4.0, −1.8]*, Holm p = 0.0004** (11/12 negative). Uniform across windows (−3.2*, −2.8*, −2.8*).
+- Secondary: sham refresh vs retain C − A +0.9 [−0.8, +2.7] (n.s.). Descriptive: (B − C)/(B − A) = 73%.
+
+**Exposure (addendum, committed before results were viewed):**
+- Replacement share: B (= D) 0.41 until +140, drained by +250; C 0.41 until +40, drained by +150. Mean sampled replacement share over the AUC window B 0.119 vs C 0.056; cumulative sampled replacement transitions 0.65M vs 0.31M (ratio 2.07).
+- Restricted-era share in C follows A exactly (0.41 until +140, 0 by +250); B and D 0.
+- **Exposure-matched period** (+10..+40, before the sham block starts being overwritten at ~+44; identical replacement exposure so far): **B − C = +2.5 [+0.2, +4.8]*** (9/12). Here the arms differ only in which 41% of the old buffer was retained (B: pre-onset data from u150–249; C: restriction-era data). Descriptive and short (4 checkpoints).
+
+**Reading (under the pre-registered constraint).**
+- Targeted removal beats the matched sham, so replacing restriction-era transitions matters beyond refreshing the buffer. But per the user's note, the full B − C is **not** attributed entirely to the identity of the removed data: from +44 on, B also holds the replacement data ~100 updates longer (2.1× the sampled exposure).
+- Evidence that identity contributes: the gap already exists while exposure is identical (+10..+40, +2.5*), and the sham refresh alone does not help (C − A +0.9 n.s.).
+- Residence could still contribute to the middle/late gap. The size of the two components is not identified by this design.
+- The damaged network still trails the clean one under exactly matched data (B − D −2.9*), consistent with Phase 6 (B − E −1.9*) and the 1M surgery (−2.6*). Both carriers exist: restriction-era replay data and the network.
+
+**Planned follow-up (per the user's rule for B − C > 0), not yet run:** an identity × residence 2×2 that matches replacement exposure. Add C′ = remove the u150–249 block but place the replacement pool in the newest rows (moving the restriction-era block into the older position), and B′ = remove the restriction-era block but place the replacement in the older position (moving the u150–249 block into the newest rows). Then B vs C′ differ only in data identity at matched residence, and B vs B′ isolate the residence effect. Seams at moved-block boundaries are handled by the same `valid_next` flags; pre-register before running.
