@@ -767,3 +767,9 @@ Script `scripts/posthoc_2x2_factorial.py`; output `results/summary/p6c_2x2-facto
 Analysis script: `scripts/analyze_pqn_identity_swap.py`.
 
 **Scope of the claim.** Δ compares R with the clean counterfactual U, so it measures their relative value as retained data: "restricted data is worse to keep than matched clean data". It does not split this into "R is harmful" vs "U is helpful". A retain-Z reference arm would do that; it is not included, in order to spend the budget on seeds.
+
+## 2026-10-12 — Phase 6d run status (blind; no results viewed)
+
+- 12/32 seeds complete (0–11). Each has both arms; all Phase 6b consistency checks are True (forks and pool stats bit-identical), and the construction asserts passed. Summaries are committed as they finish. Their filenames carry intermediate commit hashes; those commits contain result files only (`git diff a873dc0 HEAD -- src scripts` is empty).
+- Seed 12 is in progress. The queue (`scripts/queue_p6d_idswap.sh`) is resumable: it skips complete seeds and deletes and reruns any partial seed from scratch.
+- Operational note: during long in-turn waits the sandbox clock stopped advancing (the VM appears to be suspended), so the run only progresses while the sandbox is active. The primary contrast has not been computed. The analysis runs only at n = 32, as pre-registered.
