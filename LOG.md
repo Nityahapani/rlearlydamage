@@ -419,3 +419,63 @@ This agrees with the delay-adjusted Phase 2 / recovery results. Caveats: 1 env, 
 - On Asterix, PPO at update 100 scores only ~2 (Phase 1: ~4 at 2M steps, still climbing). The restriction caused no collapse: D 1.8 vs C 2.2 at removal, so there is nothing to ablate.
 - PPO's u100 is "late" on SpaceInvaders (40% of final competence) but not on Asterix.
 - A meaning-matched Asterix replication needs a long control to locate the 40%-of-final point (likely ≫ 2M steps). Alternatively, use PQN, which learns Asterix faster (purejaxql default env). Pending user decision.
+
+## 2026-10-12 — Phase 6: seed extension, 1M-buffer persistence test, Asterix onset pilot
+
+User directives (2026-10-11): (1) more seeds on the key PQN-R surgery contrasts before expanding mechanistic claims, prioritised over new ablation arms; (2) a stronger replay-persistence test only if the data-carrier claim is central (judged central: it is the "data scar" in the title) — 1M buffer, same transfer factorial, measure how fast the transferred buffer is overwritten; (3) locate a meaning-matched Asterix onset before any surgery there.
+
+**Code (c75175b, bit-identical to 5a915ec on a PQN-R check run).**
+- Replay slots carry an int16 write-time tag (update index). Diagnostics per update, for a runner-state window [l0, l1) (set to the restriction window in surgery runs): `buf_frac_window` (share of valid slots written in the window) and `sample_frac_window` (share of sampled replay transitions from it). Learning is unaffected.
+- Actions stored as uint8; the jitted run fn donates its state (surgery arms run on private copies, so C/D are never invalidated); `--buffer-size`; 1M runs do not pickle buffers (snapshot cap).
+- `analyze_pqn_surgery.py` pools seed groups and adds a seed-robustness block (between-seed SD, #seeds < 0, 95% prediction interval for a new seed, mean ± t·sd·√(1+1/n)) and an overwrite block. `scripts/onset_rule.py` applies the Phase 5 onset rule to pooled controls (reproduces PQN-R u250 / 46% and PPO SpaceInvaders u100 / 40%; "final" = mean of checkpoints in the last 50 updates). `scripts/surgery_phase_contrasts.py` splits contrasts by overwrite phase.
+- Bug fixed during the 1M queue: the surgery consistency check kept only the last recovery summary per arm, so seed 0 of the 1M run was not checked online; all 8 C forks were then verified post hoc (identical to their 1M control runs).
+
+### 6a. PQN-R 100k surgery at n = 12 (seeds 0–11; same window u250–350, recovery 650; ε = 0.05 primary)
+Summaries: `…p5-surgery-late-pqnr-…-77afd57.json` (0–3), `…surgery-late-s4to7-…-c75175b.json`, `…surgery-late-s8to11-…-28909a2.json`. Analysis: `results/summary/p6_surgery_pqnr_n12-analysis.md` (greedy secondary: `p6_surgery_pqnr_n12_greedy-analysis.md`), `figures/p6_surgery_pqnr_n12.png`.
+
+| AUC contrast | n = 4 | n = 12 | seeds < 0 | between-seed SD | 95% PI (new seed) |
+|---|---|---|---|---|---|
+| total DD − CC | −7.0* | −6.7 [−8.0, −5.3]* | 12/12 | 2.1 | [−11.4, −1.9] |
+| parameter transfer DC − CC | −5.0* | −4.6 [−6.1, −3.0]* | 12/12 | 2.5 | [−10.2, +1.1] |
+| data transfer CD − CC | −0.1 | +0.0 [−1.0, +1.0] | 6/12 | 1.6 | [−3.7, +3.8] |
+| network main effect | −6.0* | −5.6 [−6.3, −4.9]* | 12/12 | 1.1 | [−8.1, −3.1] |
+| buffer main effect | −1.1 | −1.0 [−2.0, −0.1]* | 10/12 | 1.5 | [−4.5, +2.4] |
+| interaction | −1.9 | −2.1 [−4.5, +0.2] | 8/12 | 3.7 | [−10.6, +6.3] |
+
+- Network main effect = 84% of total damage. Data transfer is a short transient only (+20: −3.9 [−7.5, −0.3]*; +10: −4.5, CI touches 0), zero over the horizon.
+- Overwrite (tagged seeds 4–11): restriction-era data < 50% of the buffer by +13, < 10% by +22, gone at +25 updates; mean sampled share over the AUC window 1.8%.
+- Greedy (secondary): parameter −11.0*, data −3.2 [−8.7, +2.4], network main −11.4*.
+- With 12 seeds the n = 4 conclusions hold; the small buffer main effect becomes significant (−1.0) but its prediction interval spans 0.
+
+### 6b. PQN-R 1M-buffer persistence test
+**Controls** (8 seeds, groups of 2; `…p5-recovery-pqnr-1000k-control-s{01,23,45,67}-…json`; `results/summary/p6_pqnr1m_control-onset.md`).
+- Metric rule: ε = 0.05 again (noise 0.178 vs greedy 0.597).
+- Onset rule: 40%-of-final reached at u170 (per seed 60–180); the ε-floor condition binds → **onset u250** (control there 24.7 = 51% of final 48.3). Same window as 100k: [250, 350), recovery 650.
+- The 1M control learns slower (final 48.3 vs 58.3) and is still climbing at u1000 (+7.4 over the last 100 updates).
+
+**Surgery** (8 seeds, one per process for memory; `…p5-surgery-late-s{0..7}-pqnr-1000k-…json`; `results/summary/p6_surgery_pqnr1m_n8-analysis.md`, `…-phases.md`, `figures/p6_surgery_pqnr1m_n8.png`).
+- Composition at removal (all seeds): D buffer full, 41.0% restricted-era data (newest); 59% pre-onset data shared with C. Restricted data stays at 41% until +150, drains over +160..+240, gone at +245; mean sampled share over the AUC window 12.2% (vs 1.8% at 100k).
+- **The deficit itself is milder with 1M:** at removal D 14.1 vs C 27.8 (−50%; 100k: 4.2 vs 32.0, −87%). The persisting pre-onset data (including left/right actions) dilutes the restriction. So the 1M test changes severity as well as persistence.
+
+| AUC contrast (n = 8) | 1M | seeds < 0 | 95% PI | 100k (n = 12) |
+|---|---|---|---|---|
+| total DD − CC | −5.6 [−7.0, −4.2]* | 8/8 | [−9.9, −1.3] | −6.7* |
+| parameter transfer DC − CC | −2.6 [−3.6, −1.6]* | 8/8 | [−5.6, +0.4] | −4.6* |
+| data transfer CD − CC | **−1.7 [−3.3, −0.2]*** | 6/8 | [−6.5, +3.0] | +0.0 |
+| network main effect | −3.2 [−4.2, −2.2]* | 8/8 | [−6.2, −0.2] | −5.6* |
+| buffer main effect | **−2.4 [−3.4, −1.4]*** | 8/8 | [−5.5, +0.7] | −1.0* |
+| interaction | −1.3 [−3.2, +0.6] | 5/8 | [−7.1, +4.5] | −2.1 |
+
+- Share of total damage: network 57%, buffer 43% (100k: 84% / 16%).
+- Early readouts: data transfer ≈ 0 at +10/+20/+30 (+0.1, −0.7, +0.2) — no immediate effect of handing a clean network a 41%-restricted buffer.
+- **By overwrite phase** (`p6_surgery_pqnr1m_n8-phases.md`): data transfer −1.2 [−2.8, +0.5] while carried (+10..+150), −2.5 [−5.0, +0.0] while draining (+160..+240), −1.8 [−3.9, +0.3] after it is gone (+250..+650); buffer main effect −1.4*, −1.7, −2.9*. The data effect does **not** track the presence of the restricted data: it accrues while the clean network trains on it and then persists after the data is overwritten.
+- TD loss over the first 30 updates: CC 0.074, DC 0.690, CD 0.058, DD 0.858.
+
+**Answer to the persistence question.** When the transferred buffer persists (~245 updates instead of 25), a data carrier appears: small, cumulative, and significant (data transfer −1.7*, buffer main effect −2.4*, 8/8 seeds), but a new seed could plausibly show none (PIs span 0). It is not an immediate "poisoned buffer" effect; the harm is consistent with the restricted data being written into a clean network during training and persisting as network damage once the data is gone. The network remains the larger carrier at both buffer sizes. Caveats: n = 8; the 1M deficit is milder (so absolute effects are not directly comparable to 100k); one buffer size beyond 100k; same game and restriction.
+
+### 6c. PPO Asterix long control (onset pilot only; no surgery)
+Run `runs/20261012-p2-asterix-long-control-ppo-Asterix-MinAtar-f12598d.json` (1220 updates = 10M steps, 4 seeds); `results/summary/p6_asterix_ppo_long_control-onset.md`.
+- Eval rises almost linearly: u100 1.8, u200 2.8, u300 4.4, u400 5.9, u600 8.1, u800 10.4, u1000 12.8, u1100 14.0, u1220 13.6.
+- Final (last 50 updates) 14.0 (per-seed sd 3.5); 40% = 5.6; mean crosses at u390 (per seed 270–470) → **meaning-matched onset u390** (43% of final).
+- Plateau is weak: only the last ~120 updates are flat (−0.18, −0.25 per 100). If the true asymptote is higher, the 40% point moves later (e.g. final 18 → ~u550). The onset is provisional.
+- Proposed PPO Asterix replication (not run): restriction [390, 440) (50 updates = 409,600 steps), recovery 290 updates (u730; within the observed control) — or a longer control first to confirm the plateau.

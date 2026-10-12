@@ -47,9 +47,9 @@ pytest -q
 ```
 
 ## Status
-Phases 0–5 done (scaffold, baselines, deficit pilots, state surgery, causal ablations, PQN replication + replay-buffer surgery). See `LOG.md`.
+Phases 0–6 done (scaffold, baselines, deficit pilots, state surgery, causal ablations, PQN replication + replay-buffer surgery, 12-seed surgery + 1M-buffer persistence test + Asterix onset pilot). See `LOG.md`.
 
-## Status and results so far (2026-10-11)
+## Status and results so far (2026-10-12)
 
 Full details, tables and caveats are in [`LOG.md`](LOG.md). Every number traces to a manifest in `runs/` and a summary in `results/summary/`.
 
@@ -86,6 +86,10 @@ Full details, tables and caveats are in [`LOG.md`](LOG.md). Every number traces 
   - In PQN-R (a 100k replay buffer) there is a small excess (+4.3 AUC, delay-adjusted), concentrated early.
   - Params × buffer surgery: damaged network + clean buffer −5.0 [−8.9, −1.1] AUC; clean network + damaged buffer −0.1 [−1.7, +1.6]. The network carries 85% of the damage.
   - Caveat: the buffer turns over in 24 updates.
+- **Phase 6 (`figures/p6_surgery_pqnr_n12.png`, `figures/p6_surgery_pqnr1m_n8.png`):**
+  - 100k surgery at **12 seeds**: parameter transfer −4.6 [−6.1, −3.0] (12/12 seeds negative), data transfer +0.0 [−1.0, +1.0]; network 84% of damage. Restriction-era data is gone from the buffer 25 updates after removal (write-time tags).
+  - **1M buffer** (restricted data persists ~245 updates, 41% of the buffer at removal; 8 seeds): the deficit is milder (D −50% vs −87% at removal), and a small data carrier appears: data transfer −1.7 [−3.3, −0.2], buffer main effect −2.4 [−3.4, −1.4] (8/8), network still larger (57% vs 43%). The data effect is ~0 early and persists after the restricted data is overwritten, i.e. it acts by damaging the network that trains on it, not as an ongoing buffer effect. Prediction intervals span 0.
+  - **Asterix (PPO):** a 10M-step control gives a meaning-matched onset of u390 (43% of final), provisional because the plateau is weak.
 - Decision point 2 (a peak-then-fall damage curve) is **not met yet**.
 - CIs are paired t-intervals over seeds (earlier bootstrap CIs were too narrow at n=4 and were corrected; see LOG).
 - Methodological note: while the control is still improving, raw final-return damage is confounded with lost time, so we report delay-adjusted damage.
