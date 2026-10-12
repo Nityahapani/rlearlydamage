@@ -129,8 +129,10 @@ def main():
         arms_by = {}
         for f in a.recovery_summary:
             d = json.loads(Path(f).read_text())
-            for arm, v in d["arms"].items():
-                arms_by[arm] = (d["seeds"], d["eval_updates"], np.array(v["eval_eps05_return_mean"]))
+            for arm, v in d["arms"].items():  # pool seed groups across files
+                sd0, U0, M0 = arms_by.get(arm, ([], d["eval_updates"], None))
+                M1 = np.array(v["eval_eps05_return_mean"])
+                arms_by[arm] = (sd0 + d["seeds"], U0, M1 if M0 is None else np.concatenate([M0, M1]))
         for arm, fk, key in (("control", "C_eps05", "C_fork_matches_recovery_control"), ("late", "D_eps05", "D_fork_matches_recovery_late")):
             if arm not in arms_by:
                 continue
