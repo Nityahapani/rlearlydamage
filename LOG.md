@@ -664,3 +664,40 @@ Summaries `results/summary/20261012-p6c-res2x2-s{0..11}-pqnr-1000k-…json`. Fil
   - Not supported: "the damage lives in the restricted data" as the explanation for the full targeted-purge benefit.
 - Unchanged: the network carrier. B − D −2.9* (Phase 6b) is not affected by this design.
 - Power note (descriptive): with SD ≈ 2.1 for B − Cp, detecting +1.1 at 80% power (two-sided, α = 0.05) would need about 30 seeds.
+
+## 2026-10-12 — POST-HOC (user request): paired 2x2 factorial model of Phase 6c
+
+Script `scripts/posthoc_2x2_factorial.py`; output `results/summary/p6c_2x2-factorial-posthoc.md`; figure `figures/p6c_2x2_factorial.png`. This is not pre-registered: only the interaction was pre-registered, as secondary and descriptive. The p-values are unadjusted and descriptive, and the Phase 6c pre-registered conclusions are unchanged.
+
+- **Model 1:** two-way repeated-measures ANOVA, seeds as blocks, one error term per effect; F(1,11) = t² of the per-seed contrast; effect coding ±½. Seed-block SS 101.6 of 257.9 total.
+  - Identity main effect: **+1.11 [+0.01, +2.21]**, F = 4.91, p = 0.049, partial η² = 0.31.
+  - Residence main effect: **+1.49 [+0.23, +2.74]**, F = 6.82, p = 0.024, partial η² = 0.38.
+  - **Interaction (B − Bp) − (Cp − C) = +0.04 [−2.35, +2.43]**, F = 0.00, p = 0.97, partial η² = 0.00.
+- **Model 2 (pooled residual, df 33; equals a random-intercept mixed model here):**
+  - identity +1.11 [+0.01, +2.21], p = 0.047;
+  - residence +1.49 [+0.39, +2.58], p = 0.009;
+  - interaction +0.04 [−2.15, +2.23], p = 0.97.
+  - Per-effect error MS 3.02 / 3.90 / 3.53, so the pooling assumption is reasonable.
+- **Windows:**
+  - Identity is concentrated early: +1.48 [+0.79, +2.16], flip p 0.001.
+  - Residence acts mid (+1.08*) and late (+2.11*), not early (+0.05).
+  - The interaction is significant only early, at −1.53 [−2.50, −0.56]: early on, the identity effect is larger when the replacement is short-resident, i.e. when the swapped blocks sit in the newest rows.
+- **Exact sign-flip (4096 assignments):**
+  - identity p 0.048; residence p 0.027; interaction p 0.975 (3992/4096 assignments at least as extreme).
+  - The studentized-t version gives the same p-values.
+  - Exact Wilcoxon: identity 0.064, residence 0.043, interaction 0.52.
+  - **Leave-one-seed-out:** identity +0.82..+1.31 (flip p 0.023–0.096; dropping seed 1 gives 0.096); residence +1.20..+1.81 (0.009–0.054); interaction −0.40..+0.94 (dropping seed 3, at −9.88, gives +0.94, p 0.18).
+  - **Conclusion:** the main effects are borderline-to-modest and sensitive to single seeds. No interaction at any LOSO cut.
+- **Exposure (M sampled transitions, +1..650):** sampled restriction-era exposure is realised (logged); replacement and pre-onset exposure are expected from exact per-update buffer shares.
+  - B: R 0 / pool 0.650 / P 0.314.
+  - Bp: R 0 / pool 0.314 / P 0.650.
+  - Cp: R 0.314 (per-seed 0.313–0.315) / pool 0.650 / P 0.
+  - C: R 0.650 / pool 0.314 / P 0.
+  - A: R 0.650 / pool 0 / P 0.314.
+  - The matched pairs have identical replacement exposure.
+  - The identity contrast swaps 0.314M R ↔ P at long residence but 0.650M at short residence. The residence contrast also swaps which retained block is long-resident (pool ±0.336M against P or R).
+- **Exposure-dose check (descriptive):**
+  - bR = −2.04 per M restriction-era samples [−4.45, +0.36]; bpool = +3.41 per M [−0.43, +7.25] (relative to P data).
+  - Lack of fit +0.61 [−1.07, +2.28], p 0.44.
+  - The observed Bp − C ≈ B − Cp (+1.09 vs +1.13), despite 2.1× more R exposure swapped, gives no sign of a dose-response in restriction-era exposure, but the test is weak.
+- **Reading:** the data fit an additive model, with small separate contributions from which data was removed (early) and how long the replacement stays (mid/late), and no evidence of interaction. A mild correction to the Phase 6c entry: the post-hoc main effects reach unadjusted p < 0.05, whereas the pre-registered simple contrasts (Holm) did not. They are still borderline and LOSO-sensitive, and they do not upgrade the claim.
