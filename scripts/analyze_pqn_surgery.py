@@ -7,7 +7,12 @@ Arms: CC, DC, CD, DD (network source, buffer source). Paired by seed, 95% t-CI (
   interaction        : (DD - CD) - (DC - CC)
   rescues            : CD - DD (clean network into a damaged agent), DC - DD (clean buffer into a damaged agent)
 Readouts: AUC (mean eval over +E..+R), +0, +10, +20, +30 (around the buffer turnover), +100, end (mean of last 2).
-Usage: python scripts/analyze_pqn_surgery.py results/summary/<p5 surgery>.json --metric eval_eps05_return_mean
+Several summaries (disjoint seed groups of the same protocol) are pooled by concatenating seeds.
+Seed-robustness block for the key AUC contrasts: per-seed values, between-seed SD, number of seeds < 0, and a 95%
+prediction interval for a new seed, mean +/- t_{n-1} * sd * sqrt(1 + 1/n).
+Overwrite block (summaries with buffer write-time tags): share of valid buffer slots written during the restriction
+window, and share of sampled replay transitions from it, after removal.
+Usage: python scripts/analyze_pqn_surgery.py results/summary/<p5 surgery>.json [...] --metric eval_eps05_return_mean --tag <tag>
 """
 from __future__ import annotations
 
@@ -38,17 +43,23 @@ def fmt(x):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("summary")
+    ap.add_argument("summaries", nargs="+")
     ap.add_argument("--metric", default="eval_eps05_return_mean")
     ap.add_argument("--tag", default="p5_surgery")
     a = ap.parse_args()
-    s = json.loads(Path(a.summary).read_text())
+    S = [json.loads(Path(f).read_text()) for f in a.summaries]
+    s = S[0]
+    for t in S[1:]:
+        assert t["eval_updates"] == s["eval_updates"] and t["protocol"]["window_updates"] == s["protocol"]["window_updates"], "protocol mismatch"
+        assert t["protocol"].get("buffer_size", 100_000) == s["protocol"].get("buffer_size", 100_000), "buffer mismatch"
+    seeds = sum((t["seeds"] for t in S), [])
+    assert len(set(seeds)) == len(seeds), "duplicate seeds"
     U = np.array(s["eval_updates"])
     w1 = U[0]
     E = int(U[1] - U[0])
     R = int(U[-1] - w1)
     ix = {int(u - w1): i for i, u in enumerate(U)}
-    ev = {k: np.array(v[a.metric], float) for k, v in s["arms"].items()}
+    ev = {k: np.concatenate([np.array(t["arms"][k][a.metric], float) for t in S]) for k in s["arms"]}
 
     def ro(M):
         out = {"AUC": M[:, 1:].mean(1), "+0": M[:, 0]}
@@ -59,11 +70,14 @@ def main():
 
     sc = {k: ro(v) for k, v in ev.items()}
     keys = list(sc["CC"].keys())
-    L = [f"# Phase 5 — PQN-R params x replay-buffer surgery — {s['manifest']}", "",
+    fracs = ", ".join(f"{t['frac_D_buffer_written_in_window']:.2f}" for t in S)
+    L = [f"# PQN-R params x replay-buffer surgery — {', '.join(t['manifest'] for t in S)}", "",
+         f"Seeds (n = {len(seeds)}): {seeds}. Variant: {s['protocol']['variant']}.", "",
          f"Metric: {a.metric}. Removal at update {w1}; recovery {R} updates; eval every {E}. Assignment rule: "
          f"{s['protocol']['assignment_rule']}. Buffer turnover: {s['protocol']['buffer_turnover_updates']:.1f} updates; "
-         f"fraction of D's buffer written under the restriction at removal: {s['frac_D_buffer_written_in_window']:.2f}. "
-         f"Buffer pointer/size identical in C and D: {s['buffer_meta_identical']}. Consistency vs recovery run: {s['consistency_check']}.", "",
+         f"fraction of D's buffer written under the restriction at removal: "
+         f"{fracs}. "
+         f"Buffer pointer/size identical in C and D: {[t['buffer_meta_identical'] for t in S]}. Consistency vs recovery run: {[t['consistency_check'] for t in S]}.", "",
          "Readouts at +h > 0 average checkpoints h-E, h, h+E; end = mean of last 2.", "",
          "## Arm scores (mean over seeds)", "", "| arm | " + " | ".join(keys) + " |", "|---" * (len(keys) + 1) + "|"]
     for k in ("CC", "DC", "CD", "DD"):
@@ -87,9 +101,31 @@ def main():
         L += ["", "Share of total AUC damage: network main effect "
               f"{con['network main effect']('AUC').mean() / tot.mean():.0%}, buffer main effect "
               f"{con['buffer main effect']('AUC').mean() / tot.mean():.0%}."]
-    tr = {k: np.array(v["train"]["loss"], float) for k, v in s["arms"].items()}
+    n = len(seeds)
+    key_con = ["total damage: DD - CC", "parameter transfer: DC - CC", "data transfer: CD - CC",
+               "network main effect", "buffer main effect", "interaction (DD-CD)-(DC-CC)"]
+    L += ["", f"## Seed robustness (AUC, n = {n})", "",
+          "| contrast | mean | between-seed SD | seeds < 0 | 95% prediction interval (new seed) | per-seed (" + ", ".join(map(str, seeds)) + ") |",
+          "|---|---|---|---|---|---|"]
+    for name in key_con:
+        x = con[name]("AUC")
+        sd = x.std(ddof=1) if n > 1 else float("nan")
+        h = stats.t.ppf(0.975, n - 1) * sd * np.sqrt(1 + 1 / n) if n > 1 else float("nan")
+        L.append(f"| {name} | {x.mean():+.1f} | {sd:.1f} | {(x < 0).sum()}/{n} | [{x.mean() - h:+.1f}, {x.mean() + h:+.1f}] | "
+                 + ", ".join(f"{v:+.1f}" for v in x) + " |")
+    if "buf_frac_window" in s["arms"]["DD"]["train"]:
+        L += ["", "## Overwrite of restriction-era data after removal (mean over seeds)", "",
+              "buf = share of valid buffer slots written during the window; samp = share of sampled replay transitions from it. "
+              "Arms with the D buffer carry restricted data; arms with the C buffer carry the control's same-era data.", "",
+              "| arm | +1 buf | +1 samp | first update buf < 50% | < 10% | = 0 | AUC-window mean samp |", "|---|---|---|---|---|---|---|"]
+        for k in ("CC", "CD", "DD", "DC"):
+            B = np.concatenate([np.array(t["arms"][k]["train"]["buf_frac_window"], float) for t in S]).mean(0)
+            P = np.concatenate([np.array(t["arms"][k]["train"]["sample_frac_window"], float) for t in S]).mean(0)
+            first = lambda c: next((i + 1 for i, v in enumerate(B) if c(v)), None)
+            L.append(f"| {k} | {B[0]:.2f} | {P[0]:.2f} | {first(lambda v: v < .5)} | {first(lambda v: v < .1)} | {first(lambda v: v <= 0)} | {P.mean():.3f} |")
+    tr = {k: np.concatenate([np.array(t["arms"][k]["train"]["loss"], float) for t in S]) for k in s["arms"]}
     L += ["", "TD loss over the first 30 post-removal updates (mean): " + ", ".join(f"{k} {tr[k][:, :30].mean():.3f}" for k in tr)]
-    out_md = Path("results/summary") / f"{Path(a.summary).stem}-analysis.md"
+    out_md = Path("results/summary") / (f"{Path(a.summaries[0]).stem}-analysis.md" if len(S) == 1 else f"{a.tag}-analysis.md")
     out_md.write_text("\n".join(L) + "\n")
     print("\n".join(L)); print("wrote", out_md)
 
