@@ -592,3 +592,36 @@ Summaries `results/summary/20261012-p6b-tpurge-s{0..11}-pqnr-1000k-…json` (see
 - The damaged network still trails the clean one under exactly matched data (B − D −2.9*), consistent with Phase 6 (B − E −1.9*) and the 1M surgery (−2.6*). Both carriers exist: restriction-era replay data and the network.
 
 **Planned follow-up (per the user's rule for B − C > 0), not yet run:** an identity × residence 2×2 that matches replacement exposure. Add C′ = remove the u150–249 block but place the replacement pool in the newest rows (moving the restriction-era block into the older position), and B′ = remove the restriction-era block but place the replacement in the older position (moving the u150–249 block into the newest rows). Then B vs C′ differ only in data identity at matched residence, and B vs B′ isolate the residence effect. Seams at moved-block boundaries are handled by the same `valid_next` flags; pre-register before running.
+
+## 2026-10-12 — Phase 6c identity x residence 2x2: PRE-REGISTRATION (before any real run)
+
+**Why.** Phase 6b B − C (+2.6*) mixes data identity with replacement residence: the sham's replacement data sits in older rows and is overwritten ~100 updates earlier (2.07x the sampled exposure in B). Following the user's rule (if B − C > 0, match exposure before a strong identity claim), the design is completed into a 2x2 by repositioning blocks.
+
+**Design.** The removal state (restricted fork D at u350), the frozen replacement pool, evaluation, seeds 0–11 and all training settings are identical to Phase 6b (same code path and keys). Buffer positions at removal, oldest → newest: [rest][P2: rows written u150–249][P1: rows written u250–349]. R = restriction-era data (u250–349), P = pre-onset data (u150–249).
+
+| cell | removed | replacement position (residence) | P2 / P1 contents | source |
+|---|---|---|---|---|
+| B_targeted | R | P1, newest (long, overwritten +144..+244) | P / pool | Phase 6b (reused) |
+| Bp_targeted_short | R | P2 (short, +44..+144) | pool / P | NEW |
+| Cp_sham_long | P | P1 (long) | R / pool | NEW |
+| C_sham | P | P2 (short) | pool / R | Phase 6b (reused) |
+
+- B vs Cp: same replacement position and same retained-block position. They differ only in whether the retained 41% block is restriction-era or pre-onset data. This is the residence-matched identity test. It is conservative relative to Phase 6b, because in Cp the restriction-era data sits in the older rows and drains by +144 (in C and A it lasts to +244).
+- Bp vs C: the same identity test at short replacement residence.
+- Moved blocks keep their per-env time order and every field (obs, action, reward, done, tag, valid_next). ptr, size, buffer length, params, optimizer state, env state, RNG and update counter are those of the fork.
+- Seams: the new cells have 3 invalid successor links per env, flagged valid_next = False with zero loss weight until overwritten. They are the row before P2, the last row of P2, and the last (newest) row of P1, whose successor is patched to the current env obs. B and C (Phase 6b) have 2 per env. The difference is 128 transitions per buffer (0.013%), disclosed.
+- Script: `scripts/pqn_residence_2x2.py`. It runs Bp and Cp per seed. Seed 0 also reruns B_targeted (`--check-b`) as a bit-identity check against Phase 6b.
+- Reuse guard (required per seed; the analysis aborts otherwise): fork C/D eval traces, pool collection stats and row blocks must match the Phase 6b summary of the same seed. In-script asserts check that every moved row equals its source rows (tags and packed obs), that the rest rows are unchanged, and that the seam count is 3 × 128.
+- Smoke-tested on a 100k buffer (layout asserts, determinism, consistency code). No real run had been made at the time of this entry.
+
+**Analysis** (`scripts/analyze_pqn_2x2.py`; metric eval_eps05_return_mean; AUC over +10..+650 primary; windows early +10..150, middle +160..240, late +250..650 secondary; paired 95% t-CIs; n = 12).
+- **Primary (Holm across three AUC tests):**
+  1. Identity at matched long residence: B − Cp (key test).
+  2. Identity at matched short residence: Bp − C.
+  3. Residence main effect: ((B − Bp) + (Cp − C)) / 2.
+- **Secondary (descriptive):** identity main effect ((B − Cp) + (Bp − C)) / 2; interaction (B − Cp) − (Bp − C), underpowered at n = 12; simple residence effects B − Bp and Cp − C; the decomposition B − C = (B − Cp) + (Cp − C); exact sign-flip p; seed-level differences. Exposure: restricted-era and replacement shares per checkpoint; cumulative expected sampled restricted-era and replacement transitions per cell; a check that the residence-matched pairs have identical replacement curves.
+- **Interpretation rules, fixed now:**
+  - B − Cp > 0 (Holm) → removing restriction-era data helps beyond replacement exposure, which supports data identity.
+  - B − Cp ≈ 0 with residence main effect > 0 → the Phase 6b gap is better explained by residence. This weakens the identity claim but does not prove no identity effect: Cp's restricted data is resident for less time than in A/C.
+  - Residence main effect is reported either way. A, D are drawn for reference only.
+- Budget: ~6.5 min per seed (2 arms), seed 0 ~9 min; ~80 min total, sequential, 1 seed per process.
