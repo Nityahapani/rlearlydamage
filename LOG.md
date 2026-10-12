@@ -701,3 +701,69 @@ Script `scripts/posthoc_2x2_factorial.py`; output `results/summary/p6c_2x2-facto
   - Lack of fit +0.61 [−1.07, +2.28], p 0.44.
   - The observed Bp − C ≈ B − Cp (+1.09 vs +1.13), despite 2.1× more R exposure swapped, gives no sign of a dose-response in restriction-era exposure, but the test is weak.
 - **Reading:** the data fit an additive model, with small separate contributions from which data was removed (early) and how long the replacement stays (mid/late), and no evidence of interaction. A mild correction to the Phase 6c entry: the post-hoc main effects reach unadjusted p < 0.05, whereas the pre-registered simple contrasts (Holm) did not. They are still borderline and LOSO-sensitive, and they do not upgrade the claim.
+
+## 2026-10-12 — Phase 6d matched-identity purge: PRE-REGISTRATION (before any real run)
+
+**Why.** The earlier identity contrasts compared restriction-era data R with a weak control:
+- Phase 6b/6c used the pre-onset block P (written u150–249). P differs from R in epoch, exploration (ε ≈ 0.42 → 0.05 vs 0.05) and policy competence, and in Phase 6c in its slot position.
+- The user asked for a comparison where the arms differ only in the identity of the removed transitions. Slot count and age, replacement-pool identity and sampled exposure, retained residence, seams and learner state must all be matched.
+
+**Matched counterpart.** U = the clean fork C's own transitions in the same rows (P1, the newest K = 3,200 rows written u250–349).
+- Same update window, same ε (0.05), same 128 env instances with identical env state at u250, same on-line collection.
+- U differs from R only in the absence of the restriction, and in the clean learner that the restriction-free history produced.
+- Every row outside P1 is identical in C and D (shared history; asserted).
+
+**Design: column-split purge from one common buffer.**
+- **Common buffer:** per seed, the common pre-purge buffer Z = D's buffer with the P1 rows of one half of the env columns (H_U) taken from C.
+  - The other half (H_R) holds R.
+  - Counterbalanced by seed parity: even seeds H_R = columns 0–63, odd seeds 64–127.
+  - Each column's time series is its genuine history, so Z has no internal seams.
+- **Arms** (both start from the restricted fork D at removal: params, RAdam state, env state, current obs, RNG, update counter; ptr and size unchanged):
+  - **purge_R:** P1 rows of H_R ← pool; U retained.
+  - **purge_U:** P1 rows of H_U ← the same pool trajectories; R retained.
+- **Matching:**
+  - Slots: replaced slots = K × 64 = 204,800 (20.5%) in the same rows, so ages and FIFO residence are identical. They differ only in env column, which uniform replay sampling ignores.
+  - Pool: the Phase 6b pool (frozen clean actor = fork C params at removal, ε 0.05, full action set, key fold_in(PRNGKey(seed), 2026)); env columns 0–63 in both arms. Identical trajectories and identical expected sampled exposure (~0.325M samples).
+  - Retained transitions: identical positions, so the residence distribution is identical. The swapped content (U vs R) sits in the same rows.
+  - Seams, identical in both arms: rows P2-end and P1-end are flagged valid_next = False in all 128 columns (256 slots). This covers every invalid link in either arm and discards the same valid links in both.
+  - Common random numbers: the same replay (row, column) draws in both arms.
+- **Diagnostics:** R keeps tags 250–349, so the per-update sampled R fraction is logged by the learner. U is tagged 20000 + update; the pool 32000. R/U/pool shares are logged at every checkpoint.
+- **Asserts:** C and D are identical outside P1; P1 is exactly the restriction-era rows; Z equals D except U cells, which equal C; each arm's purged cells equal the pool and its retained cells equal Z; seam count 256; ptr unchanged.
+- **Consistency:** for seeds 0–11, the fork eval traces and pool stats must match Phase 6b, or the analysis aborts.
+- **Environment:** the venv was rebuilt after a sandbox restart with the same pinned versions (jax 0.11.2, flax 0.12.10, optax 0.2.8, gymnax 0.0.9, numpy 2.5.4; distrax re-added for PPO tests). 22/22 tests pass. Smoke-tested on a 100k buffer for both column parities.
+- **Script and run:** `scripts/pqn_identity_swap.py`; queue `scripts/queue_p6d_idswap.sh` (resumable; one seed per process).
+- **Blinding:** the run log prints no post-removal returns. The primary contrast is not computed before all seeds finish.
+
+**Sample size, fixed in advance: n = 32 (seeds 0–31).** No interim analysis and no optional stopping. If the sandbox interrupts a seed, that seed is rerun from scratch. Planning SD of the paired difference = 2.0 (Phase 6c paired SDs were 2.1–2.9 for 41% manipulations; this one is 20.5% with common random numbers). At n = 32:
+- power to detect +1.0 = 0.78 (SD 1.5: 0.95; SD 2.5: 0.59);
+- TOST power at a true 0 = 0.73;
+- expected 95% CI half-width ≈ 0.72.
+- Budget ≈ 7.5 min per seed, about 4 h.
+
+**PRIMARY (only confirmatory test).**
+- **Contrast:** Δ = AUC(purge_R) − AUC(purge_U), paired by seed; AUC = mean ε = 0.05 eval return over checkpoints +10..+650. Positive = removing restriction-era transitions is better than removing matched same-epoch unrestricted transitions.
+- **Test:** two-sided paired t, α = 0.05.
+- **SESOI δ = 1.0 AUC point.** It is ≈3% of the retain-arm AUC (33.1) and ≈30% of the full targeted-purge benefit (Phase 6b B − A = +3.5). It is also about the Phase 6c identity estimates (+1.1) at a comparable swapped restricted exposure (0.31M there vs ~0.33M here). A smaller difference would not justify calling restriction-era data a damage carrier in the paper.
+- **Equivalence:** TOST vs ±1.0 (90% CI).
+
+| outcome | rule | interpretation |
+|---|---|---|
+| A | CI95 lower > 0 and CI90 upper > +1.0 | identity effect detected, not shown to be below the SESOI (also report whether CI95 lower > +1.0) |
+| B | CI95 lower > 0 and CI90 within (−1, +1) | detected but smaller than the SESOI: negligible |
+| C | CI95 includes 0 and CI90 within (−1, +1) | no meaningful identity effect (equivalence) |
+| D | CI95 includes 0, CI90 not within (−1, +1) | inconclusive |
+| E | CI95 upper < 0 | removing restricted data is worse |
+
+**Secondary (descriptive only):**
+- windows early +10..150, middle +160..240, late +250..650;
+- greedy-eval AUC;
+- Monte Carlo sign-flip (10^6 draws) and Wilcoxon;
+- leave-one-seed-out range;
+- even vs odd seed (column-parity) check;
+- per-seed table;
+- exposure (realised sampled R, expected U and pool, between-arm pool-share check);
+- TD loss after removal.
+
+Analysis script: `scripts/analyze_pqn_identity_swap.py`.
+
+**Scope of the claim.** Δ compares R with the clean counterfactual U, so it measures their relative value as retained data: "restricted data is worse to keep than matched clean data". It does not split this into "R is harmful" vs "U is helpful". A retain-Z reference arm would do that; it is not included, in order to spend the budget on seeds.
