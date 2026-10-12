@@ -534,3 +534,23 @@ Summaries `results/summary/20261012-p6-purge-s{0..7}-pqnr-1000k-SpaceInvaders-Mi
 4. **Purge shock:** swapping the whole buffer right at removal makes the damaged agent briefly much worse (+10: −14.8*). The same swap 50 updates later, or applied to a clean agent, does not. The just-damaged Q-function is fragile to an abrupt data shift.
 
 Caveats: one game and restriction; n = 8; the replacement policy is a frozen clean actor (a learning or self-collected replacement was not tested); E − D shows the replacement data is not neutral.
+
+## 2026-10-12 — Phase 6b: targeted vs sham replay purge — PRE-REGISTRATION (committed before any real run)
+
+**Question (user):** does replacing *restriction-era* transitions matter beyond refreshing the buffer? SpaceInvaders-MinAtar, movement restriction, PQN-R, 1M buffer, late window [250, 350), removal u350, recovery 650, ε = 0.05 eval primary (greedy secondary), **12 paired seeds (0–11)**, one per process. Script `scripts/pqn_targeted_purge.py`; analysis `scripts/analyze_pqn_targeted.py`.
+
+**Common start state:** every arm starts from the restricted fork's saved removal state (params, RAdam state, env state, current obs, RNG, update counter, buffer). Training schedule unchanged.
+- **A_retain:** no change.
+- **B_targeted:** the restriction-era rows (exactly the newest K = 3,200 rows × 128 envs = 409,600 transitions = 41%; asserted from write-time tags) are overwritten with the replacement pool; all other rows preserved.
+- **C_sham:** the same number of non-restriction-era rows, chosen as the closest in age — the adjacent older block (rows written u150–249) — overwritten with the same pool; restriction-era rows intact.
+- **D_cleannet:** B's exact buffer and start state, but params + optimizer state from the clean fork.
+
+**Replacement pool:** frozen clean actor (clean fork params at u350), ε = 0.05, full action set, 128 fresh unrestricted envs, key `fold_in(PRNGKey(seed), 2026)`, 3,200 time-ordered steps per env (verified identical to the first 3,200 steps of the Phase 6 purge pool). Collected once per seed and frozen before any learner arm branches; identical in B, C, D. Buffer size, pointer, size and schema unchanged; replaced slots tagged 32000 (diagnostic only).
+
+**Successor continuity:** s' is the next row of the same env, so each spliced block creates 2 invalid successor links per env (row before the block; the block's last row). New per-slot flag `valid_next` (`SEAM_MASK`, used by all four arms); flagged transitions (2 × 128 = 256 per buffer, 0.026%) get zero loss weight until overwritten. Verified: flag off is bit-identical to HEAD; flag on with no flags is bit-identical to flag off (so A must reproduce Phase 6 A_retain for seeds 0–7); a unit test shows flagged slots do not affect learning.
+
+**Age-matching limit (stated before the run):** the restriction-era rows are the newest rows, so no non-restriction-era row has the same age. The sham uses the nearest feasible block (rows aged 100–199 updates at removal vs 0–99). Under FIFO, the sham's replacement data is overwritten ~100 updates earlier (+44..+144 vs +144..+244), so B carries replacement data for longer. Mean replacement share over the AUC window is reported per arm. A positive B − C therefore bundles "removing restricted data" with "replacement data persisting ~100 updates longer"; B − C ≈ 0 would be informative despite the mismatch.
+
+**Primary contrasts** (AUC +10..+650; paired; 95% t-CI; **Holm across the three**; seed-level differences reported; exact sign-flip p as a robustness check):
+1. **B − C** targeted vs sham (key test). 2. **B − A** targeted purge vs retain. 3. **B − D** residual network impairment under matched data exposure.
+**Secondary endpoints:** early +10..+150, middle +160..+240, late +250..+650. Secondary contrast: C − A. Descriptive: (B − C)/(B − A).

@@ -44,3 +44,30 @@ def test_greedy_eval_unmasked_and_deterministic():
     ev = jax.jit(pqn.make_eval(cfg, num_envs=4))
     a, b = ev(rs["train_state"].params, jax.random.PRNGKey(5)), ev(rs["train_state"].params, jax.random.PRNGKey(5))
     assert jnp.array_equal(a["ret"], b["ret"]) and bool(jnp.all(a["length"] > 0))
+
+
+def test_seam_mask_zero_weight():
+    """Flagged slots (valid_next False) must not influence learning: two buffers that differ only in the rewards of
+    flagged slots give bit-identical parameters after an update."""
+    import jax
+    import jax.numpy as jnp
+    import numpy as np
+    from rled.agents.pqn import make
+    cfg, init, run = make(dict(REPLAY=True, NUM_ENVS=16, NUM_STEPS=8, NUM_MINIBATCHES=4, BUFFER_SIZE=512,
+                               REPLAY_BATCH=32, SEAM_MASK=True))
+    rs = init(jax.random.PRNGKey(0))
+    rs, _ = jax.jit(lambda r: run(r, 4))(rs)  # 32 of 32 slots filled -> wraps; ptr = 0
+    b = rs["buffer"]
+    rows = jnp.array([10, 11, 12])  # not written by the next update (it writes rows ptr..ptr+7)
+    assert int(b["ptr"]) not in (10, 11, 12) and int(b["size"]) == cfg["BUFFER_LEN"]
+    flag = b["valid_next"].at[rows].set(False)
+    r1 = dict(rs, buffer=dict(b, valid_next=flag, reward=b["reward"].at[rows].set(0.0)))
+    r2 = dict(rs, buffer=dict(b, valid_next=flag, reward=b["reward"].at[rows].set(1e6)))
+    step = jax.jit(lambda r: run(r, 1))
+    p1 = jax.tree.leaves(step(r1)[0]["train_state"].params)
+    p2 = jax.tree.leaves(step(r2)[0]["train_state"].params)
+    assert all(np.array_equal(x, y) for x, y in zip(p1, p2))
+    # sanity: without the flag the reward change does matter
+    r3 = dict(rs, buffer=dict(b, reward=b["reward"].at[rows].set(1e6)))
+    p3 = jax.tree.leaves(step(r3)[0]["train_state"].params)
+    assert not all(np.array_equal(x, y) for x, y in zip(p1, p3))

@@ -53,6 +53,7 @@ DEFAULT_CONFIG = dict(
     REPLAY=False,
     BUFFER_SIZE=100_000,
     REPLAY_BATCH=128,
+    SEAM_MASK=False,         # PQN-R: per-slot valid-successor flag; flagged transitions get zero loss weight (Phase 6b)
     DEFICIT="none",
     DEFICIT_START=0,
     DEFICIT_END=0,
@@ -123,6 +124,8 @@ def make(config: dict):
                                 reward=jnp.zeros((L, N), jnp.float32), done=jnp.zeros((L, N), bool),
                                 tag=jnp.full((L, N), -1, jnp.int16),  # update index at which each slot was written
                                 ptr=jnp.array(0, jnp.int32), size=jnp.array(0, jnp.int32))
+            if cfg["SEAM_MASK"]:  # False where slot t's successor (slot t+1, same env) is not its true next obs
+                rs["buffer"]["valid_next"] = jnp.ones((L, N), bool)
             # diagnostics only: report the share of the buffer / of sampled batches written in updates [w0, w1)
             rs["tag_window"] = jnp.array([0, 0], jnp.int32)
         return rs
@@ -158,10 +161,12 @@ def make(config: dict):
 
         (env_state, obs, rng), traj = jax.lax.scan(env_step, (rs["env_state"], rs["obs"], rs["rng"]), jnp.arange(cfg["NUM_STEPS"]))
 
-        def loss_fn(p, x, a, tgt):
+        def loss_fn(p, x, a, tgt, w=None):
             q = net.apply(p, x)
             qa = jnp.take_along_axis(q, a[:, None], -1)[:, 0]
-            return 0.5 * jnp.mean((qa - tgt) ** 2), qa.mean()
+            if w is None:
+                return 0.5 * jnp.mean((qa - tgt) ** 2), qa.mean()
+            return 0.5 * (jnp.sum(w * (qa - tgt) ** 2) / jnp.maximum(jnp.sum(w), 1.0)), qa.mean()
 
         def sgd(ts, batch):
             (l, qm), g = jax.value_and_grad(loss_fn, has_aux=True)(ts.params, *batch)
@@ -203,7 +208,8 @@ def make(config: dict):
             b = dict(obs=b["obs"].at[idx].set(pack(traj.obs)), action=b["action"].at[idx].set(traj.action.astype(jnp.uint8)),
                      reward=b["reward"].at[idx].set(traj.reward), done=b["done"].at[idx].set(traj.done),
                      tag=b["tag"].at[idx].set(rs["update"].astype(jnp.int16)),
-                     ptr=(b["ptr"] + T) % L, size=jnp.minimum(b["size"] + T, L))
+                     ptr=(b["ptr"] + T) % L, size=jnp.minimum(b["size"] + T, L),
+                     **({"valid_next": rs["buffer"]["valid_next"].at[idx].set(True)} if cfg["SEAM_MASK"] else {}))
             tw = rs["tag_window"]
             in_w = lambda tg: ((tg >= tw[0]) & (tg < tw[1])).astype(jnp.float32)
             unpack = lambda o: jnp.unpackbits(o, axis=-1, count=obs_dim).astype(jnp.float32)
@@ -222,7 +228,10 @@ def make(config: dict):
                 x, x2 = unpack(b["obs"][ti, ei]), unpack(o2p)
                 q2 = masked_max(net.apply(ts.params, x2), u_mask)
                 tgt = jax.lax.stop_gradient(b["reward"][ti, ei] + cfg["GAMMA"] * (1 - b["done"][ti, ei]) * q2)
-                ts, out = sgd(ts, (x, b["action"][ti, ei].astype(jnp.int32), tgt))
+                batch = (x, b["action"][ti, ei].astype(jnp.int32), tgt)
+                if cfg["SEAM_MASK"]:
+                    batch = batch + (b["valid_next"][ti, ei].astype(jnp.float32),)
+                ts, out = sgd(ts, batch)
                 return (ts, rng), (*out, in_w(b["tag"][ti, ei]).mean())
 
             (ts, rng), (losses, qms, gns, sw) = jax.lax.scan(replay_step, (ts, rng), None, cfg["GRAD_STEPS_PER_UPDATE"])
@@ -276,7 +285,7 @@ def make_eval(config: dict, num_envs: int = 64, eps: float = 0.0):
     return evaluate
 
 
-def make_collector(config: dict, eps: float = 0.05):
+def make_collector(config: dict, eps: float = 0.05, steps: int | None = None):
     """Replay-buffer replacement data (Phase 6 purge): a FROZEN policy collects BUFFER_LEN steps in NUM_ENVS fresh,
     unrestricted envs (full action set, epsilon-greedy with `eps`), returning arrays in the PQN-R buffer schema
     (packed obs, uint8 action, reward, done), time-ordered along axis 0. The training env wrappers are the same as in
@@ -287,7 +296,7 @@ def make_collector(config: dict, eps: float = 0.05):
     n_actions = env.action_space(env_params).n
     net = QNet(n_actions, cfg["HIDDEN"], cfg["LAYERNORM"])
     N = cfg["NUM_ENVS"]
-    L = cfg["BUFFER_SIZE"] // N
+    L = cfg["BUFFER_SIZE"] // N if steps is None else steps  # the first k steps do not depend on `steps`
     pack = lambda o: jnp.packbits(o > 0.5, axis=-1)
 
     def collect(params, key):
