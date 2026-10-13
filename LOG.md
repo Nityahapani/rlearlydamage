@@ -902,3 +902,54 @@ As pre-specified, Stage 1 is **not** run. Predictor results are descriptive only
 - One intervention (movement), one budget (250 updates), one onset.
 
 **Implication for the narrative:** this strengthens "lost competence, not lost plasticity" in PPO. Even a mask six times longer leaves a fully recoverable agent whose features still encode the competent policy.
+
+---
+
+## 2026-10-13 — Phase 7b: can a removal-time measurement predict slow recovery? Pre-specification, written BEFORE any of these metrics are computed
+
+**User request.** Stop extending the duration sweep. Use existing checkpoints for a cheap diagnostic: does a pre-removal measurement predict which agents recover slowly? Choose a small, motivated predictor set; do not pick whichever metric correlates best after inspecting everything; check consistency across seeds and durations; pre-register the strongest candidate for a separate causal test. A null is informative.
+
+**Disclosure of what has already been seen.**
+- The pilot analysis (`p7_ponr_pilot-analysis.md`) already printed Spearman correlations of every *onset-relative* probe (KL from onset, CKA vs onset, decode R², value correlation, etc.) with L_d and A_d.
+- Those probes are therefore **excluded from selection**. They will be reported only as context.
+- The outcomes are known: seed-mean A_d = −0.3, −1.5, −0.8, −7.6.
+- The four predictors below are **clean-fork-relative** and have not been computed for any unit.
+
+**Units.** The 16 pilot units: seeds 0–3 × d ∈ {50, 100, 200, 300}, movement restriction. Data: the saved removal params `results/<pilot stem>/{C,D}_u{w1}.npz` and the pilot bank (2000 onset-policy observations per seed).
+
+**Outcome (recovery cost).**
+- **Primary:** A_d, the delay-adjusted AUC = mean over k = 10…250 of D_online(w1 + k) − C(w0 + k). More negative = slower recovery beyond lost time.
+- Secondary: A_early = the same over k = 10…100 (where the d = 300 excess is concentrated).
+
+**Predictors.** Exactly four, measured at removal on the bank. Each compares D(w1) with the clean fork C(w1) at the same update and uses unmasked policies.
+
+| # | Predictor | Definition | Motivation | Expected sign vs A_d |
+|---|---|---|---|---|
+| P1 | `kl_clean` | KL(π_C ‖ π_D), full action set | The actor carries the damage (surgery), so the distance the policy must travel back should set the recovery cost | − |
+| P2 | `cka_clean` | 1 − linear CKA(h1_D, h1_C), actor a1 features | If the features have diverged from where clean learning took them, relearning needs more than a readout change | − |
+| P3 | `move_gap_rel` | On movement-relevant states (the half of the bank with the highest π_C(left) + π_C(right), per seed): mean of p_C(move) − p_D(move) | Under-use of the restricted actions exactly where the clean agent needs them | − |
+| P4 | `value_err_clean` | mean (V_D − V_C)² / var(V_C) on the bank | A damaged critic gives wrong advantages to a relearning actor (cf. the transplant dip) | − |
+
+Baselines (not candidates): duration d, and acute deficit = eval(D, w1) − eval(C, w1).
+
+**Criteria.** A predictor "robustly tracks recovery cost" only if all of R0–R3 hold:
+- **R0, reliability:** split-half bank reliability (metric on bank half 1 vs half 2, Spearman across the 16 units) ≥ 0.8. This is the "is the probe measurement reliable" check, applied to every predictor, critic included.
+- **R1, pooled:** Spearman(P, A_d) ≤ −0.5 across the 16 units.
+- **R2, within-duration:** Spearman of duration-centred P vs duration-centred A_d ≤ −0.3, **and** the per-duration ρ (4 seeds each) is negative in ≥ 3 of the 4 durations.
+- **R3, incremental over duration:** leave-one-seed-out (4 folds). The model M1 = duration-group mean of A plus β · (duration-centred P), fitted on the training seeds, must lower out-of-fold MSE by ≥ 10% relative to M0 = duration-group mean only.
+- Reported, not required: whether the predictor's within-duration |ρ| exceeds that of the acute deficit.
+
+**Selection.**
+- Among predictors passing R0–R3, the candidate is the one with the largest within-duration |ρ|. At most **one** candidate goes forward.
+- If none passes, the conclusion is: *no robust removal-time predictor among policy divergence, representation divergence, relevant-state action change and critic error*. Then no causal test is pre-registered from this analysis.
+- Caveat fixed in advance: there are 16 nested units from 4 seeds, so a passing predictor is a *candidate* only. Its confirmatory test must use fresh seeds.
+
+**Secondary, exploratory, not used for selection:**
+1. The same four metrics at early recovery (+10, +20, +30 updates; D_online vs C at the same update). These come from a deterministic re-run that must reproduce the pilot's removal evals bit-for-bit. They are related to A_d and A_early.
+2. Phase 4 F/A context: drift suppression changed onset-relative KL without changing recovery AUC.
+
+**Causal-test mapping, fixed now** (so the intervention is not chosen after the result). The test runs at d = 300 (the only duration with cost beyond lost time) on fresh seeds, against an active control matched on acute collapse:
+- **P1:** during the mask, add a KL penalty pulling D's unmasked policy toward its concurrently trained clean twin. Active control: the same penalty toward the onset policy (the Phase 4 A arm).
+- **P2:** feature distillation of D's a1 toward the twin's a1 on the bank, with the actor head free. Active control: matched-strength logit anchoring.
+- **P3:** a KL penalty only on movement-relevant states, toward the twin's movement probabilities. Active control: the same penalty on the irrelevant half.
+- **P4:** at removal, transplant the clean twin's critic into D (keeping D's actor and Adam state), vs D_online. A second arm runs critic distillation during the mask.
