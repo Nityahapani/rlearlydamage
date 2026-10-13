@@ -140,6 +140,9 @@ def make(config: dict):
             behaviour_actor={k: v for k, v in params["params"].items() if k in ACTOR_KEYS},
             behaviour_until=jnp.array(0, jnp.int32),
             behaviour_temp=jnp.array(1.0, jnp.float32),  # behaviour logits / temp while use_b
+            # ratio-neutral swap: while use_b, store the LEARNER's log-prob of the behaviour action, so PPO's
+            # ratio starts at 1 (no importance weighting / off-policy clipping); data content still from pi_b.
+            behaviour_ratio_learner=jnp.array(False),
             anchor_actor={k: v for k, v in params["params"].items() if k in ACTOR_KEYS},
         )
 
@@ -175,6 +178,8 @@ def make(config: dict):
             lb = jax.nn.log_softmax(jnp.where(mask, logits, -1e9))
             ll = jax.nn.log_softmax(jnp.where(mask, logits_l, -1e9))
             b_kl = jnp.sum(jnp.where(mask, jnp.exp(lb) * (lb - ll), 0.0), -1).mean()
+            lp_learner = jnp.take_along_axis(ll, action[:, None], axis=-1)[:, 0]
+            log_prob = jnp.where(use_b & rs["behaviour_ratio_learner"], lp_learner, log_prob)
             obs2, env_state, reward, done, info = jax.vmap(env.step, in_axes=(0, 0, 0, None))(
                 jax.random.split(k_step, cfg["NUM_ENVS"]), env_state, action, env_params
             )

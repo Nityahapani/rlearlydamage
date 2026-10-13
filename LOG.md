@@ -992,3 +992,47 @@ Baselines (not candidates): duration d, and acute deficit = eval(D, w1) − eval
 - Every number is taken from `results/summary/*.md`, converted to the single convention arm − reference (negative = harm). The PPO recovery-test numbers (previously printed only to stdout) were regenerated with the corrected t-interval script and saved as `results/summary/p2_recovery_all-analysis.md` so the paper's Table 1 has a committed source.
 - The repository URL is anonymized in the PDF (`[anonymized repository]`); switch to `\usepackage[preprint]{tmlr}` / `[accepted]` and fill in authors for a non-anonymous version.
 - Sandbox restart during this step again rolled `.git` back (to 02293d4); re-synced with `git reset --mixed origin/main` (479af27) before committing; working files were intact.
+
+## 2026-10-13 — Phase 8: reviewer-response experiments — PRE-REGISTRATION (written and committed before any Phase 8 data)
+
+**Context.** A review of the paper draft listed ten weaknesses. Six can be addressed with new runs within an 8-hour CPU budget. The others (non-additive attribution percentages, borderline replay equivalence, delay-adjusted baseline, predictor reliability) need re-analysis and narrower claims, which do not change any pre-registered contrast. All runs use 2 CPU cores and execute sequentially through `scripts/queue_p8.sh` (resumable; one job per process).
+
+**Code changes (committed with this entry; 24/24 tests pass; tiny-config smoke runs deleted):**
+- `ppo.py`: new runner flag `behaviour_ratio_learner`, default False. When a behaviour swap is active and the flag is set, the learner's own log-prob of the behaviour action is stored, so PPO's ratio starts at 1. There is no importance weighting; the data content still comes from π_b. With the flag off, the computation is bit-identical: `jnp.where(False, ·, log_prob)`.
+- `surgery_ppo.py`: `--arms` subset; new arms `CCC+bDr` and `DDD+bCr` (ratio-neutral versions of the Phase 3 data arms); `--deficit {action_mask, reward_flip}` with `--flip-prob`; `--eval-fork`, which evaluates C and D during [w0, w1) for delay-adjusted readouts; per-arm swap diagnostics (clip fraction, |ratio − 1|, approx. KL, behaviour KL) for the first K and next K updates.
+- `pqn_surgery.py`: 3-letter arm codes (params, optimizer state, buffer). The existing 2-letter path is unchanged. In a smoke run, `DDD` reproduced `DD` exactly.
+
+**J1 + J2 — PPO component surgery to n = 12 and the de-confounded data arms (SpaceInvaders, movement, window [100, 150), recovery 150, K = 10).**
+- J1: seeds 4–11 (fresh; two processes of 4 seeds), all Phase 3 arms (2^3 factorial, `CCC+bD`, `DDD+bC`) plus `CCC+bDr` and `DDD+bCr`.
+- J2: seeds 0–3, arms `DDD+bC` (bit-identity check against Phase 3), `DDD+bCr` and `CCC+bDr`. Seeds 0–3 factorial arms come from the Phase 3 summary (365cf2b). The forks are verified against the Phase 2 recovery test via `--reference`.
+- **Primary (n = 12, AUC over +10..+150, paired t, Holm across the three):** actor, critic and optimizer main effects. **Equivalence:** TOST for the critic and optimizer main effects with SESOI ±3.0 AUC (≈ 20% of the n = 4 total damage of −14.3).
+- **Attribution (fixes the non-additivity point):** an exact Shapley decomposition of total damage DDD − CCC over the three carriers. It sums to the total by construction, and each carrier's share is reported with a seed-paired t-CI. The factorial main-effect "shares" are no longer described as a partition.
+- **Replication check:** the actor main effect on the fresh seeds 4–11 alone (n = 8).
+- **Data arms (primary, n = 12, Holm across the two):** `DDD+bCr − DDD` (clean data content without importance weighting) and `CCC+bDr − CCC`. Descriptive: the IS versions, the IS − ratio-neutral differences, and the swap diagnostics.
+- Reading: a positive `DDD+bCr − DDD` with a CI excluding 0 means clean data content helps a damaged learner without off-policy importance weights. Any clipping that remains then comes from the learner's own policy change, i.e. from the data.
+
+**J3 — Asterix replication (PPO, allowed {noop, up, down} = [0, 2, 4], meaning-matched onset u390 from the long control, window [390, 440), recovery 200 updates, seeds 0–7, 2^3 factorial, eval-fork).**
+- Primary: total damage DDD − CCC (AUC +10..+200), and the actor, critic and optimizer main effects (Holm across the three); Shapley shares as above.
+- **Replication criterion (fixed now):** total damage CI < 0, AND actor main effect CI < 0, AND the actor's Shapley share is the largest of the three.
+- If the total damage CI includes 0, we report "no damage to localize", not a failure to replicate.
+- Secondary: unlearning at removal, D(w1) − D(w0); delay-adjusted AUC, D(w1 + k) − C(w1 + k − 50).
+
+**J4 — PQN-R parameters vs optimizer state (100k buffer, late onset 250, duration 100, recovery 650, seeds 0–7 in two processes; arms DDD, CDD, DCD).**
+- 2 × 2 params × optimizer at the damaged buffer: the cells are DDD and CDD/DCD from this run, plus CCD = the earlier CD arm (clean network with damaged buffer, same seeds; bit-identical by construction).
+- DDD must equal the earlier DD arm. A mismatch is reported and blocks the analysis.
+- Primary (AUC +10..+650, ε = 0.05 eval, Holm across the two): parameter rescue CDD − DDD and optimizer rescue DCD − DDD. Secondary: interaction, and the per-window (+10..+150) versions.
+
+**J5 — point-of-no-return confirmation (PPO, movement, onset 100, d = 300 only, recovery 250, fresh seeds 100–107 in two processes, 64-episode eval as in the pilot; arms D_online, D_transplant).**
+- Primary: L_300 (delay-adjusted, mean over k = 210..250), n = 8, 95% t-CI, and **TOST against SESOI ±5** (the pilot gate value).
+- Decisions:
+  - **equivalent** if both one-sided p < 0.05;
+  - **persistent impairment** if mean ≤ −5 and the upper CI bound < 0;
+  - otherwise **inconclusive**.
+- Secondary: A_300, and pooling with the pilot seeds 0–3 (n = 12, descriptive). Predictors are not re-tested (8 units at one duration is too few); the outcome's split-half reliability is reported descriptively.
+
+**J6 — a different deficit family: reward sign flip (PPO, SpaceInvaders, reward_flip with prob 1.0, window [100, 150), recovery 150, seeds 0–7, 2^3 factorial, eval-fork).**
+- Primary and replication criterion as for J3.
+
+**J7 (only if time remains) — architecture:** PPO hidden 256 (2 × 256), movement restriction, otherwise as J1; seeds 0–7, 2^3 factorial. Same criterion.
+
+**Analysis scripts** are written after the runs, but they only implement the contrasts above. Any additional analysis will be labelled post-hoc.

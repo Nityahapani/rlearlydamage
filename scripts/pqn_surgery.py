@@ -147,8 +147,11 @@ def main():
         print("consistency vs recovery run:", check, flush=True)
 
     def compose(code):
-        net, buf = forks[code[0]], forks[code[1]]
-        ts = C["train_state"].replace(params=net["train_state"].params, opt_state=net["train_state"].opt_state)
+        if len(code) == 3:  # (params, optimizer state, buffer) -- separates the network carrier
+            par, opt, buf = forks[code[0]], forks[code[1]], forks[code[2]]
+        else:               # (network = params + optimizer state, buffer) -- prespecified Phase 5 rule
+            par, opt, buf = forks[code[0]], forks[code[0]], forks[code[1]]
+        ts = C["train_state"].replace(params=par["train_state"].params, opt_state=opt["train_state"].opt_state)
         return dict(C, train_state=ts, buffer=buf["buffer"], deficit_bounds=bounds(0, 0))
 
     summary = dict(manifest=mpath.name, protocol=protocol, seeds=a.seeds, consistency_check=check,

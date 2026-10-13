@@ -51,6 +51,11 @@ def main():
     ap.add_argument("--reference", default=None, help="recovery-test summary to check reproduction against")
     ap.add_argument("--tag", default="surgery-move-late")
     ap.add_argument("--allow-dirty", action="store_true")
+    ap.add_argument("--arms", nargs="*", default=None,
+                    help="subset of arms (default: 2^3 factorial + CCC+bD, DDD+bC); extra: CCC+bDr, DDD+bCr (ratio-neutral)")
+    ap.add_argument("--deficit", default="action_mask", choices=["action_mask", "reward_flip"])
+    ap.add_argument("--flip-prob", type=float, default=1.0, help="reward_flip: probability a reward is negated")
+    ap.add_argument("--eval-fork", action="store_true", help="also evaluate C and D every E updates during [w0, w1]")
     a = ap.parse_args()
 
     E = a.eval_every
@@ -58,12 +63,13 @@ def main():
     assert w0 % E == 0 and w1 % E == 0 and a.recovery % E == 0
     spu = 64 * 128
     total_updates = w1 + a.recovery
-    base = dict(ENV_NAME=a.env, HIDDEN=a.hidden, DEFICIT="action_mask", TOTAL_TIMESTEPS=total_updates * spu,
-                DEFICIT_PARAMS={"allowed_actions": a.allowed})
-    arms = all_codes(PPO_CARRIERS) + ["CCC+bD", "DDD+bC"]
+    dparams = {"allowed_actions": a.allowed} if a.deficit == "action_mask" else {"prob": a.flip_prob}
+    base = dict(ENV_NAME=a.env, HIDDEN=a.hidden, DEFICIT=a.deficit, TOTAL_TIMESTEPS=total_updates * spu,
+                DEFICIT_PARAMS=dparams)
+    arms = a.arms if a.arms else all_codes(PPO_CARRIERS) + ["CCC+bD", "DDD+bC"]
     protocol = dict(window=a.window, recovery=a.recovery, behaviour_k=a.behaviour_k, eval_every=E,
                     eval_envs=a.eval_envs, eval_seed=a.eval_seed, steps_per_update=spu, carriers=list(PPO_CARRIERS),
-                    arms=arms, allowed=a.allowed,
+                    arms=arms, allowed=a.allowed, deficit=a.deficit, deficit_params=dparams,
                     future_randomness="env state, obs, RNG, update counter from clean run C")
     name = f"p3-{a.tag}-ppo-{a.env}"
     manifest = build_manifest(name, {**base, "protocol": protocol}, a.seeds, allow_dirty=a.allow_dirty)
@@ -90,9 +96,14 @@ def main():
     for _ in range(w0 // E):
         rs, _m = run_v(rs)
     rs_c, rs_d = rs, dict(rs, deficit_bounds=bounds(w0, w1))
-    for _ in range((w1 - w0) // E):
+    fork_eval = dict(updates=[w0], C=[ev(rs_c).tolist()], D=[ev(rs_d).tolist()]) if a.eval_fork else None
+    for i in range((w1 - w0) // E):
         rs_c, _m = run_v(rs_c)
         rs_d, _m = run_v(rs_d)
+        if a.eval_fork and i < (w1 - w0) // E - 1:
+            fork_eval["updates"].append(w0 + (i + 1) * E)
+            fork_eval["C"].append(ev(rs_c).tolist())
+            fork_eval["D"].append(ev(rs_d).tolist())
     rs_d = dict(rs_d, deficit_bounds=bounds(0, 0))  # deficit removed from here on
     e_c, e_d = ev(rs_c), ev(rs_d)
     print(f"fork done: eval at removal C={np.round(e_c,2)} D={np.round(e_d,2)} elapsed={time.time()-t0:.0f}s", flush=True)
@@ -116,18 +127,21 @@ def main():
 
     # 4-5. surgery arms
     summary = dict(manifest=mpath.name, protocol=protocol, seeds=a.seeds, reproduction_check=check,
-                   eval_updates=list(range(w1, total_updates + 1, E)), arms={})
+                   eval_updates=list(range(w1, total_updates + 1, E)), arms={}, fork_eval=fork_eval)
     actor_of = lambda r: {k: v for k, v in r["train_state"].params["params"].items() if k in ACTOR_KEYS}
     for arm in arms:
         code = arm[:3]
         rs = compose_ppo(rs_c, rs_d, code)
         if "+b" in arm:
-            other = rs_d if arm.endswith("bD") else rs_c
+            other = rs_d if (arm.endswith("bD") or arm.endswith("bDr")) else rs_c
             rs = dict(rs, behaviour_actor=actor_of(other), behaviour_until=jnp.full((n,), w1 + a.behaviour_k, jnp.int32))
-        evals, train = [ev(rs)], []
+            if arm.endswith("r"):  # ratio-neutral: learner log-probs stored, PPO ratio starts at 1
+                rs = dict(rs, behaviour_ratio_learner=jnp.ones((n,), bool))
+        evals, train, diag = [ev(rs)], [], []
         for _ in range(a.recovery // E):
             rs, m = run_v(rs)
             train.append(jax.device_get(m["episode_return"]))
+            diag.append({k: np.asarray(jax.device_get(m[k])) for k in ("clip_frac", "ratio_absdev", "approx_kl", "behaviour_kl")})
             evals.append(ev(rs))
         evals = np.stack(evals, 1)  # seeds x checkpoints
         train = np.concatenate(train, 1)
@@ -138,6 +152,9 @@ def main():
         summary["arms"][arm] = dict(eval_return_mean=np.round(evals, 3).tolist(),
                                     train_return_by_block=[[None if np.isnan(v) else round(float(v), 3) for v in r]
                                                            for r in tr_ds])
+        dg = {k: np.concatenate([d[k] for d in diag], 1) for k in diag[0]}  # seeds x updates
+        summary["arms"][arm]["diag_first_k"] = {k: round(float(v[:, :a.behaviour_k].mean()), 4) for k, v in dg.items()}
+        summary["arms"][arm]["diag_next_k"] = {k: round(float(v[:, a.behaviour_k:2 * a.behaviour_k].mean()), 4) for k, v in dg.items()}
         summary["wallclock_s"] = round(time.time() - t0, 1)
         summ_path.write_text(json.dumps(summary, indent=1))
         print(f"arm {arm:>7}: eval at +0 {np.round(evals[:,0],1)} +50 {np.round(evals[:,min(5, evals.shape[1]-1)],1)} "
