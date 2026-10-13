@@ -1036,3 +1036,32 @@ Baselines (not candidates): duration d, and acute deficit = eval(D, w1) − eval
 **J7 (only if time remains) — architecture:** PPO hidden 256 (2 × 256), movement restriction, otherwise as J1; seeds 0–7, 2^3 factorial. Same criterion.
 
 **Analysis scripts** are written after the runs, but they only implement the contrasts above. Any additional analysis will be labelled post-hoc.
+
+## 2026-10-13 — Phase 8 results: J1 + J2 (PPO surgery to n = 12, de-confounded data arms)
+
+Runs: J1a seeds 4–7 (8c62fe0, clean, 2131 s); J1b seeds 8–11 (8a2de07, clean); J2 seeds 0–3 data arms (3f952c0, clean, ~730 s). Analysis: `scripts/analyze_p8_surgery.py` → `results/summary/p8_ppo_surgery_n12-analysis.md`. Bit-identity: J2 `DDD+bC` equals the Phase 3 arm for seeds 0–3 (loader assertion passed). The `--reference` reproduction check in the J1 summaries compares seeds 4–11 with the reference's seeds 0–3, so it is meaningless there. For J2 (seeds 0–3) the forks match exactly.
+
+The queue failed once: after J1b, every remaining job hit the dirty-tree guard because I had edited `paper/main.tex` while the queue was running. No data were affected. I committed, then restarted the queue, which resumed at J2. From now on, paper edits are made outside the repo until the queue finishes.
+
+**Pre-registered primary (n = 12, AUC +10..+150):**
+- Total DDD − CCC −15.1 [−17.2, −13.0]*.
+- Main effects (Holm across 3):
+  - actor −13.7 [−14.9, −12.5]* (Holm p < 1e-4);
+  - **critic −1.9 [−3.5, −0.4]* (Holm p = 0.038)**;
+  - optimizer +0.2 [−0.9, +1.3] (Holm p = 0.74).
+- TOST ±3: optimizer p = 0.0001 (**equivalent**); critic p = 0.081 (**not equivalent**: a small critic effect is detected; it is early, −4.4 at +10 and −0.2 at +150).
+- Shapley (exact, sums to total): actor −13.6 [−15.0, −12.2]* (90%), critic −1.8 [−3.2, −0.4]* (12%), optimizer +0.3 [−0.9, +1.5] (−2%).
+- Fresh seeds 4–11 only (n = 8): actor −14.2 [−16.0, −12.4]* → the actor result replicates.
+- Correction to the paper: "critic not detectably involved" (n = 4) is revised to "small, transient critic contribution (~12%)".
+
+**Data arms (primary, Holm across 2):**
+- `DDD+bCr − DDD` (clean data, no importance weighting) **−5.4 [−7.0, −3.7]*** (Holm p < 1e-4): it *hurts*.
+- `CCC+bDr − CCC` −2.5 [−6.6, +1.7] (n.s.).
+- Descriptive:
+  - IS arms replicate Phase 3: `DDD+bC − DDD` +8.3 [+6.1, +10.5]*; `CCC+bD − CCC` −9.4 [−14.7, −4.2]*.
+  - IS − ratio-neutral: +13.6 [+11.5, +15.7]* (clean behaviour) and −7.0 [−11.1, −2.8]* (damaged behaviour).
+- Diagnostics over the first K = 10 updates:
+  - clip fraction 0.34 (IS) vs 0.20–0.23 (ratio-neutral) vs 0.07–0.09 (no swap);
+  - KL(π_b‖π_learner) 0.13–0.18 (IS) vs 0.76–1.07 (ratio-neutral).
+- **Reading (per the pre-registration):** the pre-registered positive reading is not supported. Clean data content does not help a damaged learner without importance weights. The Phase 3 data-swap benefit runs through the importance-weighted update, which pulls the learner toward the behaviour actor (behaviour KL is 5× lower under IS): off-policy distillation of the clean actor. This is consistent with the actor being the carrier.
+- **Caveat:** the ratio-neutral arm is not a "pure data" arm either. It treats off-policy actions as on-policy, which biases the gradient. No arm cleanly isolates data content from the update rule.
