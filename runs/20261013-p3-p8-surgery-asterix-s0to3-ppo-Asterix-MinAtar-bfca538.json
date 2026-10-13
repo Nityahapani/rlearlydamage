@@ -1,0 +1,80 @@
+{
+  "allow_dirty": false,
+  "config": {
+    "DEFICIT": "action_mask",
+    "DEFICIT_PARAMS": {
+      "allowed_actions": [
+        0,
+        2,
+        4
+      ]
+    },
+    "ENV_NAME": "Asterix-MinAtar",
+    "HIDDEN": 128,
+    "TOTAL_TIMESTEPS": 5242880,
+    "protocol": {
+      "allowed": [
+        0,
+        2,
+        4
+      ],
+      "arms": [
+        "CCC",
+        "CCD",
+        "CDC",
+        "CDD",
+        "DCC",
+        "DCD",
+        "DDC",
+        "DDD"
+      ],
+      "behaviour_k": 10,
+      "carriers": [
+        "actor",
+        "critic",
+        "opt"
+      ],
+      "deficit": "action_mask",
+      "deficit_params": {
+        "allowed_actions": [
+          0,
+          2,
+          4
+        ]
+      },
+      "eval_envs": 64,
+      "eval_every": 10,
+      "eval_seed": 10000,
+      "future_randomness": "env state, obs, RNG, update counter from clean run C",
+      "recovery": 200,
+      "steps_per_update": 8192,
+      "window": [
+        390,
+        440
+      ]
+    }
+  },
+  "created_utc": "2026-10-13T18:55:18.892483+00:00",
+  "git": {
+    "commit": "bfca538e8166e42f0689c4101d2b3b3ff670320a",
+    "dirty": false
+  },
+  "name": "p3-p8-surgery-asterix-s0to3-ppo-Asterix-MinAtar",
+  "packages": {
+    "flax": "0.12.10",
+    "gymnax": "0.0.9",
+    "jax": "0.11.2",
+    "jaxlib": "0.11.2",
+    "numpy": "2.5.4",
+    "optax": "0.2.8",
+    "rliable": null
+  },
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.41",
+  "python": "3.13.16",
+  "seeds": [
+    0,
+    1,
+    2,
+    3
+  ]
+}

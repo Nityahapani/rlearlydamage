@@ -1078,3 +1078,15 @@ Runs: J4a seeds 0–3 (3f952c0), J4b seeds 4–7 (bfca538); both clean, ~1130 s 
   - Clean parameters alone recover 87% of the network rescue (CCD − DDD +7.3); clean RAdam state alone recovers 18%.
   - Transient: clean parameters with stale RAdam moments crash at +10 (CDD 11.1 vs CCD 29.9; interaction at +10 +17.1*). This is gone by +150.
 - **Reading:** in PQN-R the network carrier is the parameters. Optimizer state contributes at most a small, early part.
+
+## 2026-10-13 — Phase 8 results: J3 (Asterix replication, PPO)
+
+Runs: J3a seeds 0–3 (bfca538), J3b seeds 4–7 (a8e2e91); clean, ~2030 s / 1850 s. Analysis: `results/summary/p8_asterix_surgery-analysis.md`.
+
+- **Fork:** C at onset u390 5.36; D at removal 4.38 vs C 5.41. Unlearning during the window D(w1) − D(w0) −1.0 [−1.6, −0.3]* (≈ 18% of onset competence).
+- **Primary:** total DDD − CCC (AUC +10..+200) −0.1 [−0.5, +0.4]. Main effects: actor −0.2, critic −0.0, optimizer +0.0 (all n.s.; all TOST ±3 p < 0.001; ±3 is a loose margin at this return scale).
+- **Pre-registered criterion: NO DAMAGE TO LOCALIZE** (total CI includes 0). This is not a failure to replicate. Shapley shares are undefined.
+- **Secondary:**
+  - Delay-adjusted AUC +0.5 [+0.0, +1.0]*; end +1.0 [+0.2, +1.7]*. The restricted agent recovers to *ahead of* a paused control.
+  - The acute deficit sits in the actor (actor main effect −1.0 [−1.3, −0.6]* at +10; clean actor +1.0* at +0) and is gone by +50.
+- **Reading:** the timing pattern replicates on a second game (late deficit → unlearning → full recovery within lost time). The carrier claim cannot be tested there because no persistent damage exists to localize. Caveat: PPO on Asterix-MinAtar is a weak, slowly improving agent (returns ~5–8 over the studied range).
