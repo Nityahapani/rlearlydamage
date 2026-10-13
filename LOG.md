@@ -830,3 +830,43 @@ User request: finish the cross-algorithm causal narrative, keeping PPO actor-sta
   - **Recommendations:** reframe the title away from "early damage"; extend the PPO surgery to ≥12 seeds first.
 - **README:** added a top-level "Causal narrative" section with the figure. The stale "Status and results so far (2026-10-12)" header became "Results by phase (last updated 2026-10-13)", and the Status line was updated through 6d.
 - **Environment note:** the sandbox restarted again. `.venv` was rebuilt with the pinned versions and the git remote re-added (token-free URL).
+
+---
+
+## 2026-10-13 — Phase 7: point of no return (causal rescue curve) — plan and Stage 0 gate, written BEFORE any Phase 7 data
+
+**User request.** Find the point during a damaging intervention at which the damage becomes encoded in the network, and test whether a measurable state variable at removal predicts which runs remain rescuable. A strong result needs two things: a threshold that predicts persistent recovery impairment across seeds and interventions, and an intervention showing that preventing the threshold crossing preserves recovery. User decisions: **PPO**; **staged, with a pilot gate**; **8 seeds** for Stage 1.
+
+**Priors from our own data (stated now, so they can't be rationalised later):**
+- At d = 50 the delay-adjusted residual is only −2.0 (Phase 2, Q4). There may be no persistent impairment to predict.
+- Masked-logit drift is not causal for recovery: Phase 4 F/A prevented it without changing AUC. The critic swap was null.
+- Leading candidate: **representation retention**, i.e. whether the onset policy is still linearly decodable from the damaged actor's features.
+
+**Design (`scripts/ponr_sweep.py`).** All windows start at onset w0 = 100, so they are nested: one masked trajectory D passes through the exact removal state for every duration d, and one clean trajectory C serves as the reference.
+- Recovery arms at each removal w1 = w0 + d run for a fixed budget of R = 250 updates (2.05M steps, the Phase 2 Q4 horizon). Env state, RNG and update counter come from C at w1, as in Phase 4.
+  - `D_online`: compose(C, D, "DDD"), the agent's own recovery.
+  - `D_transplant`: compose(C, D, "CDD"), a clean actor from C at w1 plus the damaged critic and Adam state.
+- Eval: deficit-free, every 10 updates, 64 envs, eval key 10000. Bank: 2000 onset-policy observations per seed, bank seed 20000 (identical to Phase 4).
+- Predictor probes (`src/rled/probes.py`; the candidate set below was fixed before any data) are computed at every checkpoint for C and D through the mask and for every recovery arm:
+  - policy: KL(onset‖t), conditional KL among masked actions, masked-logit state correlation, p(masked), entropy;
+  - representation: decode R² h1/h0, 1−CKA a0/a1, effective rank a1, dead units a1;
+  - critic: value correlation, value nMSE;
+  - weights: relative change of actor and critic weights.
+- Params are saved at the removal points only.
+
+**Outcomes (per seed and duration):**
+- **L_d (gate outcome):** late delay-adjusted deficit = mean over k ∈ {210, …, 250} of D_online(w0 + d + k) − C(w0 + k). Negative = impairment beyond pause-equivalent lost time at the end of the budget.
+- A_d: the same difference averaged over k = 10…250 (delay-adjusted AUC).
+- Raw: D_online(w1 + k) − C(w1 + k).
+- Transplant rescue: D_transplant − D_online, and D_transplant − C(w1 + k).
+
+**Stage 0 pilot:** movement restriction (allowed [0, 3]), seeds 0–3, d ∈ {50, 100, 200, 300}. Exploratory.
+- Reproducibility anchor: at d = 50 the removal evals must equal Phase 4 exactly (D [21.875, 28.75, 19.2344, 4.2969], C [64.0469, 53.1406, 71.7344, 45.7344]).
+- **Seeds 0–3 are excluded from every Stage 1 confirmatory test.** Stage 1 will use fresh seeds 100–107.
+
+**Gate (fixed now):**
+- **PROCEED** to the Stage 1 pre-registration if, for at least one d, mean L_d ≤ −5 return points and the 95% paired-t CI (n = 4) has an upper bound < 0.
+- **EXTEND** (a Stage 0b pilot at d ∈ {400, 500}) if seed-mean L_d decreases monotonically in d and L_300 ≤ −5, but no CI excludes 0.
+- **STOP** otherwise. Report: no point of no return up to 300 updates (2.46M steps) of movement restriction within a 250-update budget; damage remains lost time. Predictor trajectories would be reported descriptively only.
+
+**What the pilot may set** (and nothing else): the Stage 1 duration grid, the SESOI and "rescuable" cut-off, and a predictor shortlist of at most 3 (plus acute deficit and duration as baseline covariates). Stage 1 will test the shortlist on fresh seeds and on the held-out fire intervention. Stage 2 (preventing the crossing, against an active control matched on acute collapse) will be pre-registered only after Stage 1.
