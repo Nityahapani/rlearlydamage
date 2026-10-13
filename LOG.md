@@ -810,3 +810,23 @@ Analysis script: `scripts/analyze_pqn_identity_swap.py`.
   - The large purge benefits of Phases 6/6b (B − A +3.5–4.6) are mostly not explained by the restricted data's identity. The candidates are replacement residence (Phase 6c main effect +1.5) and refreshed or extra replacement data in general.
   - The network carrier is the robust finding: B − D −2.9* with identical buffers, plus the surgery results.
 - **Scope:** Δ compares R with U (relative value as retained data). It cannot separate "R harms" from "U helps", which would need a retain-both arm. The result covers one dose (20.5% of the buffer, ~0.33M samples), one env and one restriction.
+
+---
+
+## 2026-10-13 — Cross-algorithm causal narrative (synthesis; no new runs)
+
+User request: finish the cross-algorithm causal narrative, keeping PPO actor-state surgery and PQN-R network-versus-buffer surgery central and replay composition a qualified secondary finding.
+
+- **Deliverables:**
+  - `docs/causal_narrative.md`: draft Results/Discussion spine. It covers the claim hierarchy, the shared phenomenon table, PPO actor surgery, PQN-R network vs buffer, the cross-algorithm synthesis table, the replay-composition ladder with qualifications, non-claims, threats to validity, the pre-submission plan and an evidence table.
+  - `figures/causal_summary.png` via `scripts/make_causal_summary.py`: a 3-panel forest plot (A: PPO, B: PQN-R, C: replay composition with the SESOI band). The script asserts each of its 18 "est [lo, hi]" strings verbatim against the cited `results/summary/*.md` file and exits on any mismatch.
+- **Synthesis decisions (no new numbers):**
+  - **Central:**
+    - PPO actor −12.7 (89%); transplant +10.9* move / +12.9* fire; reset −27.2* ≈ scratch; optimizer null by two tests.
+    - PQN-R network −5.6* (100k) / −3.2* (1M); B−D −2.9* on identical buffers.
+  - **Buffer carrier is a mediator, not a store.** Newly highlighted from the existing `p6_surgery_pqnr1m_n8-phases.md`: the 1M buffer main effect is −1.4* while the data is present and −2.9 [−4.1, −1.8]* after it is fully overwritten.
+  - **Secondary:** purge +4.6*, targeted vs sham +2.6* (residence-confounded), 6c identity +1.1 n.s. / residence +1.5 (Holm 0.0726), 6d +0.46 equivalence (marginal).
+  - **Non-claims:** no early critical period; no direct plasticity measurement; no PQN-R optimizer split; one environment.
+  - **Recommendations:** reframe the title away from "early damage"; extend the PPO surgery to ≥12 seeds first.
+- **README:** added a top-level "Causal narrative" section with the figure. The stale "Status and results so far (2026-10-12)" header became "Results by phase (last updated 2026-10-13)", and the Status line was updated through 6d.
+- **Environment note:** the sandbox restarted again. `.venv` was rebuilt with the pinned versions and the git remote re-added (token-free URL).

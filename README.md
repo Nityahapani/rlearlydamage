@@ -46,10 +46,45 @@ pip install -e ".[dev,gpu]"        # CUDA 12 JAX
 pytest -q
 ```
 
-## Status
-Phases 0–6 done incl. the pre-registered replay-purge test (scaffold, baselines, deficit pilots, state surgery, causal ablations, PQN replication + replay-buffer surgery, 12-seed surgery + 1M-buffer persistence test + Asterix onset pilot). See `LOG.md`.
+## Causal narrative (synthesis, 2026-10-13)
 
-## Status and results so far (2026-10-12)
+Full synthesis: [`docs/causal_narrative.md`](docs/causal_narrative.md). Summary figure: `figures/causal_summary.png`, built by `scripts/make_causal_summary.py`, which asserts every plotted value verbatim against its `results/summary/` source.
+
+![causal summary](figures/causal_summary.png)
+
+- **The phenomenon (PPO, PQN, PQN-R; SpaceInvaders-MinAtar).** An early action restriction acts as pure delay: no early critical period was found. A late restriction, imposed after the agent is competent, causes unlearning during the mask. After removal the remaining cost is mostly lost time; only PQN-R shows a small excess (+4.3* delay-adjusted AUC).
+- **Central 1: in PPO, the damage is in the actor.**
+  - Actor main effect −12.7 [−13.8, −11.6] (89%). Critic −2.3 n.s.; Adam state −0.1 n.s.
+  - A clean-actor transplant recovers the deficit (+10.9* for movement, +12.9* for fire).
+  - Resetting the damaged actor is worse (−27.2*) and tracks learning from scratch: the damage is lost competence, not toxic state.
+  - A clean *behaviour* policy repairs almost as well as a transplant (+8.3*). The data channel is guidance, not a data scar.
+- **Central 2: in PQN-R, the network carries the damage robustly.**
+  - Network main effect −5.6* (84%) with a 100k buffer and −3.2* (57%) with 1M. On an identical buffer the damaged network still trails (6b B−D −2.9 [−4.0, −1.8]*).
+  - The buffer contributes only when it outlives the deficit: data transfer +0.0 at 100k, −1.7* at 1M.
+  - Its effect persists after the restriction-era data is fully overwritten (−2.9* in the "gone" phase), so it acts as a data→network mediator, not a stored scar.
+  - Caveat: the optimizer was bundled with the params by prespecified rule and is tested separately only in PPO.
+- **Secondary, qualified: replay composition (PQN-R, 1M buffer).**
+  - Purging restriction-era data helps (+4.6*). A targeted purge beats an age-matched sham (+2.6*), but that contrast is confounded with residence time.
+  - With exposure fully matched (6d, n=32, pre-registered), the identity of the removed transitions accounts for Δ = +0.46 [−0.19, +1.11]: equivalence at SESOI ±1.0 AUC, but only marginally (TOST p = 0.0495).
+- **Limits.**
+  - PPO surgery has n=4.
+  - One environment (gymnax #120), one deficit family, constant LR.
+  - Plasticity was not measured directly; the PQN-R optimizer is not separated.
+  - The "early damage" title is not supported. Suggested reframe: *deficit damage after competence*.
+  - Recommended next step: extend the PPO surgery to ≥12 seeds.
+
+## Status
+Phases 0–6d are done:
+- scaffold, baselines and deficit pilots;
+- PPO state surgery and causal ablations;
+- PQN/PQN-R replication and replay-buffer surgery;
+- 12-seed surgery, the 1M-buffer persistence test and the Asterix onset pilot;
+- the pre-registered purge, targeted-purge (6b), identity × residence (6c) and matched-identity (6d) tests;
+- the cross-algorithm synthesis.
+
+See `LOG.md`.
+
+## Results by phase (last updated 2026-10-13)
 
 Full details, tables and caveats are in [`LOG.md`](LOG.md). Every number traces to a manifest in `runs/` and a summary in `results/summary/`.
 
