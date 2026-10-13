@@ -164,9 +164,10 @@ def main():
         chk = float(np.abs(sum(phi.values()) - tot["AUC"]).max())
         L += ["", f"## Exact Shapley decomposition of total AUC damage (sums to DDD - CCC per seed; max |error| = {chk:.1e})", "",
               "| carrier | phi [95% CI] | share of total (ratio of means) | seeds < 0 |", "|---|---|---|---|"]
+        _, tlo, thi = tci(tot["AUC"])
         for cname in CARR:
-            L.append(f"| {cname} | {fmt(phi[cname])} | {phi[cname].mean() / tot['AUC'].mean() * 100:.0f}% | "
-                     f"{int((phi[cname] < 0).sum())}/{len(seeds)} |")
+            share = f"{phi[cname].mean() / tot['AUC'].mean() * 100:.0f}%" if (thi < 0 or tlo > 0) else "n/a (total CI includes 0)"
+            L.append(f"| {cname} | {fmt(phi[cname])} | {share} | {int((phi[cname] < 0).sum())}/{len(seeds)} |")
         L.append(f"| total | {fmt(tot['AUC'])} | 100% | {int((tot['AUC'] < 0).sum())}/{len(seeds)} |")
         # pre-registered replication criterion (LOG Phase 8, J3/J6/J7)
         _, _, tot_hi = tci(tot["AUC"])
