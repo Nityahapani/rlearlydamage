@@ -780,7 +780,7 @@ Analysis script: `scripts/analyze_pqn_identity_swap.py`.
 
 **Run.**
 - Seeds 0–11 ran on 2026-10-12. Seeds 12–31 ran on 2026-10-13, after another sandbox restart: the venv was rebuilt with identical pins, and the interrupted seed 12 was rerun from scratch; its partial manifest is kept outside the repo.
-- Before resuming, seed 0 was rerun under a scratch tag. All logged arm traces were bit-identical to the committed seed 0 (`results/checks/…p6d-idswapcheck-s0…`), so the rebuilt environment reproduces the run exactly.
+- Before resuming, seed 0 was rerun under a scratch tag. All logged arm traces were bit-identical to the committed seed 0, so the rebuilt environment reproduces the run exactly. That check summary was accidentally overwritten when moved (summary and manifest share a filename), so the check was rerun after the analysis, again bit-identical: `results/checks/p6d-rebuild-check-s0.{summary,manifest}.json`.
 - All 32 seeds have both arms. Seeds 0–11 pass the fork and pool consistency checks against Phase 6b, and all construction asserts passed.
 - The code is unchanged since the pre-registration commit a873dc0 (`git diff a873dc0 HEAD -- src scripts` is empty). Summary filenames carry intermediate result-only commit hashes.
 - The primary contrast was computed once, after n = 32. Analysis `results/summary/p6d_idswap-analysis.md`; figure `figures/p6d_idswap.png`.
