@@ -984,3 +984,11 @@ Baselines (not candidates): duration d, and acute deficit = eval(D, w1) − eval
 **Interpretation.**
 1. Simple policy divergence, representation drift, under-use of restricted actions and critic error each grow with restriction length. None of them explains recovery cost beyond what restriction length already explains.
 2. As currently measured, the "which agents recover slowly" question has little stable per-agent signal to explain. Answering it would need either much more reliable per-agent outcomes (more eval episodes and seeds) or experimental dissociation: interventions at a fixed duration that move one candidate without the others, as F/A did for policy drift.
+
+## 2026-10-13 — Paper draft (LaTeX, TMLR anonymous submission format)
+
+- `paper/main.tex` + `paper/refs.bib` (TMLR style files from JmlrOrg/tmlr-style-file), compiled with tectonic 0.15.0 to `paper/main.pdf` (21 pages incl. appendix). Figures copied from `figures/` into `paper/figures/`.
+- Working title: "Where Does Deficit Damage Live? Actor, Network, and Replay Carriers of Post-Competence Damage in Deep Reinforcement Learning".
+- Every number is taken from `results/summary/*.md`, converted to the single convention arm − reference (negative = harm). The PPO recovery-test numbers (previously printed only to stdout) were regenerated with the corrected t-interval script and saved as `results/summary/p2_recovery_all-analysis.md` so the paper's Table 1 has a committed source.
+- The repository URL is anonymized in the PDF (`[anonymized repository]`); switch to `\usepackage[preprint]{tmlr}` / `[accepted]` and fill in authors for a non-anonymous version.
+- Sandbox restart during this step again rolled `.git` back (to 02293d4); re-synced with `git reset --mixed origin/main` (479af27) before committing; working files were intact.
