@@ -1105,3 +1105,15 @@ Runs: J5a seeds 100–103 (975ad08), J5b seeds 104–107 (b634055); clean, ~1310
   - **This contradicts the Phase 7b post-hoc reliability of 0.30.** That estimate pooled within-duration ranks over n = 4 seeds per duration, mostly at short durations where between-seed spread is small. The paper's "ceiling ≈ 0.54 on any predictor" statement must be withdrawn for long restrictions.
   - Early-recovery cost (+10..+120) and the late deficit L_300 remain uncorrelated (Spearman −0.05; pilot −0.01). Slow early recoverers do not end worse.
 - Post-hoc note: the Phase 7b predictors (needing D-vs-C network comparisons) are not available from these summaries and were not re-tested, as pre-registered.
+
+## 2026-10-13 — Phase 8 results: J6 (reward sign flip, PPO SpaceInvaders)
+
+Runs: J6a seeds 0–3 (b634055), J6b seeds 4–7 (d072d3c); clean, ~1290 s / 1420 s. Analysis: `results/summary/p8_rflip_surgery-analysis.md`.
+
+- **Fork:** C at onset 45.6; D at removal 0.00 (the agent learns to avoid reward) vs C 58.2. Unlearning −45.6 [−50.3, −40.9]*.
+- **Primary:** total DDD − CCC −32.3 [−40.7, −23.9]*.
+  - Main effects (Holm): actor −32.8 [−36.9, −28.7]* (Holm p < 1e-4); critic +1.2 [−2.5, +4.9]; optimizer −1.9 [−4.0, +0.2] (Holm p = 0.14).
+  - Shapley: actor −32.4 [−36.5, −28.3]* (≈100%); critic +1.6; optimizer −1.5.
+- **Pre-registered criterion: REPLICATES.**
+- Clean actor into the damaged agent +31.9 [+24.2, +39.6]*. The hybrid vs clean is −0.4 [−3.4, +2.5]. A damaged actor alone gives −31.4*.
+- **Secondary:** delay-adjusted AUC −18.6 [−27.2, −9.9]*; end −10.7 [−22.0, +0.6]. Unlike the action mask, the reward flip causes damage beyond lost time within the 150-update budget. It is again carried entirely by the actor.
