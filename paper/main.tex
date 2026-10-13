@@ -263,6 +263,11 @@ The same pattern replicates with value-based learners whose meaning-matched onse
 \item \emph{After removal}, PQN recovers to within lost time (delay-adjusted AUC $-1.4\ci{-3.5}{+0.7}$). PQN-R is the one learner with a recovery cost beyond lost time: delay-adjusted AUC $-4.3\ci{-7.0}{-1.6}$. The cost is transient; by $+650$ updates the delay-adjusted difference is $-0.2\ci{-7.7}{+7.3}$.
 \end{itemize}
 
+\paragraph{How much depends on the delay baseline? (post-hoc)}
+The pause baseline $C(w_1+k-L)$ assumes the restricted agent lost exactly the window's training time. It is one of several defensible counterfactuals, so we bracket it with two others (Table~\ref{tab:baselines} in the appendix). The \emph{same-update} baseline $C(w_1+k)$ counts all lost time as damage and is an upper bound on damage. The \emph{competence-matched} baseline $C(t^\star+k)$ restarts the clean run from the update $t^\star$ at which it first had the restricted agent's competence at removal. It therefore treats unlearning itself as lost time and asks a narrower question: from equal competence, does the restricted agent learn more slowly than a clean one? A slower rate is what lost plasticity, or a lasting exploration or data deficit, would predict.
+Late-restricted agents had fallen to a competence the clean run had passed after only $t^\star\approx 12$--$35$ updates. Against the same-update baseline every late arm is worse (PPO movement AUC $-10.1\sig$; PQN-R $-8.6\sig$). Against the competence-matched baseline every late arm is \emph{better}: PPO movement $+18.0\ci{+3.8}{+32.2}$, fire $+14.4\ci{+7.0}{+21.8}$, PQN $+17.5\ci{+16.6}{+18.3}$, PQN-R $+7.2\ci{+3.5}{+11.0}$. Restricted agents relearn faster than they first learned, a ``savings'' effect.
+So the sign of ``damage'' depends on the counterfactual. What does not depend on it is the ordering. The pause baseline lies between an upper bound that charges every lost update as damage and a rate comparison that shows no learning-rate deficit. The persistent cost we attribute to the late deficit is bounded by that interval, and it reflects lost competence, not impaired learning.
+
 \paragraph{Summary.}
 The timing pattern is the reverse of a critical period. Damage beyond lost time requires that something has been learned that can be lost, and even then it is relearned. Removing movement actions after the agent has learned to dodge is what hurts.
 
@@ -438,6 +443,7 @@ The two arms purge either R or U with identical pool trajectories. They are matc
 \item It is statistically equivalent to zero within the pre-registered $\pm1$ margin, though only just (TOST $p=0.0495$; 90\% interval $[-0.08,+1.00]$).
 \item The pre-registered decision was ``no meaningful identity effect''.
 \end{itemize}
+We read this result narrowly. The equivalence call is fragile (post-hoc sensitivity analysis): it holds for bounds of $\pm1.00$ and wider, fails at $\pm0.75$ (TOST $p=0.18$), and needs $\pm1.24$ at $\alpha=0.01$. The point estimate is positive, in the direction of the earlier rungs, and the design's minimum detectable effect (80\% power) is $0.92$ AUC. Our claim is therefore only that a data-identity effect of $\geq1$ AUC point (about 30\% of the targeted-purge benefit) is rejected. Smaller effects remain compatible with the data, and we do not claim that the identity effect is zero.
 
 \paragraph{Reading the ladder.}
 As confounds are matched, the apparent harm of restriction-era data falls from $+4.6$ to $+2.6$ to $+1.1$ to $+0.46$. The network term persists at every rung. Restriction-era data mediate damage while the network trains on them (Section~\ref{sec:pqnr}). Removing them confers at most a small, early benefit beyond what any fresh, long-resident replacement data would.
@@ -499,6 +505,8 @@ The criteria were: R0, measurement reliability; R1, pooled rank correlation with
 All four were reliable measurements (R0: 0.87 to 0.99) and correlated with recovery cost when pooled across durations. None passed: within-duration correlations were $+0.05$, $-0.11$, $+0.13$ and $-0.35$, and every candidate \emph{reduced} out-of-fold accuracy (gains of $-25\%$, $-8\%$, $-8\%$ and $-83\%$). The pooled associations come entirely from the shared trend with duration. One pre-specified secondary analysis, re-computing the metrics early in recovery, was not run; we disclose this as a deviation (Appendix~\ref{app:prov}).
 
 A post-hoc check explains why prediction is so hard. Within a duration, the outcome itself agrees only weakly between odd and even checkpoints (Spearman--Brown reliability 0.30). Early- and late-recovery costs are uncorrelated ($\rho=-0.01$). The ceiling on any predictor's within-duration correlation is therefore about 0.54. With 4 seeds and 64-episode evaluations, ``recovers slowly at a fixed duration'' is mostly noise; the reliable variation is the duration effect itself.
+
+This changes what the null means. Because the outcome is unreliable, the predictor study \emph{cannot distinguish} ``no removal-time signature exists'' from ``our outcome measure is too noisy to reveal one''. We therefore do not claim that recovery cost is unpredictable. Our claim is narrower: none of the four pre-specified measurements adds out-of-fold information beyond restriction length at this measurement precision. A decisive test would need a more reliable outcome, for example more evaluation episodes, several recovery replicates per removal state (which forks make possible), or an outcome averaged over a longer window. We list this as future work rather than as a finding.
 
 %=====================================================================
 \section{Discussion}
@@ -667,6 +675,28 @@ F $-$ C & & & $-20.0\ci{-33.5}{-6.5}\sig$ & $-13.2\ci{-20.0}{-6.4}\sig$ \\
 A $-$ C & & & $-19.0\ci{-36.0}{-2.1}\sig$ & $-14.4\ci{-18.5}{-10.3}\sig$ \\
 \bottomrule
 \end{tabular}
+\end{table}
+
+\begin{table}[h]
+\centering
+\caption{Post-hoc: recovery after late restrictions under three counterfactual baselines (AUC of restricted $-$ baseline over checkpoints $+10..K$; paired 95\% $t$-intervals; $n=4$). B1 same-update $C(w_1+k)$; B2 pause $C(w_1+k-L)$, the paper's delay adjustment; B3 competence-matched $C(t^\star+k)$, where $t^\star$ is the first checkpoint at which the clean run's 3-checkpoint moving average reaches the restricted agent's competence at removal. Negative = restricted agent worse. Source: \url{p8_alt_baselines-posthoc.md}.}
+\label{tab:baselines}
+\small
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lllcccc}
+\toprule
+agent & arm & $K$ & $t^\star$ (mean) & B1 same-update & B2 pause & B3 competence-matched \\
+\midrule
+PPO   & move late $[100,150)$ & 250 & 35 & $-10.1\ci{-13.0}{-7.2}\sig$ & $+1.1\ci{-2.9}{+5.2}$ & $+18.0\ci{+3.8}{+32.2}\sig$ \\
+PPO   & fire late $[100,150)$ & 250 & 30 & $-15.2\ci{-24.8}{-5.6}\sig$ & $-4.0\ci{-16.4}{+8.4}$ & $+14.4\ci{+7.0}{+21.8}\sig$ \\
+PQN   & late $[250,350)$ & 650 & 12 & $-4.6\ci{-7.2}{-2.0}\sig$ & $-1.4\ci{-3.5}{+0.7}$ & $+17.5\ci{+16.6}{+18.3}\sig$ \\
+PQN-R & late $[250,350)$ & 650 & 25 & $-8.6\ci{-11.6}{-5.6}\sig$ & $-4.3\ci{-7.0}{-1.6}\sig$ & $+7.2\ci{+3.5}{+11.0}\sig$ \\
+\midrule
+PPO   & move early $[0,50)$ & 250 & 8 & $-0.1\ci{-15.6}{+15.4}$ & $+15.0\ci{-0.2}{+30.1}$ & $+12.5\ci{-5.1}{+30.1}$ \\
+PQN   & early $[0,100)$ & 900 & 15 & $-0.5\ci{-4.5}{+3.5}$ & $+6.4\ci{+2.4}{+10.5}\sig$ & $+5.4\ci{+1.8}{+8.9}\sig$ \\
+PQN-R & early $[0,100)$ & 900 & 40 & $-2.7\ci{-5.2}{-0.1}\sig$ & $+2.7\ci{-0.2}{+5.5}$ & $+0.4\ci{-2.3}{+3.1}$ \\
+\bottomrule
+\end{tabular}}
 \end{table}
 
 \begin{figure}[h]
