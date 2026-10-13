@@ -773,3 +773,40 @@ Analysis script: `scripts/analyze_pqn_identity_swap.py`.
 - 12/32 seeds complete (0–11). Each has both arms; all Phase 6b consistency checks are True (forks and pool stats bit-identical), and the construction asserts passed. Summaries are committed as they finish. Their filenames carry intermediate commit hashes; those commits contain result files only (`git diff a873dc0 HEAD -- src scripts` is empty).
 - Seed 12 is in progress. The queue (`scripts/queue_p6d_idswap.sh`) is resumable: it skips complete seeds and deletes and reruns any partial seed from scratch.
 - Operational note: during long in-turn waits the sandbox clock stopped advancing (the VM appears to be suspended), so the run only progresses while the sandbox is active. The primary contrast has not been computed. The analysis runs only at n = 32, as pre-registered.
+
+## 2026-10-13 — Phase 6d matched-identity purge: RESULTS (n = 32, as pre-registered)
+
+**Correction to the 2026-10-12 status note.** The "sandbox clock stopped advancing / VM suspended" explanation was wrong. I had issued several wait commands in one tool block, and those run in parallel, so five 10-minute waits took 10 minutes in total. No run was affected; only my monitoring was misread.
+
+**Run.**
+- Seeds 0–11 ran on 2026-10-12. Seeds 12–31 ran on 2026-10-13, after another sandbox restart: the venv was rebuilt with identical pins, and the interrupted seed 12 was rerun from scratch; its partial manifest is kept outside the repo.
+- Before resuming, seed 0 was rerun under a scratch tag. All logged arm traces were bit-identical to the committed seed 0 (`results/checks/…p6d-idswapcheck-s0…`), so the rebuilt environment reproduces the run exactly.
+- All 32 seeds have both arms. Seeds 0–11 pass the fork and pool consistency checks against Phase 6b, and all construction asserts passed.
+- The code is unchanged since the pre-registration commit a873dc0 (`git diff a873dc0 HEAD -- src scripts` is empty). Summary filenames carry intermediate result-only commit hashes.
+- The primary contrast was computed once, after n = 32. Analysis `results/summary/p6d_idswap-analysis.md`; figure `figures/p6d_idswap.png`.
+
+**Primary.**
+- Δ = AUC(purge_R) − AUC(purge_U) = **+0.46**, 95% CI **[−0.19, +1.11]**, 90% CI **[−0.08, +0.998]**. t(31) = 1.44, p = 0.16; 19/32 seeds > 0; SD 1.80 (the planning SD was 2.0); dz = 0.25.
+- TOST vs ±1.0: p_lower < 0.0001, p_upper = 0.0495.
+- **Pre-registered decision C: no meaningful identity effect (equivalence within ±1.0 AUC).**
+- The equivalence call is marginal. The 90% upper bound sits 0.0017 below the SESOI, which is robust to the 4-decimal storage rounding (≤ 0.00005) but would flip with a slightly different SESOI or a few more unlucky seeds. The point estimate is positive, in the direction of the earlier contrasts. The defensible statement is: an identity effect of 1 AUC point or more is rejected at α = 0.05; smaller effects (≲ 1 point) remain compatible.
+
+**Secondary (descriptive).**
+- Windows: early +0.20 [−0.28, +0.68]; middle +0.48 [−0.19, +1.15]; late +0.55 [−0.41, +1.50].
+- Greedy-eval AUC: +0.72 [−1.68, +3.13].
+- Column parity: even seeds +0.44, odd seeds +0.48. No column artifact.
+- Sign-flip p (Monte Carlo) 0.159; Wilcoxon p 0.115; leave-one-seed-out Δ +0.35..+0.58.
+- Exposure:
+  - purge_R: realised sampled R 0; expected U 0.325M; pool 0.325M.
+  - purge_U: realised sampled R 0.325M (per seed 0.324–0.326); U 0; pool 0.325M.
+  - The pool-share difference between arms is exactly 0 at every checkpoint.
+- TD loss over the first 30 updates: purge_R 0.770, purge_U 0.850.
+
+**Reading.**
+- With slots, ages, pool, exposure, retained residence, seams and learner state all matched, keeping restriction-era transitions instead of matched same-epoch clean transitions costs less than 1 AUC point, and the estimate is about +0.5.
+- Swapped exposure here is ~0.33M sampled transitions (20.5% of the buffer). That is comparable to Phase 6c's B − Cp (0.31M, +1.1, n.s.) and to the post-hoc identity main effect (+1.1, borderline).
+- Taken together, the identity of the restriction-era data is at most a small carrier of damage at this dose.
+- **What remains:**
+  - The large purge benefits of Phases 6/6b (B − A +3.5–4.6) are mostly not explained by the restricted data's identity. The candidates are replacement residence (Phase 6c main effect +1.5) and refreshed or extra replacement data in general.
+  - The network carrier is the robust finding: B − D −2.9* with identical buffers, plus the surgery results.
+- **Scope:** Δ compares R with U (relative value as retained data). It cannot separate "R harms" from "U helps", which would need a retain-both arm. The result covers one dose (20.5% of the buffer, ~0.33M samples), one env and one restriction.
