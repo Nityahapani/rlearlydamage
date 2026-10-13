@@ -1117,3 +1117,42 @@ Runs: J6a seeds 0–3 (b634055), J6b seeds 4–7 (d072d3c); clean, ~1290 s / 142
 - **Pre-registered criterion: REPLICATES.**
 - Clean actor into the damaged agent +31.9 [+24.2, +39.6]*. The hybrid vs clean is −0.4 [−3.4, +2.5]. A damaged actor alone gives −31.4*.
 - **Secondary:** delay-adjusted AUC −18.6 [−27.2, −9.9]*; end −10.7 [−22.0, +0.6]. Unlike the action mask, the reward flip causes damage beyond lost time within the 150-update budget. It is again carried entirely by the actor.
+
+## 2026-10-13 — Phase 8 results: J7 (PPO 2×256 architecture)
+
+Runs: J7a seeds 0–3 (d072d3c), J7b seeds 4–7 (8abfef6); clean, ~2390 s each. Analysis: `results/summary/p8_h256_surgery-analysis.md`.
+
+- **Fork:** C at onset 46.9; D at removal 18.3 vs C 68.2. Unlearning −28.7 [−36.4, −21.0]*.
+- **Primary:**
+  - total −19.7 [−23.7, −15.6]*.
+  - Main effects (Holm): actor −15.7 [−17.6, −13.8]* (p < 1e-4); critic −2.5 [−4.5, −0.5]* (Holm p = 0.040); optimizer −0.4 [−2.6, +1.7]. Optimizer TOST ±3 p = 0.013 (equivalent); critic not equivalent (p = 0.30).
+  - Shapley: actor −16.1 [−18.0, −14.1]* (82%), critic −2.9 [−5.4, −0.4]* (15%), optimizer −0.7 (4%).
+- **Pre-registered criterion: REPLICATES.**
+- Clean-actor rescue +15.7 [+11.7, +19.7]*. Delay-adjusted AUC −5.1 [−8.3, −1.8]*; end −2.4 [−7.8, +2.9].
+- **Reading:** the 2×128 pattern (actor ≈ 90%, small transient critic, no optimizer effect) holds at double width.
+
+## 2026-10-13 — Phase 8 wrap-up: paper revision
+
+All Phase 8 jobs are complete. The queue ran 16:48–22:49 UTC (~6 h, inside the 8 h budget), with two short dirty-tree stops (see J1/J2 entry and the J4 commit).
+
+**Post-hoc analyses (labelled as such in the paper):**
+- `posthoc_alt_baselines.py`: same-update / pause / competence-matched baselines. Late-restricted agents relearn faster than clean agents from equal competence (savings): PPO move +18.0*, fire +14.4*, PQN +17.5*, PQN-R +7.2*.
+- `posthoc_6d_sensitivity.py`: rung-4 TOST holds for ±1.00 and wider, fails at ±0.75, and needs ±1.24 at α = 0.01; MDE 0.92.
+- `posthoc_power.py`: MDEs of the remaining n = 4 nulls.
+
+**Paper changes, mapped to the ten reviewer weaknesses:**
+1. Generalizability: new Section "Does the localization generalize? (pre-registered)": Asterix (no damage to localize; timing replicates), reward flip (replicates), 2×256 (replicates).
+2. n = 4 power: PPO surgery to n = 12; "Power" paragraph; MDE table.
+3. PONR null: confirmatory d = 300 test (inconclusive; large deficits excluded). Claims reworded to "not detected".
+4. Non-additive 89%: replaced by exact Shapley values (90% at n = 12). Noted that 2×2 PQN-R main effects equal Shapley values.
+5. PQN-R bundling: parameters carry 87% of the network rescue; RAdam state is n.s. apart from a transient.
+6. PPO data-swap confound: ratio-neutral arms show the benefit runs through importance weighting (off-policy distillation of the clean actor).
+7. 6d borderline: claim narrowed to "effects of ≥ 1 AUC are excluded", with a sensitivity analysis.
+8. Delay baseline: three-baseline table and paragraph.
+9. Predictor reliability: the claim is narrowed. The 0.30 reliability is contradicted at d = 300 (0.95), and the ceiling interpretation is withdrawn.
+10. Asterix: replication completed.
+
+**Other:**
+- Abstract, contributions, discussion, limitations, conclusion, provenance table and deviations updated.
+- `make_causal_summary.py` updated (20 verified numbers).
+- Paper recompiled (25 pages).

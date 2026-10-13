@@ -19,7 +19,7 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt  # noqa: E402
 
-ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+ROOT = os.environ.get("RLED_ROOT", os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 S = os.path.join(ROOT, "results", "summary")
 
 P3 = "20261011-p3-surgery-move-late-analysis.md"
@@ -32,25 +32,31 @@ PURH = "p6_purge-posthoc.md"
 P6B = "p6b_targeted-analysis.md"
 P6C = "p6c_2x2-analysis.md"
 P6D = "p6d_idswap-analysis.md"
+P8 = "p8_ppo_surgery_n12-analysis.md"
+P8R = "p8_rflip_surgery-analysis.md"
+P8H = "p8_h256_surgery-analysis.md"
+Q8 = "p8_pqnr_split-analysis.md"
 
 # (label, est, lo, hi, source, decimals, status)
 # status: "pre" = pre-registered / primary design contrast, "post" = post-hoc
 PANEL_A = [
-    ("Actor (policy params) main effect\nmove, n=4", -12.7, -13.8, -11.6, P3, 1, "pre"),
-    ("Critic main effect\nmove, n=4", -2.3, -6.2, +1.7, P3, 1, "pre"),
-    ("Optimizer-state main effect\nmove, n=4", -0.1, -2.8, +2.6, P3, 1, "pre"),
-    ("Clean-actor transplant into damaged agent\nmove, n=4", +10.9, +7.6, +14.2, P4M, 1, "pre"),
-    ("Clean-actor transplant\nfire, n=4", +12.9, +1.3, +24.5, P4F, 1, "pre"),
+    ("Actor main effect\nmove, n=12", -13.7, -14.9, -12.5, P8, 1, "pre"),
+    ("Critic main effect\nmove, n=12", -1.9, -3.5, -0.4, P8, 1, "pre"),
+    ("Optimizer-state main effect\nmove, n=12 (TOST \u00b13 p=0.0001)", +0.2, -0.9, +1.3, P8, 1, "pre"),
+    ("Clean-actor transplant into damaged agent\nmove, n=12", +13.3, +11.0, +15.6, P8, 1, "pre"),
+    ("Clean behaviour data, importance-weighted\nmove, n=12", +8.3, +6.1, +10.5, P8, 1, "pre"),
+    ("Clean behaviour data, ratio-neutral\nmove, n=12", -5.4, -7.0, -3.7, P8, 1, "pre"),
+    ("Actor main effect\nreward flip, n=8", -32.8, -36.9, -28.7, P8R, 1, "pre"),
+    ("Actor main effect\nmove, 2x256 network, n=8", -15.7, -17.6, -13.8, P8H, 1, "pre"),
     ("Actor reset to fresh init\nmove, n=4", -27.2, -39.4, -15.1, P4M, 1, "pre"),
-    ("Actor reset to fresh init\nfire, n=4", -23.4, -35.6, -11.1, P4F, 1, "pre"),
 ]
 PANEL_B = [
     ("Network main effect\n100k buffer, n=12", -5.6, -6.3, -4.9, Q100, 1, "pre"),
     ("Buffer main effect\n100k buffer, n=12", -1.0, -2.0, -0.1, Q100, 1, "pre"),
+    ("Clean parameters, damaged opt + buffer\n(rescue) 100k, n=8", +6.4, +4.8, +8.0, Q8, 1, "pre"),
+    ("Clean optimizer state, damaged params + buffer\n(rescue) 100k, n=8", +1.3, -0.4, +3.1, Q8, 1, "pre"),
     ("Network main effect\n1M buffer, n=8", -3.2, -4.2, -2.2, Q1M, 1, "pre"),
     ("Buffer main effect\n1M buffer, n=8", -2.4, -3.4, -1.4, Q1M, 1, "pre"),
-    ("Damaged vs clean network,\nidentical buffer (6b B-D), n=12", -2.9, -4.0, -1.8, P6B, 1, "pre"),
-    ("Damaged vs clean network,\nidentical buffer (purge B-E), n=8", -1.9, -3.0, -0.8, PURH, 1, "post"),
 ]
 PANEL_C = [
     ("Purge restriction-era data vs retain\n(B-A), n=8", +4.6, +2.2, +6.9, PUR, 1, "pre"),
@@ -105,26 +111,26 @@ def forest(ax, rows, title, color, xlim=None, sesoi=False):
 def main():
     for rows in (PANEL_A, PANEL_B, PANEL_C):
         verify(rows)
-    fig, axes = plt.subplots(3, 1, figsize=(10, 12.5),
-                             gridspec_kw={"height_ratios": [7, 6, 5]})
+    fig, axes = plt.subplots(3, 1, figsize=(10, 13.2),
+                             gridspec_kw={"height_ratios": [9, 6, 5]})
     forest(axes[0], PANEL_A,
-           "A  PPO actor-state surgery (central) — SpaceInvaders, late restriction",
-           "#1f5fa8", xlim=(-42, 27))
+           "A  PPO state surgery and behaviour swap — SpaceInvaders, late window",
+           "#1f5fa8", xlim=(-42, 20))
     forest(axes[1], PANEL_B,
-           "B  PQN-R network vs buffer surgery (central) — late restriction",
-           "#b5452a", xlim=(-7, 1.5))
+           "B  PQN-R parameters / optimizer / buffer surgery — late restriction",
+           "#b5452a", xlim=(-7, 9))
     forest(axes[2], PANEL_C,
            "C  Replay composition (secondary, qualified) — PQN-R, 1M buffer",
            "#5b7f2b", xlim=(-1.5, 7.5), sesoi=True)
     fig.text(0.01, 0.005,
              "Filled marker = 95% CI excludes 0; circle = pre-registered/design contrast; "
-             "diamond = post-hoc. Negative in A-B = carrier holds harm; positive in C = "
+             "diamond = post-hoc.\nMain effects: negative = carrier holds harm; transplants/rescues: positive = clean component helps; positive in C = "
              "removing/altering the data helps.\nAUC scales differ between PPO and PQN-R; "
              "compare within panels. Every value is asserted verbatim against its "
              "results/summary/*.md source by this script.",
              fontsize=7.8, color="0.25")
-    fig.tight_layout(rect=(0, 0.035, 0.88, 1))
-    out = os.path.join(ROOT, "figures", "causal_summary.png")
+    fig.tight_layout(rect=(0, 0.05, 0.88, 1))
+    out = os.environ.get("RLED_FIG_OUT", os.path.join(ROOT, "figures", "causal_summary.png"))
     fig.savefig(out, dpi=150)
     print("verified", len(PANEL_A) + len(PANEL_B) + len(PANEL_C), "numbers; wrote", out)
 
