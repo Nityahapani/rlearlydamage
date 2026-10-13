@@ -1,0 +1,90 @@
+{
+  "allow_dirty": false,
+  "config": {
+    "BUFFER_LEN": 781,
+    "BUFFER_SIZE": 100000,
+    "DEFICIT": "action_mask",
+    "DEFICIT_END": 0,
+    "DEFICIT_PARAMS": {
+      "allowed_actions": [
+        0,
+        3
+      ]
+    },
+    "DEFICIT_START": 0,
+    "ENV_NAME": "SpaceInvaders-MinAtar",
+    "EPS_DECAY_STEPS": 1000000,
+    "EPS_FINISH": 0.05,
+    "EPS_START": 1.0,
+    "GAMMA": 0.99,
+    "GRAD_STEPS_PER_UPDATE": 64,
+    "HIDDEN": 128,
+    "LAMBDA": 0.65,
+    "LAYERNORM": true,
+    "LR": 0.0005,
+    "MAX_GRAD_NORM": 10.0,
+    "MINIBATCH_SIZE": 128,
+    "NUM_ENVS": 128,
+    "NUM_EPOCHS": 2,
+    "NUM_MINIBATCHES": 32,
+    "NUM_STEPS": 32,
+    "NUM_UPDATES": 2441,
+    "REPLAY": true,
+    "REPLAY_BATCH": 128,
+    "REPLAY_RATIO": 2.0,
+    "SEAM_MASK": false,
+    "STEPS_PER_UPDATE": 4096,
+    "TOTAL_TIMESTEPS": 10000000,
+    "protocol": {
+      "allowed": [
+        0,
+        3
+      ],
+      "arms": [
+        "DDD",
+        "CDD",
+        "DCD"
+      ],
+      "assignment_rule": "network = params + optimizer state (together); buffer = all buffer arrays; env state, obs, RNG, update counter, exploration schedule, deficit bounds from C; no target network",
+      "buffer_size": 100000,
+      "buffer_turnover_updates": 24.4140625,
+      "eval_envs": 64,
+      "eval_eps": [
+        0.0,
+        0.05
+      ],
+      "eval_every": 10,
+      "eval_seed": 10000,
+      "overwrite_diagnostics": "tag_window = [l0, l1): buf_frac_window = share of buffer slots written during the restriction window; sample_frac_window = share of sampled replay transitions from it",
+      "recovery": 650,
+      "variant": "pqnr",
+      "window_updates": [
+        250,
+        350
+      ]
+    }
+  },
+  "created_utc": "2026-10-13T18:36:25.547643+00:00",
+  "git": {
+    "commit": "bfca538e8166e42f0689c4101d2b3b3ff670320a",
+    "dirty": false
+  },
+  "name": "p5-p8-split-late-pqnr-SpaceInvaders-MinAtar",
+  "packages": {
+    "flax": "0.12.10",
+    "gymnax": "0.0.9",
+    "jax": "0.11.2",
+    "jaxlib": "0.11.2",
+    "numpy": "2.5.4",
+    "optax": "0.2.8",
+    "rliable": null
+  },
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.41",
+  "python": "3.13.16",
+  "seeds": [
+    4,
+    5,
+    6,
+    7
+  ]
+}

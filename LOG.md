@@ -1065,3 +1065,16 @@ The queue failed once: after J1b, every remaining job hit the dirty-tree guard b
   - KL(π_b‖π_learner) 0.13–0.18 (IS) vs 0.76–1.07 (ratio-neutral).
 - **Reading (per the pre-registration):** the pre-registered positive reading is not supported. Clean data content does not help a damaged learner without importance weights. The Phase 3 data-swap benefit runs through the importance-weighted update, which pulls the learner toward the behaviour actor (behaviour KL is 5× lower under IS): off-policy distillation of the clean actor. This is consistent with the actor being the carrier.
 - **Caveat:** the ratio-neutral arm is not a "pure data" arm either. It treats off-policy actions as on-policy, which biases the gradient. No arm cleanly isolates data content from the update rule.
+
+## 2026-10-13 — Phase 8 results: J4 (PQN-R parameters vs optimizer state, 100k buffer)
+
+Runs: J4a seeds 0–3 (3f952c0), J4b seeds 4–7 (bfca538); both clean, ~1130 s each. Old cells come from 77afd57 and c75175b (CD = CCD, DD, CC). **Bit-identity: Phase 8 DDD == earlier DD for all 8 seeds (PASS).** Analysis: `scripts/analyze_p8_pqnr_split.py` → `results/summary/p8_pqnr_split-analysis.md`.
+
+- **Primary (Holm across 2, AUC +10..+650, ε = 0.05):**
+  - parameter rescue CDD − DDD **+6.4 [+4.8, +8.0]*** (Holm p = 0.0001);
+  - optimizer rescue DCD − DDD +1.3 [−0.4, +3.1] (Holm p = 0.12, n.s.).
+- **Secondary:**
+  - 2×2 at the damaged buffer: params main effect +6.2 [+5.1, +7.3]*; optimizer main effect +1.1 [+0.4, +1.9]* (small); interaction −0.4 (AUC).
+  - Clean parameters alone recover 87% of the network rescue (CCD − DDD +7.3); clean RAdam state alone recovers 18%.
+  - Transient: clean parameters with stale RAdam moments crash at +10 (CDD 11.1 vs CCD 29.9; interaction at +10 +17.1*). This is gone by +150.
+- **Reading:** in PQN-R the network carrier is the parameters. Optimizer state contributes at most a small, early part.
