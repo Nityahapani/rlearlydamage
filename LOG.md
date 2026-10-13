@@ -953,3 +953,34 @@ Baselines (not candidates): duration d, and acute deficit = eval(D, w1) − eval
 - **P2:** feature distillation of D's a1 toward the twin's a1 on the bank, with the actor head free. Active control: matched-strength logit anchoring.
 - **P3:** a KL penalty only on movement-relevant states, toward the twin's movement probabilities. Active control: the same penalty on the irrelevant half.
 - **P4:** at removal, transplant the clean twin's critic into D (keeping D's actor and Adam state), vs D_online. A second arm runs critic distillation during the mask.
+
+### Phase 7b results — removal-time predictors of recovery cost (2026-10-13)
+
+**Provenance:** pre-specification aabd1ae; analysis script committed before running (39c3049); run once. Outputs: `results/summary/p7b_predictors-analysis.md` (plus `-units.json`) and `figures/p7b_predictors.png`. No training; the saved pilot removal checkpoints were used. Self-checks: identical params give 0 on all four metrics, and the numpy forward pass matches the JAX probe forward.
+
+| Predictor | R0 reliability | R1 pooled ρ | R2 within-d ρ (per-d signs) | R3 LOSO gain | Result |
+|---|---|---|---|---|---|
+| P1 kl_clean | +0.98 ✓ | −0.57 ✓ | +0.05 (2/4 negative) ✗ | −25% ✗ | fail |
+| P2 cka_clean | +0.99 ✓ | −0.68 ✓ | −0.11 (1/4) ✗ | −8% ✗ | fail |
+| P3 move_gap_rel | +0.97 ✓ | −0.15 ✗ | +0.13 (1/4) ✗ | −8% ✗ | fail |
+| P4 value_err_clean | +0.87 ✓ | −0.54 ✓ | −0.35 (3/4) ✓ | −83% ✗ | fail |
+| acute deficit (baseline) | – | +0.64 | +0.17 | −16% | – |
+
+**Verdict (pre-specified rule): no predictor passes R0–R3.**
+- Conclusion: there is no robust removal-time predictor of recovery cost among policy divergence, representation divergence, relevant-state action change and critic error.
+- **No causal test is pre-registered from this analysis.**
+- Nearest miss: critic error (P4) meets R0–R2 but makes out-of-fold prediction much worse, driven by one extreme unit (seed 3, d = 300, nMSE 30.6). It is not a candidate under the rule.
+- All four predictors are reliable measurements and all rise steadily with duration. Their pooled correlations with recovery cost come from the shared duration trend, and none adds anything once duration is known.
+- The secondary outcome (A_early) gives the same picture: within-duration |ρ| ≤ 0.09 for all four.
+
+**Post-hoc (labelled): the outcome's own reliability** (`scripts/posthoc_ponr_outcome_reliability.py`).
+- Within duration, odd- vs even-checkpoint A_d agree at ρ +0.19 (Spearman-Brown reliability 0.30).
+- Early vs late recovery cost agree at ρ −0.01.
+- The ceiling on any predictor's within-duration correlation is therefore ≈ 0.54.
+- With 4 seeds and 64-episode evals, whether a given agent "recovers slowly" at a fixed duration is mostly noise. The reliable variation in recovery cost is the duration effect, concentrated at d = 300.
+
+**Deviation from the pre-specification (disclosed).** Secondary item 1 (the four metrics at +10/+20/+30 early recovery, from a deterministic re-run) was **not run**. Its outcome is the same low-reliability A_d/A_early, so it could not change the conclusion. It stays available: the re-run is deterministic and would reproduce the pilot exactly. Secondary item 2 (context) stands as already logged: Phase 4 F/A drift suppression moved KL-from-onset at removal without changing recovery AUC.
+
+**Interpretation.**
+1. Simple policy divergence, representation drift, under-use of restricted actions and critic error each grow with restriction length. None of them explains recovery cost beyond what restriction length already explains.
+2. As currently measured, the "which agents recover slowly" question has little stable per-agent signal to explain. Answering it would need either much more reliable per-agent outcomes (more eval episodes and seeds) or experimental dissociation: interventions at a fixed duration that move one candidate without the others, as F/A did for policy drift.
