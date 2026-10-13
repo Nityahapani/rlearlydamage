@@ -870,3 +870,35 @@ User request: finish the cross-algorithm causal narrative, keeping PPO actor-sta
 - **STOP** otherwise. Report: no point of no return up to 300 updates (2.46M steps) of movement restriction within a 250-update budget; damage remains lost time. Predictor trajectories would be reported descriptively only.
 
 **What the pilot may set** (and nothing else): the Stage 1 duration grid, the SESOI and "rescuable" cut-off, and a predictor shortlist of at most 3 (plus acute deficit and duration as baseline covariates). Stage 1 will test the shortlist on fresh seeds and on the held-out fire intervention. Stage 2 (preventing the crossing, against an active control matched on acute collapse) will be pre-registered only after Stage 1.
+
+### Phase 7 Stage 0 pilot — results (2026-10-13)
+
+**Run:** `runs/20261013-p7-ponr-pilot-move-ppo-SpaceInvaders-MinAtar-ba1802f.json` (commit ba1802f, clean tree, 2683 s). Analysis: `scripts/analyze_ponr.py` → `results/summary/p7_ponr_pilot-analysis.md`, `figures/p7_ponr_pilot.png`. Analysis run once, with the gate rule fixed beforehand.
+
+**Reproducibility:** at d = 50, the removal evals of C and D equal Phase 4 exactly for all four seeds (the nested design reproduces the Phase 4 forks).
+
+| d (updates) | eval at removal D vs C | **L_d (late, delay-adj.)** | A_d (delay-adj. AUC) | raw AUC vs C(w1+k) | transplant − D_online | transplant vs C(w1+k) |
+|---|---|---|---|---|---|---|
+| 50 | 18.5 vs 58.7 | **−0.4 [−9.5, +8.7]** | −0.3 [−3.7, +3.1] | −11.5* | +8.3* | −3.2 [−6.8, +0.5] |
+| 100 | 15.3 vs 70.4 | **+4.8 [−4.3, +13.8]** | −1.5 [−7.0, +4.0] | −22.6* | +18.2* | −4.4 [−9.5, +0.7] |
+| 200 | 13.4 vs 99.3 | **+2.3 [−7.2, +11.7]** | −0.8 [−3.0, +1.3] | −33.9* | +26.7* | −7.1 [−14.2, −0.1]* |
+| 300 | 7.3 vs 111.3 | **−1.4 [−8.2, +5.5]** | **−7.6 [−10.6, −4.6]*** | −48.8* | +42.8* | −6.1 [−14.2, +2.1] |
+
+**Gate decision: STOP**, by the pre-written rule:
+- no d has L_d ≤ −5 with a CI below 0;
+- the seed means (−0.4, +4.8, +2.3, −1.4) do not decrease monotonically.
+
+As pre-specified, Stage 1 is **not** run. Predictor results are descriptive only.
+
+**What the pilot shows:**
+1. **No point of no return within 300 updates (2.46M steps) of movement restriction**, three times the agent's whole pre-onset history. Lengthening the mask lowers competence at removal (unmasked eval 45.4 at onset → 18.5, 15.3, 13.4, 7.3). Raw damage grows almost linearly with d (−11.5 → −48.8), but by the end of the 250-update budget every duration is back at the pause-equivalent level. The damage stays lost time.
+2. **The only duration-dependent cost beyond lost time is transient.** At d = 300 the delay-adjusted AUC is −7.6 [−10.6, −4.6]*: recovery starts more slowly, but the gap closes by the end of the budget (L_300 = −1.4).
+3. **The competent policy stays latent in the damaged features.** At d = 300, onset logits remain linearly decodable from D's a1 features (R² 0.905), more so than from the clean C at the same update (D − C +0.13), because C has moved past its onset policy. The masked-action logit structure also survives (corr 0.78).
+4. **The critic degrades fast and then saturates.** D's value correlation with onset falls to ≈ 0.19 within ~30 updates and stays flat, so it cannot track duration. A damaged critic briefly disrupts a transplanted clean actor (the dips in the dotted curves). Transplant vs C has a small residual of −3 to −7, significant only at d = 200.
+5. **No probe explains seed-to-seed differences** at a fixed duration (within-d |ρ| ≤ 0.45, n = 16 nested units). The across-d associations are confounded with duration. There is no basis for a predictor shortlist.
+
+**Limits:**
+- With n = 4, the L_d CIs are about ±9, so an impairment of roughly −8 at d = 300 is not excluded. "STOP" means none was detected, not that the effect is zero (no equivalence test was pre-registered for the pilot).
+- One intervention (movement), one budget (250 updates), one onset.
+
+**Implication for the narrative:** this strengthens "lost competence, not lost plasticity" in PPO. Even a mask six times longer leaves a fully recoverable agent whose features still encode the competent policy.
