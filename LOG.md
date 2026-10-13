@@ -1090,3 +1090,18 @@ Runs: J3a seeds 0–3 (bfca538), J3b seeds 4–7 (a8e2e91); clean, ~2030 s / 185
   - Delay-adjusted AUC +0.5 [+0.0, +1.0]*; end +1.0 [+0.2, +1.7]*. The restricted agent recovers to *ahead of* a paused control.
   - The acute deficit sits in the actor (actor main effect −1.0 [−1.3, −0.6]* at +10; clean actor +1.0* at +0) and is gone by +50.
 - **Reading:** the timing pattern replicates on a second game (late deficit → unlearning → full recovery within lost time). The carrier claim cannot be tested there because no persistent damage exists to localize. Caveat: PPO on Asterix-MinAtar is a weak, slowly improving agent (returns ~5–8 over the studied range).
+
+## 2026-10-13 — Phase 8 results: J5 (confirmatory point-of-no-return test, d = 300)
+
+Runs: J5a seeds 100–103 (975ad08), J5b seeds 104–107 (b634055); clean, ~1310 s each. Analysis: `scripts/analyze_p8_ponr_confirm.py` → `results/summary/p8_ponr_confirm-analysis.md`.
+
+- Unmasked eval: C at onset 46.3; at removal D 11.6 vs C 106.2.
+- **Primary: L_300 +1.1 [−6.6, +8.7]** (n = 8); TOST ±5: p_lower 0.051, p_upper 0.130. **Pre-registered decision: INCONCLUSIVE.** Neither equivalence nor persistent impairment is shown; the mean is positive. Per-seed values: +8.3, −17.6, +2.2, −5.1, +9.6, +8.9, −1.0, +3.1. Seed 101 is an outlier.
+- **Secondary:**
+  - A_300 −4.6 [−12.3, +3.0] (pilot −7.6*).
+  - Raw AUC −45.9*. The transplant rescues +39.4*, and late transplant vs pause reference is +26.6*.
+  - Pooled with the pilot (n = 12, descriptive): L_300 +0.2 [−4.7, +5.1] (TOST p = 0.028); A_300 −5.6 [−10.4, −0.8]*.
+- **Reliability:** split-half (odd/even checkpoints) reliability of A_300 across the 8 confirmatory seeds is Spearman +0.90 (Spearman–Brown 0.95; Pearson-based 0.97). The pilot's d = 300 seeds give Spearman 0.80.
+  - **This contradicts the Phase 7b post-hoc reliability of 0.30.** That estimate pooled within-duration ranks over n = 4 seeds per duration, mostly at short durations where between-seed spread is small. The paper's "ceiling ≈ 0.54 on any predictor" statement must be withdrawn for long restrictions.
+  - Early-recovery cost (+10..+120) and the late deficit L_300 remain uncorrelated (Spearman −0.05; pilot −0.01). Slow early recoverers do not end worse.
+- Post-hoc note: the Phase 7b predictors (needing D-vs-C network comparisons) are not available from these summaries and were not re-tested, as pre-registered.
