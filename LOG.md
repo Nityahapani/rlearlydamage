@@ -1385,3 +1385,54 @@ E3 at n = 32:
 - the PONR section, rewritten with an inconclusive verdict, the non-recovering seed 330 (post-hoc diagnosis: policy collapse) and the exclusion sensitivity analysis;
 - `tab:predictors`, now with a Holm column; KL is supported but framed as association only;
 - limitations, conclusion, provenance, and Appendix deviations (interim-look disclosure, with interim values reported).
+
+## 2026-10-14 ~17:50: Phase 12 PRE-REGISTRATION (generalization panel). Committed before any deficit run.
+
+**Context.** Fourth-round review: the main concern is generalization (environments, deficits, algorithms, budgets), plus claim calibration (C1–C6). We had 8 hours. A fifth sandbox restart happened at about 16:40 (recovered to 7138fe2; venv rebuilt).
+
+**Code change (no outcome seen).** `ppo.py` gains two deficits, both implemented as static Python branches:
+- `action_noise`: an actuator fault. With probability p the *executed* action is replaced by a uniform random action, while the agent stores its own sampled action and log-prob. It uses a key split from the existing `k_flip` key, so no existing RNG stream changes.
+- `reward_scale`: r → s·r inside the window; s = 0 is extinction.
+
+Existing deficits trace identical code, so earlier runs are unaffected. `surgery_ppo.py` exposes `obs_noise`, `action_noise` and `reward_scale` (`--sigma`, `--noise-prob`, `--scale`).
+
+**Onset rule (meaning-matched, Phase 5), generalized.** Late onset = the first 10-update multiple at which the long control's mean eval reaches **40% of the way from its u0 value to its final value** (final = mean over checkpoints in the last 50 updates).
+- This equals the original 40%-of-final rule when the u0 return is about 0 (SpaceInvaders, Asterix, Freeway).
+- It is needed for Acrobot, whose returns are negative.
+- Long controls (`p12-longctl`, seeds 0–3, controls only, no deficit run):
+  - CartPole-v1: u0 21.7, final 477.2 → **onset u10**.
+  - Acrobot-v1: u0 −500, final −105.2 → **onset u60**.
+  - Freeway-MinAtar: u0 0.5, final 52.1 → **onset u20** (window [20, 70)). The control is still rising slowly at u400 (+6 over the last 150 updates); disclosed.
+  - Per-seed crossings: CartPole 10/10/20/30; Acrobot 60/50/50/150; Freeway 10/20/20/30.
+- Breakout was dropped as a fallback because Freeway passed the competence gate (control learns: final ≫ u0) and Breakout PPO is bimodal (Phase 1).
+
+**Tests (PPO 2^3 actor×critic×Adam surgery at removal, fork reference, eval-fork, unmasked/undeficited eval with CRN, window 50 updates, recovery 150 updates, seeds 0–7 in two chunks of four, factorial arms only).** Listed in priority order; tests not completed within the budget are reported as not run.
+
+| id | env | deficit | window | why |
+|---|---|---|---|---|
+| G1 | CartPole-v1 | reward flip p = 1 | [10, 60) | new domain (low-dimensional state, no pixels) |
+| G2 | Acrobot-v1 | reward flip p = 1 | [60, 110) | new domain, negative-reward task |
+| G3 | SpaceInvaders | **actuator noise** p = 0.5 | [100, 150) | new deficit family: corrupts dynamics, not reward or action set |
+| G4 | Freeway-MinAtar | reward flip p = 1 | [20, 70) | third MinAtar game |
+| G5 | SpaceInvaders | **observation noise** σ = 1 | [100, 150) | new deficit family: sensory degradation |
+| G6 | SpaceInvaders | **reward extinction** (scale 0) | [100, 150) | new deficit family: passive, no adversarial signal |
+
+**Decision rules** (identical to Phase 8 / `tab:general`; `analyze_p8_surgery.py`; paired 95% t-intervals over seeds; AUC over recovery):
+1. *Damage to localize* iff total DDD − CCC AUC has its 95% CI below 0. Otherwise the verdict is "no damage to localize" (not a failure).
+2. If there is damage: the *localization criterion* is met iff the actor main effect has a CI below 0 **and** the actor has the largest Shapley share.
+3. Critic and Adam main effects get a TOST with margin **±10% of the CCC (clean-continuation) mean AUC in that setting**. Return scales differ across environments; Phase 8 used ±3 points, which is ~3% of the SpaceInvaders scale.
+4. Holm correction across the three main effects within each test.
+5. Secondary (descriptive): gap at removal, delay-adjusted AUC and end difference (requires eval-fork), unlearning during the window, relative effects (% of CCC AUC).
+
+**Pre-registered cross-setting summary.** Over all settings with damage to localize (earlier plus new): the number in which the actor is the largest carrier, and the range of actor Shapley shares.
+
+**Ceiling caveat (stated in advance).** CartPole's clean agents are near the 500 ceiling by the window. Damage there can show only as slower relearning, so a null in CartPole is weak evidence.
+
+**Claim-calibration work (text only; no new data):**
+- C1: claims ledger with evidence status, n and fresh-seed status in the abstract, results and conclusion.
+- C2: "carrier" defined operationally and the text audited.
+- C4: SESOI motivation, the smallest margin that passes, and the one-sided harm bound.
+- C5: what the interim looks did and did not influence, plus a conservative two-look adjustment.
+- C6: exact (Clopper–Pearson) interval for 1/44 non-recoveries; restrained wording in the abstract and conclusion.
+
+**Estimated compute:** about 4.7 h sequential (`scripts/queue_p12.sh`, logs in `/home/user/p12logs`). Analysis: `analyze_p8_surgery.py --fork-eval --sesoi <10% of CCC AUC>` per test, then a cross-setting table.

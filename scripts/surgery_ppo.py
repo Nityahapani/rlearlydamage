@@ -53,8 +53,12 @@ def main():
     ap.add_argument("--allow-dirty", action="store_true")
     ap.add_argument("--arms", nargs="*", default=None,
                     help="subset of arms (default: 2^3 factorial + CCC+bD, DDD+bC); extra: CCC+bDr, DDD+bCr (ratio-neutral)")
-    ap.add_argument("--deficit", default="action_mask", choices=["action_mask", "reward_flip"])
+    ap.add_argument("--deficit", default="action_mask",
+                    choices=["action_mask", "reward_flip", "obs_noise", "action_noise", "reward_scale"])
     ap.add_argument("--flip-prob", type=float, default=1.0, help="reward_flip: probability a reward is negated")
+    ap.add_argument("--sigma", type=float, default=1.0, help="obs_noise: Gaussian noise sd")
+    ap.add_argument("--noise-prob", type=float, default=0.5, help="action_noise: probability the executed action is random")
+    ap.add_argument("--scale", type=float, default=0.0, help="reward_scale: reward multiplier (0 = extinction)")
     ap.add_argument("--clean-source", default="fork", choices=["fork", "onset"],
                     help="source of 'C' components: the clean fork at w1 (default) or the shared onset state at w0 "
                          "(pause counterfactual; env/obs/RNG/counter still from the clean fork at w1)")
@@ -66,7 +70,9 @@ def main():
     assert w0 % E == 0 and w1 % E == 0 and a.recovery % E == 0
     spu = 64 * 128
     total_updates = w1 + a.recovery
-    dparams = {"allowed_actions": a.allowed} if a.deficit == "action_mask" else {"prob": a.flip_prob}
+    dparams = {"action_mask": {"allowed_actions": a.allowed}, "reward_flip": {"prob": a.flip_prob},
+               "obs_noise": {"sigma": a.sigma}, "action_noise": {"prob": a.noise_prob},
+               "reward_scale": {"scale": a.scale}}[a.deficit]
     base = dict(ENV_NAME=a.env, HIDDEN=a.hidden, DEFICIT=a.deficit, TOTAL_TIMESTEPS=total_updates * spu,
                 DEFICIT_PARAMS=dparams)
     arms = a.arms if a.arms else all_codes(PPO_CARRIERS) + ["CCC+bD", "DDD+bC"]

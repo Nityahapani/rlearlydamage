@@ -17,6 +17,8 @@ Deficits (applied on the agent side; LogWrapper still records the *true* episode
                  [legacy: `allowed_frac` draws a random subset per seed]
   reward_flip  : r -> -r with probability p
   reward_delay : rewards are banked and paid out every `delay` steps (or at episode end)
+  action_noise : the executed action is replaced by a uniform random action with probability p (Phase 12)
+  reward_scale : r -> scale * r (scale 0 = extinction) (Phase 12)
 """
 from __future__ import annotations
 
@@ -180,10 +182,17 @@ def make(config: dict):
             b_kl = jnp.sum(jnp.where(mask, jnp.exp(lb) * (lb - ll), 0.0), -1).mean()
             lp_learner = jnp.take_along_axis(ll, action[:, None], axis=-1)[:, 0]
             log_prob = jnp.where(use_b & rs["behaviour_ratio_learner"], lp_learner, log_prob)
+            act_exec = action
+            if dtype == "action_noise":  # actuator fault: executed action replaced at random; agent logs its own choice
+                k_rep, k_rand = jax.random.split(k_flip)
+                rep = active & (jax.random.uniform(k_rep, action.shape) < dp.get("prob", 0.5))
+                act_exec = jnp.where(rep, jax.random.randint(k_rand, action.shape, 0, n_actions), action)
             obs2, env_state, reward, done, info = jax.vmap(env.step, in_axes=(0, 0, 0, None))(
-                jax.random.split(k_step, cfg["NUM_ENVS"]), env_state, action, env_params
+                jax.random.split(k_step, cfg["NUM_ENVS"]), env_state, act_exec, env_params
             )
             r = reward
+            if dtype == "reward_scale":  # scale 0 = extinction (no reward signal during the window)
+                r = jnp.where(active, dp.get("scale", 0.0) * r, r)
             if dtype == "reward_flip":
                 flip = active & (jax.random.uniform(k_flip, r.shape) < dp.get("prob", 1.0))
                 r = jnp.where(flip, -r, r)
