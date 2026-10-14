@@ -1464,3 +1464,4 @@ All seven panel tests otherwise use PPO. G7 adds the second learner under the se
 - Secondary: data transfer CD − CC, parameter transfer DC − CC, overwrite fractions.
 
 **Budget rule.** G7 starts only after G1–G6 (`queue_p12c.sh`) and a chunk starts only before 22:55 (sandbox clock). An unstarted or incomplete G7 is reported as such (n < 8 ⇒ descriptive only).
+- 18:10 budget-rule change for G7 (no G7 outcome exists yet): the chunk start cutoff moves from 22:55 to 23:20, so that both G7 chunks can plausibly run after G6. Nothing else changes.
