@@ -68,6 +68,12 @@ def parse(md: Path) -> dict:
     out["c_w1"] = float(m.group(1)) if m else None
     m = re.search(r"C at onset u\d+: " + NUM, t)
     out["c_w0"] = float(m.group(1)) if m else None
+    if out["c_w1"] is None:  # fallback: clean continuation at +0 (= C at removal)
+        m = re.search(r"\| CCC \| " + NUM + r" \| " + NUM, t)
+        out["c_w1"] = float(m.group(2)) if m else None
+    if out["gap"] is None:  # fallback: total row, +0 column
+        m = re.search(r"\| total DDD - CCC \| " + CI + r"\*? \| " + CI, t)
+        out["gap"] = tuple(float(x) for x in m.groups()[3:]) if m else None
     m = re.search(r"delay-adjusted AUC [^:]*: " + CI, t)
     out["delay_auc"] = tuple(float(x) for x in m.groups()) if m else None
     m = re.search(r"delay-adjusted end [^:]*: " + CI, t)
