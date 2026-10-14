@@ -1311,3 +1311,18 @@ Sources: `p10_onsetref_rflip-analysis.md` (the script's "C" labels denote the on
   - (a) DDD bit-identical to Phase 8 (max |diff| 0).
   - (b) State-level pause PPP vs time-shifted pause C(w1 + k − L): +1.2 [−0.6, +3.0]. DDD − PPP −19.8 vs delay-adjusted −18.6: the state-level decomposition matches the primary estimand.
 - Interactions (post-hoc): only actor × Adam −2.1 [−4.1, −0.2]* (3% of PPP AUC); non-additivity +1.2 [−7.2, +9.6].
+
+### 2026-10-14 — Phase 10 K2 result (onset-reference surgery, SpaceInvaders movement, seeds 0–3; descriptive)
+Source: `p10_onsetref_move-analysis.md`.
+- DDD − PPP −2.3 [−4.8, +0.2] → **NO DAMAGE TO LOCALIZE**, as predicted from E_damage ≈ 0.
+- Descriptively: actor main effect −3.9 [−5.7, −2.1]* (Shapley −3.6, 4/4 seeds); critic −0.2; Adam +1.0; PDD − DDD +2.7.
+- DDD bit-identical to Phase 3 (max |diff| 0).
+- Reading: in the movement setting, the fork-reference actor effect (−13.7) is mostly lost progress.
+
+### 2026-10-14 — Phase 10 paper revision (ten third-round points)
+1. Surgery vs. estimand: new §5 paragraph and Table `tab:onsetref` (surgery against the pause counterfactual); abstract, contributions, conclusion and §3.4 now separate the same-update deficit from damage beyond lost time.
+2. Hybrid validity: new paragraph and Table `tab:interactions` (post-hoc). The claim is restricted to causal sufficiency within the intervention family; the critic's context dependence is reported.
+3. Plasticity: §9 retitled "not a relearning deficit"; the claims are limited to same-task relearning; limitation added.
+4. Replay: abstract, ladder and limitation now say "bounded, not zero".
+5. PONR: already bounded (Phase 9); consistency checked.
+6–10. New limitations (interventions; mechanistic readings; effect scales with Table `tab:relative`; incomplete confirmatory evidence). The PPO behaviour-swap conclusion is narrowed to "depends on importance weighting; no conclusion about data content alone".
