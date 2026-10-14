@@ -1436,3 +1436,15 @@ Existing deficits trace identical code, so earlier runs are unaffected. `surgery
 - C6: exact (Clopper–Pearson) interval for 1/44 non-recoveries; restrained wording in the abstract and conclusion.
 
 **Estimated compute:** about 4.7 h sequential (`scripts/queue_p12.sh`, logs in `/home/user/p12logs`). Analysis: `analyze_p8_surgery.py --fork-eval --sesoi <10% of CCC AUC>` per test, then a cross-setting table.
+
+### 2026-10-14 ~17:45: Phase 12 pre-registration ADDENDUM (before any Phase 12 deficit outcome was inspected)
+Only `cartpole-rflip` chunk s0–3 has finished. Its outputs were committed (0e9e214) but **not analysed or viewed**; no interim looks will be taken in Phase 12.
+
+**Queue fix.** v1 tagged both chunks of a test identically, so two chunks run under the same commit would share a summary filename. v1 was stopped one minute into cartpole s4–7. The partial s4–7 directory was deleted unanalysed, and the queue restarted as `queue_p12b.sh` with per-chunk tags (7bffda4). Seeds, arms and configuration are unchanged.
+
+**Out-of-sample test of the post-hoc gap–damage hypothesis** (paper `tab:gap`, five earlier settings: lasting damage appears only when the deficit destroys much of the competence). The prediction for each Phase 12 setting uses relative gap = (DDD − CCC at removal) / C(w1). For Acrobot, whose returns are negative, the gap is taken relative to the competence range, C(w1) − u0 control.
+- relative gap < 25% ⇒ **no damage to localize** (total CI includes 0 or is > 0);
+- relative gap ≥ 60% ⇒ **damage** (total CI < 0);
+- 25–60%: no prediction.
+
+We report the hit count over the settings with a prediction, plus a descriptive Spearman correlation of relative total damage with relative gap across all PPO settings (earlier + new).
