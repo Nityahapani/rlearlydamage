@@ -55,6 +55,9 @@ def main():
                     help="subset of arms (default: 2^3 factorial + CCC+bD, DDD+bC); extra: CCC+bDr, DDD+bCr (ratio-neutral)")
     ap.add_argument("--deficit", default="action_mask", choices=["action_mask", "reward_flip"])
     ap.add_argument("--flip-prob", type=float, default=1.0, help="reward_flip: probability a reward is negated")
+    ap.add_argument("--clean-source", default="fork", choices=["fork", "onset"],
+                    help="source of 'C' components: the clean fork at w1 (default) or the shared onset state at w0 "
+                         "(pause counterfactual; env/obs/RNG/counter still from the clean fork at w1)")
     ap.add_argument("--eval-fork", action="store_true", help="also evaluate C and D every E updates during [w0, w1]")
     a = ap.parse_args()
 
@@ -70,7 +73,8 @@ def main():
     protocol = dict(window=a.window, recovery=a.recovery, behaviour_k=a.behaviour_k, eval_every=E,
                     eval_envs=a.eval_envs, eval_seed=a.eval_seed, steps_per_update=spu, carriers=list(PPO_CARRIERS),
                     arms=arms, allowed=a.allowed, deficit=a.deficit, deficit_params=dparams,
-                    future_randomness="env state, obs, RNG, update counter from clean run C")
+                    future_randomness="env state, obs, RNG, update counter from clean run C",
+                    clean_source=a.clean_source)
     name = f"p3-{a.tag}-ppo-{a.env}"
     manifest = build_manifest(name, {**base, "protocol": protocol}, a.seeds, allow_dirty=a.allow_dirty)
     mpath = write_manifest(manifest)
@@ -95,6 +99,7 @@ def main():
     rs["deficit_bounds"] = bounds(0, 0)
     for _ in range(w0 // E):
         rs, _m = run_v(rs)
+    rs_w0 = rs  # shared onset state (pause counterfactual for --clean-source onset)
     rs_c, rs_d = rs, dict(rs, deficit_bounds=bounds(w0, w1))
     fork_eval = dict(updates=[w0], C=[ev(rs_c).tolist()], D=[ev(rs_d).tolist()]) if a.eval_fork else None
     for i in range((w1 - w0) // E):
@@ -129,9 +134,15 @@ def main():
     summary = dict(manifest=mpath.name, protocol=protocol, seeds=a.seeds, reproduction_check=check,
                    eval_updates=list(range(w1, total_updates + 1, E)), arms={}, fork_eval=fork_eval)
     actor_of = lambda r: {k: v for k, v in r["train_state"].params["params"].items() if k in ACTOR_KEYS}
+    rs_ref = rs_c
+    if a.clean_source == "onset":
+        assert not any("+b" in x for x in arms), "data arms are defined only for the clean fork"
+        rs_ref = dict(rs_c, train_state=rs_c["train_state"].replace(params=rs_w0["train_state"].params,
+                                                                    opt_state=rs_w0["train_state"].opt_state))
+        print(f"onset reference: eval of onset params {np.round(ev(rs_ref), 2)}", flush=True)
     for arm in arms:
         code = arm[:3]
-        rs = compose_ppo(rs_c, rs_d, code)
+        rs = compose_ppo(rs_ref, rs_d, code)
         if "+b" in arm:
             other = rs_d if (arm.endswith("bD") or arm.endswith("bDr")) else rs_c
             rs = dict(rs, behaviour_actor=actor_of(other), behaviour_until=jnp.full((n,), w1 + a.behaviour_k, jnp.int32))

@@ -1271,3 +1271,29 @@ Source: `results/summary/p9_ponr_predictors-analysis.md` (header notes that scri
 5. Asterix scope paragraph, E2 row in Table 9, post-hoc gap-vs-damage table.
 6. Predictor table with ρ CIs, and a "No predictor found ≠ unpredictable" paragraph. The early-recovery-cost claim was withdrawn after non-replication.
 Appendix: provenance rows and the Phase 9 deviation item.
+
+## 2026-10-14 ~13:10 UTC — Phase 10: third reviewer round — PRE-REGISTRATION (before any Phase 10 data)
+
+**Context.** The third review lists ten points. Main concern: component surgery decomposes the *same-update* deficit (DDD − CCC), while the primary estimand is damage *beyond lost time* (pause counterfactual). So "damage lives in the actor" may overstate what the primary estimand supports. The other nine points get text revisions (scope, hedging, normalized effect sizes). Budget: 2.5 h.
+
+**K: onset-reference surgery (pause counterfactual at the state level).**
+- C and D share every bit of state up to w0, so the shared onset state is the state a *paused* agent would carry at removal.
+- New flag `surgery_ppo.py --clean-source onset`: the "C" source of each component (actor, critic, Adam) is the onset state at w0 instead of the clean fork at w1.
+- As in all surgery arms, env state, observations, RNG and the update counter come from the clean fork at w1.
+- Notation: P = onset (paused) component.
+- **Total PPP − DDD contrast:** DDD − PPP = damage beyond lost time, measured from a common post-removal environment state.
+- **The 2³ factorial** (P vs D per component) decomposes it.
+- Runs (8 arms each, recovery 150, same seeds as Phase 8 so DDD must reproduce bit for bit):
+  - **K1:** SpaceInvaders reward flip, seeds 0–7 (Phase 8 delay-adjusted AUC −18.6*);
+  - **K2:** SpaceInvaders movement 2×128, seeds 0–3 (E_damage ≈ 0, so we predict little or nothing beyond lost time to localize).
+- **Primary (K1):** DDD − PPP AUC; actor/critic/Adam main effects (Holm across the three); exact Shapley.
+  - Criterion "beyond-lost-time damage localizes to the actor": total CI < 0 AND actor main-effect CI < 0 AND the actor has the largest Shapley share.
+  - "No beyond-lost-time damage to localize" if the total CI includes 0.
+  - TOST ±3 for critic and Adam.
+- **K2:** the same analysis, descriptive (n = 4). Prediction: the total CI includes 0 or the total is small.
+- **Secondary/descriptive:**
+  - (a) DDD reproduces the Phase 8 DDD cells (bit-identity check);
+  - (b) PPP vs. the pause curve C(w1 + k − L) from Phase 8 fork evaluation (how well the state-level pause matches the time-shifted control);
+  - (c) interaction size = DDD − PPP minus the sum of main effects; two- and three-way interaction contrasts.
+- **Post-hoc, labelled:** interaction contrasts for the existing n = 12 fork-reference surgery; AUC normalized by the clean agent's AUC for the PPO and PQN-R carrier effects.
+- **Order:** K1a, K1b, K2. Whatever does not finish within the budget is reported as not run.
