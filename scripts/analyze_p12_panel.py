@@ -132,6 +132,33 @@ def main():
             damaged.append(gid)
             largest = max(("actor", "critic", "opt"), key=lambda c: r.get(c + "_share", -999))
             shares.append((gid, r.get("actor_share"), largest))
+    # pre-registered addendum: out-of-sample test of the post-hoc gap-damage hypothesis
+    base = {"Acrobot-v1": -500.0}  # u0 control of the long control (negative-return task); 0 elsewhere
+    G = ["", "## Pre-registered addendum: gap-damage prediction (relative gap < 25% => no damage; >= 60% => damage)", "",
+         "| id | setting | relative gap | prediction | observed (total CI < 0?) | hit |", "|---|---|---|---|---|---|"]
+    hits, tot, pts = 0, 0, []
+    for gid, env, deficit, r, status in earlier + rows:
+        if r is None or not r.get("gap") or r.get("c_w1") is None or not r.get("total"):
+            continue
+        rel = -r["gap"][0] / (r["c_w1"] - base.get(env, 0.0))
+        dmg = r["total"][2] < 0
+        reltot = r["total"][0] / (r["c_w1"] - base.get(env, 0.0))
+        pts.append((rel, reltot))
+        if gid.startswith("G"):
+            pred = "no damage" if rel < 0.25 else ("damage" if rel >= 0.60 else "none")
+            hit = "–" if pred == "none" else ("yes" if (pred == "damage") == dmg else "NO")
+            if pred != "none":
+                tot += 1
+                hits += hit == "yes"
+            G.append(f"| {gid} | {env}, {deficit} | {100 * rel:.0f}% | {pred} | {'damage' if dmg else 'no damage'} | {hit} |")
+    G.append("")
+    G.append(f"Hits: **{hits} of {tot}** settings with a prediction.")
+    if len(pts) >= 4:
+        from scipy import stats
+        rho = stats.spearmanr([p[0] for p in pts], [p[1] for p in pts]).statistic
+        G.append(f"Descriptive: Spearman rho(relative gap, relative total damage) over {len(pts)} PPO settings = {rho:+.2f} "
+                 "(negative = larger gap, more damage). Relative total = total AUC damage / C(w1) (range for Acrobot).")
+    L += G
     L += ["", "## Pre-registered cross-setting summary", "",
           f"- Settings with damage to localize (total CI < 0): {len(damaged)} — {', '.join(damaged)}",
           f"- Actor is the largest carrier in {sum(1 for _, _, c in shares if c == 'actor')} of {len(shares)}: "
