@@ -32,7 +32,8 @@ def main():
     gen, gap = [], []
     for gid, name, env, deficit in P.TESTS:
         md = S / f"p12_{name.replace('-', '_')}-analysis.md"
-        done = all(Path(f"/home/user/p12logs/{name}-s{c}.done").exists() for c in (0, 4))
+        chunks = (0, 2, 4, 6) if name == "freeway-rflip" else (0, 4)
+        done = all(Path(f"/home/user/p12logs/{name}-s{c}.done").exists() for c in chunks)
         if not (md.exists() and done):
             continue
         r = P.parse(md)

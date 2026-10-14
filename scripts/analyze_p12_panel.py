@@ -93,7 +93,8 @@ def main():
     rows = []
     for gid, name, env, deficit in TESTS:
         summ = sorted(glob.glob(str(S / f"*p12-{name}-*.json")))
-        done = [Path(f"/home/user/p12logs/{name}-s{c}.done").exists() for c in (0, 4)]
+        chunks = (0, 2, 4, 6) if name == "freeway-rflip" else (0, 4)  # Freeway rerun in 2-seed chunks (OOM)
+        done = [Path(f"/home/user/p12logs/{name}-s{c}.done").exists() for c in chunks]
         if summ and not all(done) and "--include-partial" not in sys.argv:  # no interim looks (Phase 12 rule)
             rows.append((gid, env, deficit, None, "pending (not analysed until all chunks finish)"))
             continue

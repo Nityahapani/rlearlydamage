@@ -1465,3 +1465,13 @@ All seven panel tests otherwise use PPO. G7 adds the second learner under the se
 
 **Budget rule.** G7 starts only after G1–G6 (`queue_p12c.sh`) and a chunk starts only before 22:55 (sandbox clock). An unstarted or incomplete G7 is reported as such (n < 8 ⇒ descriptive only).
 - 18:10 budget-rule change for G7 (no G7 outcome exists yet): the chunk start cutoff moves from 22:55 to 23:20, so that both G7 chunks can plausibly run after G6. Nothing else changes.
+
+### 2026-10-14 19:20: Phase 12 deviation: G4 Freeway OOM
+The 4-seed Freeway surgery chunk (seeds 0–3) was OOM-killed by the kernel (python, 1.14 GB anon RSS). The machine had stopped responding for about 15 min, while the run was still before "fork done". The `pkill` that cleared the machine also made chunk s4 fail instantly.
+- No Freeway outcome was produced; the partial directory was deleted.
+- The main queue continued with G5 (in progress) and will continue with G6.
+- **Change:** G4 reruns after G6 in **2-seed chunks** (0–1, 2–3, 4–5, 6–7) via `queue_p12d.sh`. Seeds, arms, window [20, 70), recovery and evaluation are unchanged; vmapped seeds are computed independently.
+- If a 2-seed chunk fails, Freeway is abandoned and reported as not run (n < 8 ⇒ descriptive).
+- No Freeway chunk starts after 22:40. G7 follows under its 23:20 start cutoff.
+- `queue_p12d.sh` replaces the G7 waiter `queue_p12c.sh`, whose G7 commands are carried over unchanged.
+- G1–G3 were analysed only after completion (G1 CartPole: REPLICATES; G2 Acrobot: no damage to localize). G3 was analysed after completion, but the output was lost in the hang and will be regenerated.
