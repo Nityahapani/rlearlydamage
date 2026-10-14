@@ -11,7 +11,7 @@ PPO 2^3 actor x critic x Adam surgery at removal, fork reference, unmasked/undef
 | E2 | Asterix | reward flip | earlier (n = 8) | 8 | -3.7 [-4.6, -2.8]* (-68%) | -2.3 [-2.9, -1.7]* | -2.1 [-2.6, -1.7]* | -0.1 [-0.2, +0.0] | +0.0 [-0.2, +0.2] | 94% (8/8) | 0.0000 | 0.0000 | -1.7 [-2.1, -1.3]* | -1.2 [-1.7, -0.6]* | REPLICATES |
 | G1 | CartPole-v1 | reward flip | complete | 8 | -448.2 [-502.1, -394.2]* (-98%) | -223.3 [-347.1, -99.5]* | -206.1 [-319.9, -92.3]* | -17.0 [-50.8, +16.8] | +18.7 [-3.0, +40.3] | 95% (8/8) | 0.0337 | 0.0077 | -196.6 [-322.8, -70.3]* | -91.8 [-262.4, +78.8] | REPLICATES |
 | G2 | Acrobot-v1 | reward flip | complete | 8 | -134.5 [-217.1, -51.9]* (neg. scale) | -108.9 [-236.9, +19.0] | -42.5 [-94.3, +9.2] | -66.8 [-148.3, +14.6] | -10.7 [-27.1, +5.7] | –% (–) | 0.9276 | 0.5198 | -54.5 [-147.5, +38.5] | -98.6 [-248.3, +51.0] | NO DAMAGE TO LOCALIZE |
-| G3 | SpaceInvaders | actuator noise p=0.5 | not run | – | – | – | – | – | – | – | – | – | – | – | – |
+| G3 | SpaceInvaders | actuator noise p=0.5 | complete | 8 | -27.1 [-32.6, -21.6]* (-47%) | -9.5 [-12.7, -6.3]* | -11.0 [-13.8, -8.2]* | -0.5 [-2.1, +1.0] | +1.8 [+0.9, +2.7]* | 115% (8/8) | 0.0000 | 0.0000 | +4.2 [+0.9, +7.5]* | +8.3 [+2.7, +13.9]* | REPLICATES |
 | G4 | Freeway-MinAtar | reward flip | not run | – | – | – | – | – | – | – | – | – | – | – | – |
 | G5 | SpaceInvaders | observation noise sigma=1 | not run | – | – | – | – | – | – | – | – | – | – | – | – |
 | G6 | SpaceInvaders | reward extinction | not run | – | – | – | – | – | – | – | – | – | – | – | – |
@@ -22,14 +22,15 @@ PPO 2^3 actor x critic x Adam surgery at removal, fork reference, unmasked/undef
 |---|---|---|---|---|---|
 | G1 | CartPole-v1, reward flip | 98% | damage | damage | yes |
 | G2 | Acrobot-v1, reward flip | 44% | none | no damage | – |
+| G3 | SpaceInvaders, actuator noise p=0.5 | 47% | none | damage | – |
 
 Hits: **1 of 1** settings with a prediction.
-Descriptive: Spearman rho(relative gap, relative total damage) over 7 PPO settings = -0.82 (negative = larger gap, more damage). Relative total = total AUC damage / C(w1) (range for Acrobot).
+Descriptive: Spearman rho(relative gap, relative total damage) over 8 PPO settings = -0.81 (negative = larger gap, more damage). Relative total = total AUC damage / C(w1) (range for Acrobot).
 
 ## Pre-registered cross-setting summary
 
-- Settings with damage to localize (total CI < 0): 5 — main, J4, J7, E2, G1
-- Actor is the largest carrier in 5 of 5: main 90%, J4 100%, J7 82%, E2 94%, G1 95%
-- Actor Shapley share range: 82–100%
+- Settings with damage to localize (total CI < 0): 6 — main, J4, J7, E2, G1, G3
+- Actor is the largest carrier in 6 of 6: main 90%, J4 100%, J7 82%, E2 94%, G1 95%, G3 115%
+- Actor Shapley share range: 82–115%
 
 Per-test details: `p12_<name>-analysis.md`. Earlier settings: the files listed in the table.
