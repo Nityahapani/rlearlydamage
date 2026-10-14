@@ -1,0 +1,81 @@
+{
+  "allow_dirty": false,
+  "config": {
+    "DEFICIT": "action_mask",
+    "ENV_NAME": "SpaceInvaders-MinAtar",
+    "HIDDEN": 128,
+    "TOTAL_TIMESTEPS": 3604480,
+    "protocol": {
+      "configs": {
+        "control": {
+          "allowed": [
+            0,
+            3
+          ],
+          "window": [
+            0,
+            0
+          ]
+        },
+        "move_late": {
+          "allowed": [
+            0,
+            3
+          ],
+          "window": [
+            100,
+            150
+          ]
+        }
+      },
+      "early": [
+        0,
+        50
+      ],
+      "eval_envs": 64,
+      "eval_every": 10,
+      "eval_policy": "stochastic, unmasked, clean obs, true reward",
+      "eval_seed": 10000,
+      "interventions": {
+        "fire": [
+          0,
+          1,
+          2
+        ],
+        "move": [
+          0,
+          3
+        ]
+      },
+      "late": [
+        100,
+        150
+      ],
+      "steps_per_update": 8192,
+      "updates": 440
+    }
+  },
+  "created_utc": "2026-10-14T06:07:26.438929+00:00",
+  "git": {
+    "commit": "63a8f1d7a71b20472d73d3054b2c743a93a04cbc",
+    "dirty": false
+  },
+  "name": "p2-p9-recovery-move-late-s208to211-ppo-SpaceInvaders-MinAtar",
+  "packages": {
+    "flax": "0.12.10",
+    "gymnax": "0.0.9",
+    "jax": "0.11.2",
+    "jaxlib": "0.11.2",
+    "numpy": "2.5.4",
+    "optax": "0.2.8",
+    "rliable": null
+  },
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.41",
+  "python": "3.13.16",
+  "seeds": [
+    208,
+    209,
+    210,
+    211
+  ]
+}

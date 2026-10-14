@@ -1211,3 +1211,12 @@ No Phase 8 J5 predictor values were computed.
 - Runs last; if it does not finish within the budget, it is reported as not run.
 
 **Order:** E1 → E3 → E2 (~42 + 145 + 68 min).
+
+### 2026-10-14 — Phase 9 E1 result (confirmatory recovery estimands; seeds 200–211, n = 12)
+Source: `results/summary/p9_estimands-analysis.md`. D at removal 24.4; C at onset 41.3, at removal 60.7. t* mean 52 (range 30–90).
+- **E_damage (primary, pause): +1.9 [−0.7, +4.4]**; TOST ±3: p_lower 0.0007, p_upper 0.171 → pre-registered decision **INCONCLUSIVE**.
+  - The harmful side is rejected decisively: mean > −3 at p = 0.0007, and the CI excludes harm beyond −0.7.
+  - Equivalence fails only because a *benefit* larger than +3 cannot be excluded.
+  - It replicates the Phase 2 value (+1.1 [−2.9, +5.2], n = 4).
+- **E_plast (competence-matched): +14.2 [+10.9, +17.5]***, p < 10⁻⁴ → **SAVINGS** (12/12 seeds positive). This replicates the post-hoc Phase 8 value (+18.0, n = 4).
+- E_total (descriptive): −8.9 [−11.1, −6.6]*.
