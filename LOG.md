@@ -1235,3 +1235,18 @@ Source: `results/summary/p9_estimands-analysis.md`. D at removal 24.4; C at onse
   2. **E3 chunks in pre-registered order until the budget ends**.
 - E3 will therefore not reach n = 32. Per the pre-registered fallback, **E3 is reported descriptively with no decision** (no TOST decision, no predictor support/no-support verdict). Interval estimates and Fisher-z CIs for ρ are still reported as bounds.
 - E1 is complete and unaffected.
+
+### 2026-10-14 — Phase 9 E2 result (Asterix reward flip, seeds 0–3, n = 4 per deviation 1)
+Source: `results/summary/p9_asterix_rflip_surgery-analysis.md`.
+- **Pre-registered criterion: REPLICATES.**
+  - Total damage −2.4 [−3.6, −1.2]*.
+  - Actor main effect −2.2 [−3.3, −1.1]* (Holm 0.023).
+  - Actor Shapley −2.3 [−3.2, −1.3]* = 93% (4/4 seeds).
+  - Critic −0.1 and optimizer +0.0, both TOST ±3 p ≤ 0.0001.
+- Clean-actor transplant +2.5 [+1.9, +3.0]*; hybrid vs. clean +0.1 [−0.9, +1.0].
+- Fork readouts:
+  - C at onset 6.01, at removal 5.98: the clean agent made no progress during the window.
+  - D at removal 1.76; gap −4.2 [−6.0, −2.4]* (70% of C(w1); 18% under the movement restriction).
+  - Delay-adjusted AUC −1.8 [−2.6, −1.0]*; delay-adjusted end −1.2 [−2.2, −0.1]*.
+- Reading: the Asterix movement null was deficit-specific, not game-specific. When the deficit removes most competence, Asterix shows damage beyond lost time, and the actor carries it.
+- Post-hoc cross-setting table: `results/summary/p9_gap_vs_damage-posthoc.md` (descriptive).

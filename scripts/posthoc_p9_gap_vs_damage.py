@@ -29,7 +29,7 @@ def main():
     a = ap.parse_args()
     rows = []
     for item in a.settings:
-        lab, f = item.split("=", 1)
+        lab, f = item.rsplit("=", 1)
         t = Path("results/summary", f).read_text()
         fork = grab(t, r"C at onset u\d+: " + NUM + r"; D at removal u\d+: " + NUM + r"; C at removal: " + NUM)
         flag = ""
