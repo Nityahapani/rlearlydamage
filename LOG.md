@@ -1372,3 +1372,16 @@ Source: `p9_ponr_predictors_n32-analysis.md`.
 - The other three are not supported: 1−CKA −0.19, move_gap −0.24, value_err +0.03.
 - LOO R² gain for kl_clean: +5% (small).
 - Post-hoc robustness without seed 330: ρ −0.43 [−0.69, −0.07], one-sided p 0.008. Seed 330 had the largest KL of all 32.
+
+### 2026-10-14 ~17:10 UTC: Phase 11 paper revision
+`paper/main.tex` and `main.pdf` (33 pp.) were updated.
+
+Asterix reward flip at n = 8:
+- `tab:general`, the Asterix paragraph, `tab:gap` and `tab:relative`;
+- status, provenance and deviation rows.
+
+E3 at n = 32:
+- the abstract (iv) and the contributions;
+- the PONR section, rewritten with an inconclusive verdict, the non-recovering seed 330 (post-hoc diagnosis: policy collapse) and the exclusion sensitivity analysis;
+- `tab:predictors`, now with a Holm column; KL is supported but framed as association only;
+- limitations, conclusion, provenance, and Appendix deviations (interim-look disclosure, with interim values reported).
