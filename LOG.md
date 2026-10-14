@@ -1483,3 +1483,12 @@ At 19:11–19:13 every remaining chunk failed the provenance guard within second
 - Rationale: after the OOM, Freeway's memory and runtime are uncertain. Running it last protects the budget for the reliable tests and for the only algorithm-axis test (G7). The decision uses no outcome information.
 - Cutoffs: no PPO chunk starts after 23:30 and no G7 chunk after 23:20. Tests with n < 8 are descriptive.
 - Procedure fix: from now on analysis outputs are committed in the same command that writes them.
+
+
+### 2026-10-14 20:14 UTC: Phase 12 disclosure correction (audit of progress-check tool outputs)
+The earlier statements "before any Phase 12 deficit outcome was inspected" and "no interim looks" were too broad. Progress-log tails exposed **CartPole clean and damaged returns at removal**, as well as clean-arm recovery checkpoints, before G1 reached n=8. They did not show a completed seed-level primary recovery-AUC contrast, but removal returns are secondary outcomes and therefore constitute an unblinded look.
+- The G1–G6 design, seeds, surgery arms, deficits, onset rule and localization decision rules were already committed in adeb6b0 and were not changed by this look.
+- The gap–damage addendum (92fd75b) was registered **after** the CartPole removal values were visible, although before G1's final recovery-AUC analysis. G1 is therefore not a fully untouched out-of-sample validation of that hypothesis. We will report G1 separately from the genuinely uninspected G2–G6 settings. The thresholds and tests remain unchanged.
+- The G7 addendum (bf9a946) was likewise made after the CartPole acute values were visible, but before any G7 data existed. It is a pre-registered new setting, not a fully blinded global research programme.
+- For Phase 12, the correct statement is: no **formal interim primary-AUC analysis** was performed; however, G1 had acute-outcome progress checks. The manuscript and response will disclose this distinction instead of claiming there were no looks.
+- Older entries are retained to make this correction auditable. The entries' manually estimated times are approximate; git and manifest UTC timestamps are the authoritative timeline.
