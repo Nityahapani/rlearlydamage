@@ -147,7 +147,7 @@ def main():
     base = {"Acrobot-v1": -500.0}  # u0 control of the long control (negative-return task); 0 elsewhere
     G = ["", "## Pre-registered addendum: gap-damage prediction (relative gap < 25% => no damage; >= 60% => damage)", "",
          "| id | setting | relative gap | prediction | observed (total CI < 0?) | hit |", "|---|---|---|---|---|---|"]
-    hits, tot, pts = 0, 0, []
+    hits, tot, untouched_hits, untouched_n, pts = 0, 0, 0, 0, []
     for gid, env, deficit, r, status in earlier + rows:
         if r is None or not r.get("gap") or r.get("c_w1") is None or not r.get("total"):
             continue
@@ -161,9 +161,14 @@ def main():
             if pred != "none":
                 tot += 1
                 hits += hit == "yes"
+                if gid != "G1":  # acute CartPole values were seen before the addendum (audit correction 79c9c85)
+                    untouched_n += 1
+                    untouched_hits += hit == "yes"
             G.append(f"| {gid} | {env}, {deficit} | {100 * rel:.0f}% | {pred} | {'damage' if dmg else 'no damage'} | {hit} |")
     G.append("")
-    G.append(f"Hits: **{hits} of {tot}** settings with a prediction.")
+    G.append(f"All planned settings: **{hits} of {tot}** hits where a prediction was issued (G1 acute values had been seen).")
+    G.append(f"Untouched settings only (exclude G1): **{untouched_hits} of {untouched_n}** hits. Intermediate gaps receive no prediction.")
+    G.append("The addendum predicts a same-update gap, not persistence beyond lost time. See disclosure correction 79c9c85.")
     if len(pts) >= 4:
         from scipy import stats
         rho = stats.spearmanr([p[0] for p in pts], [p[1] for p in pts]).statistic

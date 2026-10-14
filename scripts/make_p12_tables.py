@@ -40,15 +40,15 @@ def main():
         d = 0 if abs(r["total"][0]) >= 20 else 1
         dmg = r["total"][2] < 0
         verdict = (f"{r['actor_share']}\\%; replicates" if r.get("verdict") == "REPLICATES" else
-                   ("n/a; no damage to localize" if not dmg else f"{r.get('actor_share', '–')}\\%; not met"))
+                   ("n/a; no gap to localize" if not dmg else f"{r.get('actor_share', '–')}\\%; not met"))
         gen.append(f"{LABEL[name]} ({gid}) & {r['n']} & {ci(r['gap'], d)} & {ci(r['total'], d)} & "
                    f"{ci(r['delay_auc'], d) if r.get('delay_auc') else '--'} & {pt(r['actor'], d)} & {pt(r['critic'], d)} & "
                    f"{pt(r['opt'], d)} & {verdict} \\\\")
         scale = r["c_w1"] - BASE.get(name, 0.0)
         relgap = -r["gap"][0] / scale
-        pred = "no damage" if relgap < 0.25 else ("damage" if relgap >= 0.60 else "no prediction")
-        obs = "damage" if dmg else "no damage"
-        hit = obs if pred == "no prediction" else obs + (" (hit)" if (pred == "damage") == dmg else " (miss)")
+        pred = "no gap" if relgap < 0.25 else ("gap" if relgap >= 0.60 else "no prediction")
+        obs = "gap" if dmg else "no gap"
+        hit = obs if pred == "no prediction" else obs + (" (hit)" if (pred == "gap") == dmg else " (miss)")
         gap.append(f"{LABEL[name]} ({gid}) & {r['n']} & {100 * relgap:.0f}\\% & {ci(r['total'], d)} & "
                    f"${100 * r['total'][0] / scale:+.0f}\\%$ & {ci(r['delay_auc'], d) if r.get('delay_auc') else '--'} & "
                    f"{pred}; {hit} \\\\")
