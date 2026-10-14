@@ -1350,3 +1350,25 @@ Source: `p9_asterix_rflip_surgery_n8-analysis.md`.
 - Fork readouts: C 5.36 → 5.41 (no clean progress); D at removal 1.70; gap −3.7 [−4.6, −2.8]* (68% of C(w1)).
 - Delay-adjusted AUC −1.7 [−2.1, −1.3]*; end −1.2 [−1.7, −0.6]*.
 - The interim n = 4 result (−2.4, 93%) is unchanged in substance. The post-hoc gap table was regenerated with the n = 8 row.
+
+### 2026-10-14 ~16:40 UTC — Phase 11: E3 completed (n = 32, pre-registered n; completed after the unblinded n = 16 interim)
+Source: `p9_ponr_predictors_n32-analysis.md`.
+
+**Primary 1, L_300: +2.3 [−4.6, +9.2] → INCONCLUSIVE** (TOST ±5 p = 0.21).
+- Harm worse than −5 is rejected (p_lower 0.019); a benefit above +5 is not excluded.
+- Median L +5.7. Pooled with J5 (n = 40, descriptive): +2.1 [−3.5, +7.6].
+- The interim n = 16 estimate (+6.0) moved mainly because of one seed.
+
+**Seed 330: the restricted agent never recovered** (L −92.0, A −75.2). Its eval was exactly 3.0 at every checkpoint for 250 updates.
+- Diagnosis (post-hoc): no NaNs, no dead units.
+- Its actor at removal had collapsed: entropy on the evaluation bank 0.19 (other D agents 0.43–0.53, clean agents 0.55–0.59), with 85% probability on fire.
+- Its clean fork is normal (114 at +250).
+- So 1 of 44 agents restricted for d = 300 (pilot 4 + J5 8 + E3 32) failed to recover within budget.
+- Post-hoc, excluding 330: L +5.3 [+2.3, +8.4]; A −1.0 [−3.1, +1.2]. Only one other seed had L < −10 (316: −11.2).
+
+**A_300: −3.3 [−8.4, +1.9]** (split-half SB 0.86). Pooled with J5: −3.6 [−7.8, +0.7].
+
+**Primary 2, predictors (one-sided, Holm): kl_clean SUPPORTED**, ρ −0.48 [−0.72, −0.14], one-sided p 0.0026, Holm 0.010.
+- The other three are not supported: 1−CKA −0.19, move_gap −0.24, value_err +0.03.
+- LOO R² gain for kl_clean: +5% (small).
+- Post-hoc robustness without seed 330: ρ −0.43 [−0.69, −0.07], one-sided p 0.008. Seed 330 had the largest KL of all 32.
