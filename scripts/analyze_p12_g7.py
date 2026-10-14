@@ -45,9 +45,6 @@ def main():
     ap=argparse.ArgumentParser()
     ap.add_argument("--include-partial",action="store_true")
     a=ap.parse_args()
-    done=all(Path(f"/home/user/p12logs/pqnr-rflip-s{k}.done").exists() for k in (0,4))
-    if not done and not a.include_partial:
-        raise SystemExit("G7 not complete: primary analysis withheld until n=8 (no interim look)")
     files=sorted(glob.glob("results/summary/*p12-pqnr-rflip-*.json"))
     ds=[json.loads(Path(f).read_text()) for f in files]
     ds=[d for d in ds if all(c in d.get("arms",{}) for c in CODES)]
@@ -56,6 +53,9 @@ def main():
     U=np.asarray(ds[0]["eval_updates"])
     seeds=sum((d["seeds"] for d in ds),[])
     assert len(seeds)==len(set(seeds)), "duplicate seed"
+    done=set(seeds)==set(range(8))
+    if not done and not a.include_partial:
+        raise SystemExit("G7 not complete: primary analysis withheld until n=8 (no formal interim primary look)")
     assert all(d["eval_updates"]==U.tolist() for d in ds)
     order=np.argsort(seeds)
     seeds=[seeds[k] for k in order]

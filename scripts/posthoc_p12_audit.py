@@ -114,11 +114,10 @@ def main():
     a = ap.parse_args()
     out, actor_ps = {}, []
     for gid, name, env, untrained in TESTS:
-        chunks = (0,2,4,6) if name == "freeway-rflip" else (0,4)
-        done = all(Path(f"/home/user/p12logs/{name}-s{k}.done").exists() for k in chunks)
+        seeds, M, onset, U, ds, fs = read_test(name)
+        done = set(seeds) == set(range(8))
         if not done and not a.include_partial:
             continue
-        seeds, M, onset, U, ds, fs = read_test(name)
         if len(seeds) < 2:
             continue
         X = {c: m[:,1:].mean(1) for c,m in M.items()}

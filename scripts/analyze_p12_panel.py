@@ -89,13 +89,24 @@ def f(ci, d=1):
     return f"{e:+.{d}f} [{lo:+.{d}f}, {hi:+.{d}f}]{star}"
 
 
+def ready(name):
+    """Planned n=8 is complete from committed summaries, without workspace-only .done markers."""
+    seen=set()
+    for f in sorted(glob.glob(str(S / f"*p12-{name}-*.json"))):
+        d=json.loads(Path(f).read_text())
+        if not all(c in d.get("arms",{}) for c in ("CCC","CCD","CDC","CDD","DCC","DCD","DDC","DDD")):
+            continue
+        ss=set(d["seeds"])
+        assert not (seen & ss), f"duplicate complete seed group in {f}"
+        seen |= ss
+    return seen == set(range(8))
+
+
 def main():
     rows = []
     for gid, name, env, deficit in TESTS:
         summ = sorted(glob.glob(str(S / f"*p12-{name}-*.json")))
-        chunks = (0, 2, 4, 6) if name == "freeway-rflip" else (0, 4)  # Freeway rerun in 2-seed chunks (OOM)
-        done = [Path(f"/home/user/p12logs/{name}-s{c}.done").exists() for c in chunks]
-        if summ and not all(done) and "--include-partial" not in sys.argv:  # no interim looks (Phase 12 rule)
+        if summ and not ready(name) and "--include-partial" not in sys.argv:  # withhold formal interim primary analyses
             rows.append((gid, env, deficit, None, "pending (not analysed until all chunks finish)"))
             continue
         if not summ:
