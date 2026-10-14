@@ -157,6 +157,8 @@ def make(config: dict):
             a = jnp.where(explore, rand, greedy)
             obs2, env_state, r, d, info = jax.vmap(env.step, in_axes=(0, 0, 0, None))(
                 jax.random.split(k_s, N), env_state, a, env_params)
+            if dtype == "reward_flip":  # Phase 12: deterministic sign flip (p = 1) of the stored reward; no RNG used
+                r = jnp.where(_is_active(t, rs["deficit_bounds"]), -r, r)
             return (env_state, obs2, rng), Transition(obs, a, r, d, q, info)
 
         (env_state, obs, rng), traj = jax.lax.scan(env_step, (rs["env_state"], rs["obs"], rs["rng"]), jnp.arange(cfg["NUM_STEPS"]))

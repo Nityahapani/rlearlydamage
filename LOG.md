@@ -1448,3 +1448,19 @@ Only `cartpole-rflip` chunk s0–3 has finished. Its outputs were committed (0e9
 - 25–60%: no prediction.
 
 We report the hit count over the settings with a prediction, plus a descriptive Spearman correlation of relative total damage with relative gap across all PPO settings (earlier + new).
+
+### 2026-10-14 ~17:55: Phase 12 pre-registration ADDENDUM 2: G7, algorithm axis (before any Phase 12 outcome was inspected)
+All seven panel tests otherwise use PPO. G7 adds the second learner under the second deficit family.
+
+**G7: PQN-R (100k buffer) reward-flip network × buffer surgery.** SpaceInvaders, late onset u250, duration 100 updates, recovery 650 (the J4 protocol). The reward sign is flipped deterministically (p = 1) *as stored in replay*, so restriction-era transitions in the buffer carry wrong rewards. This is the strongest case for a data carrier we can construct.
+- Arms: CC, DC, CD, DD (network = parameters + RAdam state, as pre-specified in Phase 5; buffer = all buffer arrays).
+- Seeds 0–7 in two chunks; ε = 0.05 evaluation, AUC +10..+650 (`analyze_pqn_surgery.py`).
+- Code (no outcome seen): `pqn.py` gains a static `reward_flip` branch (no RNG; other deficits unchanged); `pqn_surgery.py` gets `--deficit`.
+
+**G7 decision rules:**
+- *Damage* iff DD − CC AUC CI < 0.
+- *Network carrier* iff the network main-effect CI < 0 and |network main effect| > |buffer main effect|.
+- *Buffer carrier* iff the buffer main-effect CI < 0. Otherwise the buffer gets a TOST at ±10% of |CC AUC|.
+- Secondary: data transfer CD − CC, parameter transfer DC − CC, overwrite fractions.
+
+**Budget rule.** G7 starts only after G1–G6 (`queue_p12c.sh`) and a chunk starts only before 22:55 (sandbox clock). An unstarted or incomplete G7 is reported as such (n < 8 ⇒ descriptive only).

@@ -42,6 +42,8 @@ def main():
     ap.add_argument("--variant", choices=["pqnr"], default="pqnr")
     ap.add_argument("--env", default="SpaceInvaders-MinAtar")
     ap.add_argument("--allowed", type=int, nargs="+", default=[0, 3])
+    ap.add_argument("--deficit", default="action_mask", choices=["action_mask", "reward_flip"],
+                    help="reward_flip (Phase 12): stored reward sign-flipped during the window (p = 1)")
     ap.add_argument("--late-onset", type=int, required=True)
     ap.add_argument("--buffer-size", type=int, default=100_000)
     ap.add_argument("--save-states", choices=["auto", "full", "nobuffer", "none"], default="auto",
@@ -62,11 +64,11 @@ def main():
     assert l0 % E == 0 and a.duration % E == 0 and a.recovery % E == 0
 
     label = "pqnr" if a.buffer_size == 100_000 else f"pqnr-{a.buffer_size // 1000}k"
-    cfg, init, run = make(dict(ENV_NAME=a.env, REPLAY=True, BUFFER_SIZE=a.buffer_size, DEFICIT="action_mask",
+    cfg, init, run = make(dict(ENV_NAME=a.env, REPLAY=True, BUFFER_SIZE=a.buffer_size, DEFICIT=a.deficit,
                                DEFICIT_PARAMS={"allowed_actions": a.allowed}, DEFICIT_START=0, DEFICIT_END=0))
     spu = cfg["STEPS_PER_UPDATE"]
     protocol = dict(variant=label, window_updates=[l0, l1], recovery=a.recovery, eval_every=E, eval_envs=a.eval_envs,
-                    eval_seed=a.eval_seed, eval_eps=[0.0, EVAL_EPS2], allowed=a.allowed, arms=a.arms,
+                    eval_seed=a.eval_seed, eval_eps=[0.0, EVAL_EPS2], allowed=a.allowed, arms=a.arms, deficit=a.deficit,
                     assignment_rule="network = params + optimizer state (together); buffer = all buffer arrays; "
                                     "env state, obs, RNG, update counter, exploration schedule, deficit bounds from C; "
                                     "no target network",
