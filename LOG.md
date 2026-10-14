@@ -1339,3 +1339,14 @@ Source: `p10_onsetref_move-analysis.md`.
   - The pre-registered decision rules are applied at the final n and labelled "pre-registered n, completed after an unblinded interim look".
   - The n = 16 / n = 4 interim values stay in the paper.
   - If only part of the runs finishes, the completed n is reported descriptively, as before.
+
+### 2026-10-14 ~15:12 UTC — Phase 11: E2 completed (Asterix reward flip, n = 8, pre-registered n; completed after the unblinded n = 4 interim)
+Source: `p9_asterix_rflip_surgery_n8-analysis.md`.
+- **REPLICATES.**
+  - Total −2.3 [−2.9, −1.7]*.
+  - Actor main effect −2.1 [−2.6, −1.7]* (Holm < 10⁻⁴).
+  - Actor Shapley 94% (8/8 seeds).
+  - Critic −0.1 and Adam +0.0, both TOST ±3 p < 10⁻⁴.
+- Fork readouts: C 5.36 → 5.41 (no clean progress); D at removal 1.70; gap −3.7 [−4.6, −2.8]* (68% of C(w1)).
+- Delay-adjusted AUC −1.7 [−2.1, −1.3]*; end −1.2 [−1.7, −0.6]*.
+- The interim n = 4 result (−2.4, 93%) is unchanged in substance. The post-hoc gap table was regenerated with the n = 8 row.
