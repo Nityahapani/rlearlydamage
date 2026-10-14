@@ -1326,3 +1326,16 @@ Source: `p10_onsetref_move-analysis.md`.
 4. Replay: abstract, ladder and limitation now say "bounded, not zero".
 5. PONR: already bounded (Phase 9); consistency checked.
 6–10. New limitations (interventions; mechanistic readings; effect scales with Table `tab:relative`; incomplete confirmatory evidence). The PPO behaviour-swap conclusion is narrowed to "depends on importance weighting; no conclusion about data content alone".
+
+## 2026-10-14 ~14:40 UTC — Phase 11: completing the unfinished pre-registered Phase 9 runs
+- The user asked to continue. We resume the two Phase 9 experiments cut short by sandbox restarts, with **identical commands** (`scripts/queue_p11.sh`):
+  1. **E2 seeds 4–7**: Asterix reward flip, bringing n to the pre-registered 8;
+  2. **E3 seeds 316–331**: PONR + predictor replication, bringing n to the pre-registered 32.
+- **Disclosure (optional-stopping risk):** the interim results are already public.
+  - E2 at n = 4: REPLICATES.
+  - E3 at n = 16: L_300 +6.0 [+1.9, +10.2]; no predictor supported.
+- Completing to the pre-registered n was the plan from the start and does not depend on those results. However, it is not blind.
+- Reporting rule (fixed now):
+  - The pre-registered decision rules are applied at the final n and labelled "pre-registered n, completed after an unblinded interim look".
+  - The n = 16 / n = 4 interim values stay in the paper.
+  - If only part of the runs finishes, the completed n is reported descriptively, as before.
