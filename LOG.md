@@ -1156,3 +1156,58 @@ All Phase 8 jobs are complete. The queue ran 16:48–22:49 UTC (~6 h, inside the
 - Abstract, contributions, discussion, limitations, conclusion, provenance table and deviations updated.
 - `make_causal_summary.py` updated (20 verified numbers).
 - Paper recompiled (25 pages).
+
+## 2026-10-14 — Phase 9: second reviewer round — PRE-REGISTRATION (committed before any Phase 9 data)
+
+**Context.** The second review lists six remaining weaknesses:
+1. baseline-dependent conclusions with no declared primary estimand;
+2. null claims (point of no return, predictors) still underpowered or inconclusive;
+3. post-hoc sensitivity analyses not clearly separated from confirmatory tests;
+4. inconsistent treatment of the significant critic effect;
+5. the scope of generalization, given that Asterix showed no lasting damage;
+6. "no predictor found in this sample" vs "measurements cannot predict".
+
+Points 3 and 4 are fixed in the text. Points 1, 2, 5 and 6 also get new data. Budget: ~6 h on 2 CPU cores. Queue: `scripts/queue_p9.sh` (sequential, resumable; logs in /home/user/p9logs). The analysis scripts were written and checked before this entry, on existing data only:
+- `scripts/analyze_p9_estimands.py` reproduces the Phase 8 post-hoc values on the Phase 2 seeds: E_damage +1.1, E_plast +18.0.
+- `scripts/analyze_p9_ponr_predictors.py` reproduces the Phase 7b d = 300 correlations on the pilot seeds: +0.80, +0.60, +0.40, −0.20.
+No Phase 8 J5 predictor values were computed.
+
+**Declared estimands (paper-wide, fixed now).** Each question gets one estimand. The three baselines are not alternatives for the same question.
+- **Q-damage**, "damage beyond the training time the deficit consumes": **primary estimand E_damage = D(w1 + k) − C(w1 + k − L)**, the pause counterfactual.
+  - Justification: it is the only one of the three that (a) charges the deficit exactly for the training time it occupies, and (b) is defined without conditioning on the restricted agent's post-treatment state.
+- **Q-plasticity**, "does the restricted agent learn more slowly than a clean agent from equal competence?": **E_plast = D(w1 + k) − C(t* + k)**, competence-matched.
+  - It conditions on the competence reached at removal (a mediator), so it answers only the rate question. It is never used to claim absence of damage.
+- **E_total = D(w1 + k) − C(w1 + k)**, same-update: the total cost including lost time. Descriptive only.
+- Carrier analyses (surgery) compare damaged and clean components at the same update and do not depend on this choice.
+
+**E1 — confirmatory test of E_damage and E_plast (PPO, movement, late [100, 150), fresh seeds 200–211, n = 12, 440 updates; configs control + move_late; AUC over k = 10..250).**
+- **E_damage:** TOST against SESOI ±3. Decisions:
+  - **equivalent** if both one-sided p < 0.05;
+  - **damage beyond lost time** if the mean ≤ −3 and the CI upper bound < 0;
+  - otherwise **inconclusive**.
+- **E_plast:** two-sided paired t. Decisions:
+  - **savings** if the CI lower bound > 0;
+  - **slower relearning** if the CI upper bound < 0;
+  - otherwise inconclusive.
+- The two answer different questions, so there is no multiplicity correction between them. E_total is descriptive.
+- t* is defined exactly as in `posthoc_alt_baselines.py`: the first checkpoint at which C's 3-checkpoint moving average ≥ D(w1).
+
+**E3 — independent confirmatory point-of-no-return study and predictor test (PPO, movement, onset 100, d = 300, budget 250, fresh seeds 300–331, n = 32, arm D_online only, 64-episode eval).**
+- It is independent of Phase 8 J5 (seeds 100–107, inconclusive), which stays reported as is. J5 is pooled with E3 only descriptively.
+- **Primary 1:** L_300 (k = 210..250), TOST ±5. Decisions as in J5 (equivalent / persistent impairment / inconclusive).
+  - Power: with SD ≈ 9 (J5), the probability of declaring equivalence when the true mean is 0 is ≈ 0.84.
+- **Primary 2:** the four Phase 7b predictors at removal (kl_clean, cka_clean, move_gap_rel, value_err_clean; definitions unchanged, imported from `ponr_predictors.py`) vs A_300.
+  - Test: Spearman ρ, one-sided H1 ρ < 0, Holm across the four. A predictor is **supported** if Holm p < 0.05.
+  - Power: 80% for ρ ≈ −0.45 at the uncorrected level and ≈ −0.53 at the Holm worst case.
+  - For every predictor we report a 95% CI for ρ (Fisher z, Bonett–Wright SE). If none is supported, the conclusion is stated as bounds: associations stronger than the CI lower bounds are excluded. It is not stated as "unpredictable".
+- **Descriptive:** predictor split-half reliability; A_300 split-half reliability; leave-one-out R² gain; correlations with L_300; pooling with J5.
+- **Fallback:** if the budget ends before all 8 chunks finish, the completed chunks are reported descriptively and no decision is made.
+
+**E2 — Asterix reward-flip surgery (PPO, Asterix-MinAtar, reward sign flipped with prob 1.0 during [390, 440), recovery 200, seeds 0–7, 2^3 factorial, eval-fork).**
+- Rationale: Phase 8 J3 (Asterix, movement) produced only a small competence gap at removal (−1.0, ~18%) and no lasting damage. The lost-competence account predicts lasting damage only when the deficit removes enough competence (and the clean agent gains enough) relative to the relearning speed. A harsher deficit on the same game tests whether Asterix's null is game-specific or deficit-specific.
+- **Primary:** the same replication criterion as Phase 8 (total CI < 0 AND actor main-effect CI < 0 AND the actor has the largest Shapley share); "no damage to localize" if the total CI includes 0.
+- **Secondary:** gap at removal, unlearning, delay-adjusted AUC.
+- **Post-hoc, labelled:** across all PPO surgery settings, the relation between gap at removal and total damage.
+- Runs last; if it does not finish within the budget, it is reported as not run.
+
+**Order:** E1 → E3 → E2 (~42 + 145 + 68 min).
