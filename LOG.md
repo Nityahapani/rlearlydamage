@@ -1492,3 +1492,11 @@ The earlier statements "before any Phase 12 deficit outcome was inspected" and "
 - The G7 addendum (bf9a946) was likewise made after the CartPole acute values were visible, but before any G7 data existed. It is a pre-registered new setting, not a fully blinded global research programme.
 - For Phase 12, the correct statement is: no **formal interim primary-AUC analysis** was performed; however, G1 had acute-outcome progress checks. The manuscript and response will disclose this distinction instead of claiming there were no looks.
 - Older entries are retained to make this correction auditable. The entries' manually estimated times are approximate; git and manifest UTC timestamps are the authoritative timeline.
+
+
+### 2026-10-14 20:24 UTC: G7 matched-horizon secondary analysis (before any G7 run)
+The original G7 primary remains AUC at +10..+650 PQN-R updates. Its horizon differs from the PPO panel, so algorithm-wise effect magnitudes must not be pooled or compared as if budgets matched.
+- Add a **secondary matched-horizon readout**: PQN-R evaluations at +20, +40, ..., +300 updates. These exactly match PPO's +10, +20, ..., +150 checkpoints in environment steps (15 checkpoints over 1,228,800 recovery steps).
+- The deficit duration is already equal (100 PQN updates = 50 PPO updates = 409,600 environment steps), with competence-based onsets.
+- Report the same total, network and buffer contrasts on this matched grid; do not change the original primary G7 decisions.
+- This analysis was selected to satisfy the horizon-matching instruction, after other Phase 12 tests were seen but before any G7 data. It is a target-specific registered secondary analysis, not a new global pre-registration.
