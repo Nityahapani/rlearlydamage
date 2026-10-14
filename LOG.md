@@ -1297,3 +1297,17 @@ Appendix: provenance rows and the Phase 9 deviation item.
   - (c) interaction size = DDD − PPP minus the sum of main effects; two- and three-way interaction contrasts.
 - **Post-hoc, labelled:** interaction contrasts for the existing n = 12 fork-reference surgery; AUC normalized by the clean agent's AUC for the PPO and PQN-R carrier effects.
 - **Order:** K1a, K1b, K2. Whatever does not finish within the budget is reported as not run.
+
+### 2026-10-14 ~13:52 UTC — Phase 10 K1 result (onset-reference surgery, SpaceInvaders reward flip, seeds 0–7)
+Sources: `p10_onsetref_rflip-analysis.md` (the script's "C" labels denote the onset component P), `p10_onsetref_rflip-checks.md`, `p10_interactions_onsetref_rflip-posthoc.md`.
+- **Pre-registered criterion: beyond-lost-time damage localizes to the actor (REPLICATES).**
+  - DDD − PPP −19.8 [−27.8, −11.8]*.
+  - Actor main effect −22.0 [−25.2, −18.8]* (Holm < 10⁻⁴).
+  - Actor Shapley −21.6 [−24.8, −18.4]* = 109% (8/8 seeds).
+  - Critic +2.8 [−2.8, +8.4] (Shapley −16%; TOST ±3 p 0.47, not equivalent).
+  - Adam −1.6 [−4.3, +1.0] (TOST p 0.13, not equivalent).
+- Onset actor into damaged agent: PDD − DDD +21.2 [+14.9, +27.5]*; PDD 68.8 vs PPP 67.4.
+- Checks:
+  - (a) DDD bit-identical to Phase 8 (max |diff| 0).
+  - (b) State-level pause PPP vs time-shifted pause C(w1 + k − L): +1.2 [−0.6, +3.0]. DDD − PPP −19.8 vs delay-adjusted −18.6: the state-level decomposition matches the primary estimand.
+- Interactions (post-hoc): only actor × Adam −2.1 [−4.1, −0.2]* (3% of PPP AUC); non-additivity +1.2 [−7.2, +9.6].
