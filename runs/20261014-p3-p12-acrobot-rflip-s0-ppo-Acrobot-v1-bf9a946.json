@@ -1,0 +1,72 @@
+{
+  "allow_dirty": false,
+  "config": {
+    "DEFICIT": "reward_flip",
+    "DEFICIT_PARAMS": {
+      "prob": 1.0
+    },
+    "ENV_NAME": "Acrobot-v1",
+    "HIDDEN": 128,
+    "TOTAL_TIMESTEPS": 2129920,
+    "protocol": {
+      "allowed": [
+        0,
+        3
+      ],
+      "arms": [
+        "CCC",
+        "DCC",
+        "CDC",
+        "CCD",
+        "DDC",
+        "DCD",
+        "CDD",
+        "DDD"
+      ],
+      "behaviour_k": 10,
+      "carriers": [
+        "actor",
+        "critic",
+        "opt"
+      ],
+      "clean_source": "fork",
+      "deficit": "reward_flip",
+      "deficit_params": {
+        "prob": 1.0
+      },
+      "eval_envs": 64,
+      "eval_every": 10,
+      "eval_seed": 10000,
+      "future_randomness": "env state, obs, RNG, update counter from clean run C",
+      "recovery": 150,
+      "steps_per_update": 8192,
+      "window": [
+        60,
+        110
+      ]
+    }
+  },
+  "created_utc": "2026-10-14T17:50:17.896444+00:00",
+  "git": {
+    "commit": "bf9a9461b81457134b35a57680561bd48a7fb84a",
+    "dirty": false
+  },
+  "name": "p3-p12-acrobot-rflip-s0-ppo-Acrobot-v1",
+  "packages": {
+    "flax": "0.12.10",
+    "gymnax": "0.0.9",
+    "jax": "0.11.2",
+    "jaxlib": "0.11.2",
+    "numpy": "2.5.4",
+    "optax": "0.2.8",
+    "rliable": null
+  },
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.41",
+  "python": "3.13.16",
+  "seeds": [
+    0,
+    1,
+    2,
+    3
+  ]
+}
