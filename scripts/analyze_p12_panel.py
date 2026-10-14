@@ -93,6 +93,10 @@ def main():
     rows = []
     for gid, name, env, deficit in TESTS:
         summ = sorted(glob.glob(str(S / f"*p12-{name}-*.json")))
+        done = [Path(f"/home/user/p12logs/{name}-s{c}.done").exists() for c in (0, 4)]
+        if summ and not all(done) and "--include-partial" not in sys.argv:  # no interim looks (Phase 12 rule)
+            rows.append((gid, env, deficit, None, "pending (not analysed until all chunks finish)"))
+            continue
         if not summ:
             rows.append((gid, env, deficit, None, "not run"))
             continue
