@@ -46,10 +46,11 @@ def main():
                    f"{pt(r['opt'], d)} & {verdict} \\\\")
         scale = r["c_w1"] - BASE.get(name, 0.0)
         relgap = -r["gap"][0] / scale
-        pred = "no damage" if relgap < 0.25 else ("damage" if relgap >= 0.60 else "--")
-        hit = "--" if pred == "--" else ("hit" if (pred == "damage") == dmg else "miss")
+        pred = "no damage" if relgap < 0.25 else ("damage" if relgap >= 0.60 else "no prediction")
+        obs = "damage" if dmg else "no damage"
+        hit = obs if pred == "no prediction" else obs + (" (hit)" if (pred == "damage") == dmg else " (miss)")
         gap.append(f"{LABEL[name]} ({gid}) & {r['n']} & {100 * relgap:.0f}\\% & {ci(r['total'], d)} & "
-                   f"{100 * r['total'][0] / scale:+.0f}\\% & {ci(r['delay_auc'], d) if r.get('delay_auc') else '--'} & "
+                   f"${100 * r['total'][0] / scale:+.0f}\\%$ & {ci(r['delay_auc'], d) if r.get('delay_auc') else '--'} & "
                    f"{pred}; {hit} \\\\")
     out = ["% tab:general rows (Phase 12)"] + gen + ["", "% tab:gap rows (Phase 12; prediction; hit)"] + gap
     (S / "p12_tables.tex").write_text("\n".join(out) + "\n")
