@@ -1,0 +1,77 @@
+{
+  "allow_dirty": false,
+  "config": {
+    "DEFICIT": "action_mask",
+    "DEFICIT_PARAMS": {
+      "allowed_actions": [
+        0,
+        3
+      ]
+    },
+    "ENV_NAME": "SpaceInvaders-MinAtar",
+    "HIDDEN": 128,
+    "TOTAL_TIMESTEPS": 5324800,
+    "protocol": {
+      "allowed": [
+        0,
+        3
+      ],
+      "arms": [
+        "D_online"
+      ],
+      "bank_seed": 20000,
+      "durations": [
+        300
+      ],
+      "eval_envs": 64,
+      "eval_every": 10,
+      "eval_seed": 10000,
+      "future_randomness": "env state, obs, RNG, update counter from clean run C at removal",
+      "nested_windows": true,
+      "onset": 100,
+      "probes": [
+        "kl_onset",
+        "entropy",
+        "p_masked",
+        "kl_masked_cond",
+        "masked_logit_corr",
+        "decode_r2_h1",
+        "decode_r2_h0",
+        "repr_drift_a0",
+        "repr_drift_a1",
+        "srank_a1",
+        "dead_a1",
+        "value_corr",
+        "value_nmse",
+        "actor_rel_change",
+        "critic_rel_change"
+      ],
+      "recovery": 250,
+      "steps_per_update": 8192,
+      "transplant": "actor (a0, a1, Dense_0) from C at removal; critic + Adam state from D"
+    }
+  },
+  "created_utc": "2026-10-14T06:28:25.452091+00:00",
+  "git": {
+    "commit": "63a8f1d7a71b20472d73d3054b2c743a93a04cbc",
+    "dirty": false
+  },
+  "name": "p7-p9-ponr-confirm2-s300to303-ppo-SpaceInvaders-MinAtar",
+  "packages": {
+    "flax": "0.12.10",
+    "gymnax": "0.0.9",
+    "jax": "0.11.2",
+    "jaxlib": "0.11.2",
+    "numpy": "2.5.4",
+    "optax": "0.2.8",
+    "rliable": null
+  },
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.41",
+  "python": "3.13.16",
+  "seeds": [
+    300,
+    301,
+    302,
+    303
+  ]
+}

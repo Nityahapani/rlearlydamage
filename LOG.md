@@ -1250,3 +1250,24 @@ Source: `results/summary/p9_asterix_rflip_surgery-analysis.md`.
   - Delay-adjusted AUC −1.8 [−2.6, −1.0]*; delay-adjusted end −1.2 [−2.2, −0.1]*.
 - Reading: the Asterix movement null was deficit-specific, not game-specific. When the deficit removes most competence, Asterix shows damage beyond lost time, and the actor carries it.
 - Post-hoc cross-setting table: `results/summary/p9_gap_vs_damage-posthoc.md` (descriptive).
+
+### 2026-10-14 ~11:10 UTC — Phase 9 E3 result (descriptive per fallback; seeds 300–315, n = 16 of 32)
+Source: `results/summary/p9_ponr_predictors-analysis.md` (header notes that script decision labels are not applied). The queue was stopped at the budget limit; the partial chunk s316–319 was deleted unanalysed.
+- L_300 +6.0 [+1.9, +10.2]: harm worse than −5 is rejected (p_lower < 10⁻⁴), but a benefit above +5 is not excluded. Pooled with J5 (n = 24): +4.4 [+0.8, +7.9].
+- A_300 +1.3 [−0.7, +3.3] (split-half SB 0.78). Pooled with J5: −0.7 [−3.4, +2.1]. The pilot's early-recovery cost does **not** replicate.
+- Predictors vs A_300 (ρ [95% CI]; LOO gain):
+  - KL −0.24 [−0.66, +0.30], −18%;
+  - 1−CKA −0.13 [−0.59, +0.39], −21%;
+  - move_gap −0.15 [−0.60, +0.38], −14%;
+  - value_err +0.18 [−0.35, +0.62], −8%.
+  - Predictor split-half reliabilities 0.65–0.96.
+  - Reported as "no predictor found in this sample"; moderate correlations (down to about −0.6) remain compatible.
+
+### 2026-10-14 — Phase 9 paper revision (all six second-round weaknesses)
+1. New §3.4 "Declared estimands": E_damage (pause, primary) with its justification; E_plast (competence-matched); E_total descriptive. Confirmatory Table 4 (E1). The B1–B3 appendix table is relabelled post-hoc.
+2. "Not detected"/bounds wording throughout (abstract, contributions, §4, §5, §7 title and text, conclusion, captions).
+3. New "Evidence status" table (confirmatory / exploratory / post-hoc). The rung-4 sensitivity analysis is labelled as not part of the test.
+4. Critic made consistent everywhere (main effect −1.9*, Shapley 12%, transient time course, not equivalent to 0), with a paragraph on how the main effect relates to the Shapley value. §5 title is now "mainly in the actor".
+5. Asterix scope paragraph, E2 row in Table 9, post-hoc gap-vs-damage table.
+6. Predictor table with ρ CIs, and a "No predictor found ≠ unpredictable" paragraph. The early-recovery-cost claim was withdrawn after non-replication.
+Appendix: provenance rows and the Phase 9 deviation item.
