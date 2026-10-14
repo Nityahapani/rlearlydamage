@@ -13,7 +13,7 @@ PPO 2^3 actor x critic x Adam surgery at removal, fork reference, unmasked/undef
 | G2 | Acrobot-v1 | reward flip | complete | 8 | -134.5 [-217.1, -51.9]* (neg. scale) | -108.9 [-236.9, +19.0] | -42.5 [-94.3, +9.2] | -66.8 [-148.3, +14.6] | -10.7 [-27.1, +5.7] | –% (–) | 0.9276 | 0.5198 | -54.5 [-147.5, +38.5] | -98.6 [-248.3, +51.0] | NO DAMAGE TO LOCALIZE |
 | G3 | SpaceInvaders | actuator noise p=0.5 | complete | 8 | -27.1 [-32.6, -21.6]* (-47%) | -9.5 [-12.7, -6.3]* | -11.0 [-13.8, -8.2]* | -0.5 [-2.1, +1.0] | +1.8 [+0.9, +2.7]* | 115% (8/8) | 0.0000 | 0.0000 | +4.2 [+0.9, +7.5]* | +8.3 [+2.7, +13.9]* | REPLICATES |
 | G4 | Freeway-MinAtar | reward flip | not run | – | – | – | – | – | – | – | – | – | – | – | – |
-| G5 | SpaceInvaders | observation noise sigma=1 | not run | – | – | – | – | – | – | – | – | – | – | – | – |
+| G5 | SpaceInvaders | observation noise sigma=1 | complete | 8 | -24.2 [-32.9, -15.6]* (-42%) | -10.0 [-13.4, -6.5]* | -10.6 [-12.7, -8.5]* | -0.3 [-2.1, +1.6] | +1.0 [-0.5, +2.5] | 107% (8/8) | 0.0000 | 0.0000 | +3.7 [+0.5, +7.0]* | +7.9 [+2.9, +13.0]* | REPLICATES |
 | G6 | SpaceInvaders | reward extinction | not run | – | – | – | – | – | – | – | – | – | – | – | – |
 
 ## Pre-registered addendum: gap-damage prediction (relative gap < 25% => no damage; >= 60% => damage)
@@ -23,14 +23,15 @@ PPO 2^3 actor x critic x Adam surgery at removal, fork reference, unmasked/undef
 | G1 | CartPole-v1, reward flip | 98% | damage | damage | yes |
 | G2 | Acrobot-v1, reward flip | 44% | none | no damage | – |
 | G3 | SpaceInvaders, actuator noise p=0.5 | 47% | none | damage | – |
+| G5 | SpaceInvaders, observation noise sigma=1 | 42% | none | damage | – |
 
 Hits: **1 of 1** settings with a prediction.
-Descriptive: Spearman rho(relative gap, relative total damage) over 8 PPO settings = -0.81 (negative = larger gap, more damage). Relative total = total AUC damage / C(w1) (range for Acrobot).
+Descriptive: Spearman rho(relative gap, relative total damage) over 9 PPO settings = -0.83 (negative = larger gap, more damage). Relative total = total AUC damage / C(w1) (range for Acrobot).
 
 ## Pre-registered cross-setting summary
 
-- Settings with damage to localize (total CI < 0): 6 — main, J4, J7, E2, G1, G3
-- Actor is the largest carrier in 6 of 6: main 90%, J4 100%, J7 82%, E2 94%, G1 95%, G3 115%
+- Settings with damage to localize (total CI < 0): 7 — main, J4, J7, E2, G1, G3, G5
+- Actor is the largest carrier in 7 of 7: main 90%, J4 100%, J7 82%, E2 94%, G1 95%, G3 115%, G5 107%
 - Actor Shapley share range: 82–115%
 
 Per-test details: `p12_<name>-analysis.md`. Earlier settings: the files listed in the table.
