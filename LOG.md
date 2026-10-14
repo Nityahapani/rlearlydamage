@@ -1220,3 +1220,18 @@ Source: `results/summary/p9_estimands-analysis.md`. D at removal 24.4; C at onse
   - It replicates the Phase 2 value (+1.1 [−2.9, +5.2], n = 4).
 - **E_plast (competence-matched): +14.2 [+10.9, +17.5]***, p < 10⁻⁴ → **SAVINGS** (12/12 seeds positive). This replicates the post-hoc Phase 8 value (+18.0, n = 4).
 - E_total (descriptive): −8.9 [−11.1, −6.6]*.
+
+### 2026-10-14 ~07:00 UTC — Phase 9 deviation (budget; decided before any E2/E3 outcome was inspected)
+- E3 chunks take ~27.5 min, not the estimated 18. The full queue would end at the budget limit, leaving no time for analysis.
+- With the user's approval, E2 (Asterix reward flip) runs **seeds 0–3 only** (n = 4 instead of 8). E2-s4 was skipped with a done-marker; `queue_p9.sh` is unchanged.
+- The E2 replication criterion is applied unchanged but is reported as an **underpowered, reduced-n confirmatory test**.
+- E3 is unaffected (n = 32 as pre-registered). No E3 chunk outcome had been analysed; only the run log's one-line progress output for chunk 1 was visible.
+
+### 2026-10-14 ~09:30 UTC — Phase 9 deviation 2 (sandbox restart; decided before inspecting any E3 outcome)
+- A sandbox restart (~07:20 UTC) killed the queue during E3 chunk 2. About 2 h of the 6 h budget were lost; ~1 h 50 min remain.
+- The partial chunk-2 output (shared history only) was deleted.
+- With the user's choice, a resume queue `scripts/queue_p9b.sh` (same commands) runs:
+  1. **E2 seeds 0–3** (as in deviation 1);
+  2. **E3 chunks in pre-registered order until the budget ends**.
+- E3 will therefore not reach n = 32. Per the pre-registered fallback, **E3 is reported descriptively with no decision** (no TOST decision, no predictor support/no-support verdict). Interval estimates and Fisher-z CIs for ρ are still reported as bounds.
+- E1 is complete and unaffected.
