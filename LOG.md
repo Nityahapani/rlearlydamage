@@ -1475,3 +1475,11 @@ The 4-seed Freeway surgery chunk (seeds 0–3) was OOM-killed by the kernel (pyt
 - No Freeway chunk starts after 22:40. G7 follows under its 23:20 start cutoff.
 - `queue_p12d.sh` replaces the G7 waiter `queue_p12c.sh`, whose G7 commands are carried over unchanged.
 - G1–G3 were analysed only after completion (G1 CartPole: REPLICATES; G2 Acrobot: no damage to localize). G3 was analysed after completion, but the output was lost in the hang and will be regenerated.
+
+### 2026-10-14 19:25: Phase 12 deviation: dirty-tree cascade; new order
+At 19:11–19:13 every remaining chunk failed the provenance guard within seconds, because an analysis run had modified a tracked file (`p12_panel-analysis.md`). The affected chunks were G5 s0/s4, G6 s0/s4, the Freeway reruns and both G7 chunks.
+- No run started and no outcome exists for G4–G7.
+- **New order (`queue_p12e.sh`):** G5, G6, G7, then G4 Freeway in 2-seed chunks as time allows.
+- Rationale: after the OOM, Freeway's memory and runtime are uncertain. Running it last protects the budget for the reliable tests and for the only algorithm-axis test (G7). The decision uses no outcome information.
+- Cutoffs: no PPO chunk starts after 23:30 and no G7 chunk after 23:20. Tests with n < 8 are descriptive.
+- Procedure fix: from now on analysis outputs are committed in the same command that writes them.
