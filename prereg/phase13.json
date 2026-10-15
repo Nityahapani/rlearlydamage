@@ -1,0 +1,236 @@
+{
+  "phase": 13,
+  "registered_utc": "2026-10-15T15:55:38.049463+00:00",
+  "budget_end_utc": "2026-10-15T23:40:00+00:00",
+  "all_training_seeds_unused": true,
+  "studies": {
+    "A": {
+      "name": "CartPole independent replication and pause/context localization",
+      "env": "CartPole-v1",
+      "deficit": "reward_flip",
+      "window": [
+        10,
+        60
+      ],
+      "recovery": 150,
+      "seeds": [
+        600,
+        601,
+        602,
+        603,
+        604,
+        605,
+        606,
+        607
+      ],
+      "n": 8,
+      "references": [
+        "fork",
+        "pause"
+      ],
+      "contexts": [
+        "clean",
+        "damaged",
+        "reset"
+      ],
+      "primary_reference": "pause",
+      "primary_context": "clean",
+      "notes": "Full 2^3 for fork/pause x clean/damaged; pause clean zero-Adam 2x2; reset-world pause actor corners. Natural D equals damaged-context DDD by full state assertion."
+    },
+    "B": {
+      "name": "Asterix pause-reference extension on independent seeds",
+      "env": "Asterix-MinAtar",
+      "deficit": "reward_flip",
+      "window": [
+        390,
+        440
+      ],
+      "recovery": 200,
+      "seeds": [
+        800,
+        801,
+        802,
+        803,
+        804,
+        805,
+        806,
+        807
+      ],
+      "n": 8,
+      "references": [
+        "pause"
+      ],
+      "contexts": [
+        "clean",
+        "damaged"
+      ],
+      "primary_reference": "pause",
+      "primary_context": "clean",
+      "notes": "Full pause clean-context factorial; damaged-context four actor corners; natural clean continuation for historical pause. No new competence/onset tuning."
+    },
+    "C": {
+      "name": "Actuator-noise independent impairment-family replication",
+      "env": "SpaceInvaders-MinAtar",
+      "deficit": "action_noise",
+      "window": [
+        100,
+        150
+      ],
+      "recovery": 150,
+      "seeds": [
+        700,
+        701,
+        702,
+        703,
+        704,
+        705,
+        706,
+        707
+      ],
+      "n": 8,
+      "references": [
+        "fork"
+      ],
+      "contexts": [
+        "clean",
+        "damaged"
+      ],
+      "primary_reference": "fork",
+      "primary_context": "clean",
+      "notes": "Full clean-context factorial; natural-D context actor corners; common fresh-Adam 2x2. Replacement probability .5, uniform over all actions."
+    },
+    "E": {
+      "name": "Controlled replay-label exposure and washout state crossing",
+      "env": "SpaceInvaders-MinAtar",
+      "algorithm": "PQN-R",
+      "buffer_size": 100000,
+      "window": [
+        250,
+        350
+      ],
+      "seeds": [
+        1000,
+        1001,
+        1002,
+        1003,
+        1004,
+        1005,
+        1006,
+        1007
+      ],
+      "n": 8,
+      "exposure_updates": 25,
+      "recovery": 300,
+      "eval_every": 10,
+      "eval_eps": 0.05,
+      "notes": "Identical damaged learner and D transitions; only original-window reward labels negative versus sign-restored. Collect 25 updates with the frozen clean fork behavior policy, same RNG/replay schedule. Assert buffers/env/obs/RNG/counter identical after overwrite. Then 2x2 parameter x RAdam state crossing, learning resumes normally."
+    },
+    "D": {
+      "name": "Frozen prospective diagnostic comparison",
+      "env": "SpaceInvaders-MinAtar",
+      "algorithm": "PPO",
+      "window": [
+        100,
+        400
+      ],
+      "recovery": 250,
+      "seeds": [
+        900,
+        901,
+        902,
+        903,
+        904,
+        905,
+        906,
+        907,
+        908,
+        909,
+        910,
+        911,
+        912,
+        913,
+        914,
+        915
+      ],
+      "n": 16,
+      "train_cohort": [
+        300,
+        301,
+        302,
+        303,
+        304,
+        305,
+        306,
+        307,
+        308,
+        309,
+        310,
+        311,
+        312,
+        313,
+        314,
+        315,
+        316,
+        317,
+        318,
+        319,
+        320,
+        321,
+        322,
+        323,
+        324,
+        325,
+        326,
+        327,
+        328,
+        329,
+        330,
+        331
+      ],
+      "target": "A_300 delay-adjusted mean over +10..+250",
+      "models": [
+        "training_mean",
+        "acute_gap",
+        "removal_entropy",
+        "KL",
+        "acute_gap_plus_KL"
+      ],
+      "metric": "held-out squared-error reduction versus acute_gap; primary practical threshold 10%",
+      "notes": "All coefficients frozen on original 32 before any new cohort run. Raw one-predictor OLS and acute+KL OLS, intercepts included, no hyperparameter tuning. No fitting on held-out data; rank correlations secondary."
+    }
+  },
+  "primary_inference": {
+    "family": [
+      "A",
+      "B",
+      "C",
+      "E",
+      "D"
+    ],
+    "correction": "Holm across these five phase-13 primary claim p-values; unrun/incomplete studies receive p=1. This does not retrospectively control the entire legacy paper.",
+    "A_B": "Intersection-union max one-sided paired-t p for: native delay-adjusted harm, standardized-pause total harm, actor main effect <0, Shapley(actor)-Shapley(critic)<0, Shapley(actor)-Shapley(Adam)<0. All AUCs exclude removal checkpoint. Report 95% paired t-CIs; CI/rank shares descriptive when total uncertain.",
+    "C": "IUT max one-sided paired-t p for same-update harm, actor main effect <0 and actor Shapley below critic and Adam. No persistent-damage claim from this study without a separate pause-reference intervention.",
+    "E": "One-sided paired-t test of post-washout bad-label minus repaired-label matched-background continuation; claim practically substantial delayed harm only if point estimate <= -1 and globally adjusted p<.05. TOST +/-1 secondary; parameter/optimizer crossing and interactions secondary.",
+    "D": "One-sided paired-t of per-seed loss(acute_gap)-loss(acute_gap_plus_KL)>0; usefulness requires at least 10% point reduction AND globally adjusted p<.05. Compare all frozen baselines regardless of outcome. No validated failure-probability or causal claim."
+  },
+  "secondary_rules": {
+    "contexts": "Report all planned natural/standardized differences, actor swaps in both backgrounds, zero-Adam and reset-context checks. No choosing a context after data; no unique natural-damage decomposition claim.",
+    "native_pause": "Historical unbroken clean C at onset+k, from the clean trace; natural damaged continuation is exact damaged-context DDD. The standardized state-level pause is not asserted identical to historical pause.",
+    "equivalence": "Context effect TOST margin +/-5% of native clean mean recovery score (prespecified scale rule); also report paired CI. No neutrality claim merely because a difference test is nonsignificant.",
+    "prediction": "Prospective cohort, not new-task validation. Primary losses are paired by held-out seed. All other model/rank comparisons and exclusion checks reported as secondary; no refitting after outliers.",
+    "partial": "No formal primary analysis until planned cohort complete; incomplete cells/seeds are retained and descriptive only. Never expand seeds or change contrasts after a look."
+  },
+  "queue_priority": [
+    "A",
+    "B",
+    "C",
+    "E",
+    "D"
+  ],
+  "whole_study_start_cutoffs_utc": {
+    "E": "2026-10-15T21:10:00+00:00",
+    "D": "2026-10-15T21:55:00+00:00"
+  },
+  "no_new_chunk_after_utc": "2026-10-15T22:45:00+00:00",
+  "progress_logging": "Only status/elapsed time, no outcomes until full planned cohort; all primary claims and nulls retained."
+}
