@@ -75,7 +75,7 @@ def main():
       ['Main same-task rate','competence-matched AUC','D minus C(t*+k)','12 fresh','single paired rate test','registered same-task support'],
       ['Main PPO gap (Tier I)','same-update AUC gap','actor/critic/Adam factorial','12 (8 new)','Holm 3 effects','actor fresh subset; critic pooled only'],
       ['SI flip pause (Tier II)','state-pause AUC gap','DDD minus PPP; component swaps','8 reused IDs','Holm 3 effects','specific procedural support'],
-      ['Legacy generalization','eligible same-update gaps','negative gap, actor effect, largest point share','8/setting','within-setting; no legacy global rate','conditional new contrasts, not fresh replication'],
+      ['Legacy generalization','eligible same-update gaps','negative gap, actor effect, largest point share','8 each','within-setting; no legacy global rate','conditional new contrasts, not fresh replication'],
       ['Q network/buffer','same-update AUC gap','network-block x buffer','12 / 8','exploratory intervals','network block includes moments'],
       ['Q parameter rescue','damaged-buffer recovery','parameter versus moment rescues','8 reused','Holm 2 rescues','parameter support; moment rescue inconclusive'],
       ['Replay identity','matched-identity AUC','purge R minus matched U, TOST +/-1','32','one contrast / TOST IUT','marginal practical bound, not zero'],
