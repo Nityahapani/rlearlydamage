@@ -9,9 +9,9 @@
 \toprule
 study & $n$ & primary $p$ & phase-wise Holm $p$ & completion \\
 \midrule
-A: CartPole flip & 8 & $0.031$ & $0.124$ & complete \\
+A: CartPole flip & 8 & $0.031$ & $0.093$ & complete \\
 B: Asterix flip & 8 & $<10^{-4}$ & $0.000$ & complete \\
-C: SI actuator noise & -- & -- & -- & not completed \\
+C: SI actuator noise & 8 & $0.001$ & $0.003$ & complete \\
 E: controlled replay labels & -- & -- & -- & not completed \\
 D: prospective diagnostic & -- & -- & -- & not completed \\
 \bottomrule
@@ -31,6 +31,7 @@ study & $n$ & tier/reference & native pause-relative AUC & surgery AUC gap & act
 \midrule
 A: CartPole flip & 8 & Tier II & $-155.0\ci{-220.1}{-90.0}\sig$ & $-160.6\ci{-251.9}{-69.2}\sig$ & $-117.4\ci{-195.5}{-39.2}\sig$ & 75\% \\
 B: Asterix flip & 8 & Tier II & $-1.6\ci{-1.8}{-1.3}\sig$ & $-1.4\ci{-1.8}{-1.0}\sig$ & $-1.5\ci{-1.7}{-1.2}\sig$ & 98\% \\
+C: SI actuator noise & 8 & Tier I & $+3.5\ci{+0.2}{+6.8}\sig$ & $-12.5\ci{-18.4}{-6.5}\sig$ & $-11.8\ci{-16.5}{-7.2}\sig$ & 95\% \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -48,6 +49,7 @@ study & natural D AUC & standardized DDD AUC & standardized $-$ natural & margin
 \midrule
 A: CartPole flip & $+297.6\ci{+233.9}{+361.4}\sig$ & $+285.1\ci{+191.2}{+379.0}\sig$ & $-12.5\ci{-44.2}{+19.1}$ & $\pm24.01$ & $0.211$ \\
 B: Asterix flip & $+4.0\ci{+3.6}{+4.5}\sig$ & $+4.0\ci{+3.7}{+4.4}\sig$ & $+0.0\ci{-0.3}{+0.3}$ & $\pm0.30$ & $0.044$ \\
+C: SI actuator noise & $+73.6\ci{+70.9}{+76.4}\sig$ & $+72.5\ci{+69.7}{+75.3}\sig$ & $-1.1\ci{-3.9}{+1.7}$ & $\pm4.25$ & $0.014$ \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -71,6 +73,9 @@ A: pause/damaged/donor & $-141.8\ci{-189.8}{-93.8}\sig$ & $-139.2\ci{-225.1}{-53
 A: pause/reset/donor & $-152.3\ci{-254.8}{-49.8}\sig$ & $-122.3\ci{-234.6}{-10.0}\sig$ & $+117.8\ci{+24.9}{+210.7}\sig$ \\
 B: pause/clean/donor & $-1.4\ci{-1.8}{-1.0}\sig$ & $-1.3\ci{-1.7}{-1.0}\sig$ & $+1.2\ci{+1.0}{+1.5}\sig$ \\
 B: pause/damaged/donor & $-1.5\ci{-1.9}{-1.1}\sig$ & $-1.4\ci{-1.8}{-1.0}\sig$ & $+1.5\ci{+1.2}{+1.7}\sig$ \\
+C: fork/clean/donor & $-12.5\ci{-18.4}{-6.5}\sig$ & $-11.6\ci{-15.0}{-8.2}\sig$ & $+11.8\ci{+7.2}{+16.4}\sig$ \\
+C: fork/clean/zero & $-13.0\ci{-17.4}{-8.6}\sig$ & $-12.5\ci{-17.0}{-8.0}\sig$ & -- \\
+C: fork/damaged/donor & $-12.7\ci{-18.5}{-6.9}\sig$ & $-14.9\ci{-21.6}{-8.2}\sig$ & $+10.2\ci{+7.2}{+13.1}\sig$ \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -90,7 +95,7 @@ Main movement harm & historical pause AUC & D minus C(t-L), TOST +/-3 & 12 fresh
 Main same-task rate & competence-matched AUC & D minus C(t*+k) & 12 fresh & single paired rate test & registered same-task support \\
 Main PPO gap (Tier I) & same-update AUC gap & actor/critic/Adam factorial & 12 (8 new) & Holm 3 effects & actor fresh subset; critic pooled only \\
 SI flip pause (Tier II) & state-pause AUC gap & DDD minus PPP; component swaps & 8 reused IDs & Holm 3 effects & specific procedural support \\
-Legacy generalization & eligible same-update gaps & negative gap, actor effect, largest point share & 8/setting & within-setting; no legacy global rate & conditional new contrasts, not fresh replication \\
+Legacy generalization & eligible same-update gaps & negative gap, actor effect, largest point share & 8 each & within-setting; no legacy global rate & conditional new contrasts, not fresh replication \\
 Q network/buffer & same-update AUC gap & network-block x buffer & 12 / 8 & exploratory intervals & network block includes moments \\
 Q parameter rescue & damaged-buffer recovery & parameter versus moment rescues & 8 reused & Holm 2 rescues & parameter support; moment rescue inconclusive \\
 Replay identity & matched-identity AUC & purge R minus matched U, TOST +/-1 & 32 & one contrast / TOST IUT & marginal practical bound, not zero \\
@@ -98,7 +103,7 @@ Longest restriction & late historical pause gap & L300, TOST +/-5 & 8 + 32 & stu
 KL association & rank with recovery AUC & Spearman rho & 32 fresh & Holm 4; two-look check & association; combined exclusion weaker \\
 Extreme collapse & post-hoc phenotype count & flat-score phenotype, not all failures & 1 / 44 & descriptive binomial interval & rare-event probability imprecise \\
 A/B pause replications & native + state-pause AUC & harm + actor effect + paired Shapley rank & 8/8 & fixed five-claim Phase-13 Holm & new independent IDs; compound test specified \\
-C noise replication & same-update gap (Tier I) & harm + actor effect + paired Shapley rank & 0 of 8 planned & same five-claim family & not a pause-localization test \\
+C noise replication & same-update gap (Tier I) & harm + actor effect + paired Shapley rank & 8 fresh & same five-claim family & not a pause-localization test \\
 E label exposure & post-washout AUC & naturally matched RR minus UU & 0 of 8 planned & same five-claim family; delta=1 & controlled assay, not legacy mediation proof \\
 D prospective diagnostic & held-out squared error & acute-gap versus acute-gap+KL & 0 of 16 planned & same five-claim family; 10\% gain & fixed-coefficient cost prediction, not failure probability \\
 \bottomrule

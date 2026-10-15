@@ -4,9 +4,9 @@ five NEW Phase 13 claims only, not retrospective paper-wide control
 
 | study | n | primary p (compound where specified) | Phase-13 Holm p | status |
 |---|---|---|---|---|
-| A | 8 | 0.0310171 | 0.124068 | planned cohort complete |
+| A | 8 | 0.0310171 | 0.0930512 | planned cohort complete |
 | B | 8 | 3.43335e-05 | 0.000171667 | planned cohort complete |
-| C | 0 | 1 | 1 | not run / incomplete (no primary inference) |
+| C | 8 | 0.00083166 | 0.00332664 | planned cohort complete |
 | E | 0 | 1 | 1 | not run / incomplete (no primary inference) |
 | D | 0 | 1 | 1 | not run / incomplete (no primary inference) |
 
@@ -50,3 +50,18 @@ Context shift, standardized DDD minus natural D: +0.02 [-0.30, +0.34]; joint-sca
 
 pause/clean/donor: actor/critic/Adam main effects actor -1.47 [-1.70, -1.24]*, critic -0.20 [-0.40, -0.01]*, opt +0.06 [-0.15, +0.26].
 Shapley shares (only if total CI <0): {'actor': 98.0838486104505, 'critic': 9.944282122715226, 'opt': -8.028130733165733}.
+
+## C: natural benchmark and contexts (n=8)
+
+Native damage beyond historical pause: +3.49 [+0.21, +6.77]*; last five checkpoints +5.62 [+3.26, +7.97]*.
+Natural-state identity checks: True.
+Context shift, standardized DDD minus natural D: -1.12 [-3.91, +1.68]; joint-scale TOST p=0.01419.
+
+| reference/context/moments | total gap | actor effect / bad-actor transfer | good-actor rescue |
+|---|---|---|---|
+| fork/clean/donor | -12.45 [-18.41, -6.50]* | -11.57 [-14.96, -8.18]* | +11.80 [+7.22, +16.37]* |
+| fork/clean/zero | -13.01 [-17.40, -8.63]* | -12.50 [-16.99, -8.00]* | zero-moment 2x2 |
+| fork/damaged/donor | -12.72 [-18.52, -6.92]* | -14.90 [-21.59, -8.21]* | +10.16 [+7.18, +13.14]* |
+
+fork/clean/donor: actor/critic/Adam main effects actor -11.85 [-16.45, -7.24]*, critic -0.92 [-2.44, +0.60], opt +0.15 [-1.66, +1.96].
+Shapley shares (only if total CI <0): {'actor': 94.70817039252178, 'critic': 6.943892594993632, 'opt': -1.652062987515426}.
