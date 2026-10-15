@@ -89,6 +89,7 @@ def evaluate():
              primary_loss_difference=[float(delta.mean()),float(delta.mean()-h),float(delta.mean()+h)],
              primary_one_sided_p=p,primary_gain=gain,practical_threshold=.10,
              rank={m:float(stats.spearmanr(pred[m],Y).statistic) if np.std(pred[m])>0 else None for m in pred},
+             feature_rank={k:float(stats.spearmanr([r[k] for r in rows],Y).statistic) for k in ['KL','acute_gap','entropy','removal_score']},
              status='Independent prospective cohort; global Phase 13 Holm applied separately; not new-task or causal validation')
     out=Path('results/summary/p13_D_prospective-analysis.json');out.write_text(json.dumps(res,indent=2)+'\n')
     L=['# Phase 13 D — frozen prospective diagnostic comparison','',res['status'],'',

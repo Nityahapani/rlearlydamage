@@ -12,8 +12,8 @@ def main():
  r=json.loads((S/'p13_confirmatory-analysis.json').read_text())['studies']
  studies=[k for k in ['A','B'] if r.get(k) and r[k].get('complete')]
  if not studies:return
- plt.rcParams.update({'font.family':'DejaVu Sans','font.size':12,'axes.spines.top':False,'axes.spines.right':False})
- f,axs=plt.subplots(1,len(studies),figsize=(6.0*len(studies),4.8),squeeze=False,constrained_layout=True)
+ plt.rcParams.update({'font.family':'DejaVu Sans','font.size':14,'axes.spines.top':False,'axes.spines.right':False})
+ f,axs=plt.subplots(1,len(studies),figsize=(5.8*len(studies),5.8),squeeze=False,constrained_layout=True)
  for ax,k in zip(axs[0],studies):
   z=r[k];cells=z['cells'];x=np.arange(len(z['historical_pause_curve'][0]))*10
   def draw(M,label,color,ls='-'):
@@ -26,7 +26,7 @@ def main():
   draw(cells['pause/damaged/donor/CCC'],'Onset learner / D context','#7462A2','-.')
   ax.set_title(('A  CartPole' if k=='A' else 'B  Asterix')+f' (independent n={z["n"]})',weight='bold')
   ax.set_xlabel('Updates after removal');ax.set_ylabel('Unrestricted true-reward return');ax.grid(alpha=.14)
-  ax.legend(fontsize=9.5,loc='upper left',bbox_to_anchor=(0,-.16),frameon=False,ncol=2)
+  ax.legend(fontsize=11.5,loc='upper left',bbox_to_anchor=(0,-.18),frameon=False,ncol=1)
  f.savefig('figures/p13_natural_contexts.png',dpi=200,facecolor='white')
  f.savefig('figures/p13_natural_contexts.pdf',facecolor='white')
  print('Rendered natural/context curves:',studies)
