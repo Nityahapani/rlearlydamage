@@ -1,0 +1,72 @@
+% P13 TABLE family
+\begin{table}[t]
+\centering
+\caption{Five \emph{new} Phase-13 primary claim tests. A--C use the registered intersection-union (maximum component $p$) construction, including paired Shapley dominance rather than only a largest point estimate. Holm is over this fixed family of five; unrun/incomplete tests receive $p=1$. This is not retrospective paper-wide control. E additionally requires a point effect $\leq-1$; D requires a point MSE reduction $\geq10\%$.}
+\label{tab:p13family}
+\scriptsize
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lcccc}
+\toprule
+study & $n$ & primary $p$ & phase-wise Holm $p$ & completion \\
+\midrule
+A: CartPole flip & 8 & $0.031$ & $0.155$ & complete \\
+B: Asterix flip & -- & -- & -- & not completed \\
+C: SI actuator noise & -- & -- & -- & not completed \\
+E: controlled replay labels & -- & -- & -- & not completed \\
+D: prospective diagnostic & -- & -- & -- & not completed \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+% P13 TABLE primary
+\begin{table}[t]
+\centering
+\caption{Independent-seed localization at the planned sample. Native damage is natural D minus the unbroken historical clean pause. The surgery gap uses the indicated reference under the clean future context; it is not automatically identical to that native estimand. Pause-reference rows target Tier II, but support is asserted only when direct interventions and native-harm criteria pass; Tier-I actuator noise tests only same-update gap localization. Shares are descriptive allocations, not encoded information.}
+\label{tab:p13primary}
+\scriptsize
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lclcccc}
+\toprule
+study & $n$ & tier/reference & native pause-relative AUC & surgery AUC gap & actor main effect & actor share \\
+\midrule
+A: CartPole flip & 8 & Tier II & $-155.0\ci{-220.1}{-90.0}\sig$ & $-160.6\ci{-251.9}{-69.2}\sig$ & $-117.4\ci{-195.5}{-39.2}\sig$ & 75\% \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+% P13 TABLE natural
+\begin{table}[t]
+\centering
+\caption{Natural damaged continuation versus standardized-context DDD, paired over independent seeds. The natural cell is asserted equal over the full runner tree, not merely the parameters. Context-equivalence margin: $5\%$ of native clean mean AUC; TOST retains uncertainty/covariance in that scale. Nonsignificance alone is not evidence of context neutrality.}
+\label{tab:p13natural}
+\scriptsize
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lccccc}
+\toprule
+study & natural D AUC & standardized DDD AUC & standardized $-$ natural & margin & TOST $p$ \\
+\midrule
+A: CartPole flip & $+297.6\ci{+233.9}{+361.4}\sig$ & $+285.1\ci{+191.2}{+379.0}\sig$ & $-12.5\ci{-44.2}{+19.1}$ & $\pm24.01$ & $0.211$ \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+% P13 TABLE contexts
+\begin{table}[t]
+\centering
+\caption{Secondary context and compatibility checks, always reported. An actor-transfer contrast is not a unique natural decomposition. In zero-moment rows all cells restart Adam, and the actor column is the two-factor main effect; this is an alternative update procedure, not an untouched natural optimizer. All intervals are nominal paired $95\%$ $t$-intervals.}
+\label{tab:p13contexts}
+\scriptsize
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lccc}
+\toprule
+study: reference/context/moments & total AUC gap & bad actor effect / zero-moment main effect & good actor rescue \\
+\midrule
+A: fork/clean/donor & $-195.1\ci{-287.5}{-102.7}\sig$ & $-266.3\ci{-355.1}{-177.6}\sig$ & $+124.8\ci{+11.4}{+238.2}\sig$ \\
+A: fork/damaged/donor & $-181.4\ci{-245.8}{-116.9}\sig$ & $-253.0\ci{-332.4}{-173.6}\sig$ & $+97.7\ci{+8.5}{+186.8}\sig$ \\
+A: pause/clean/donor & $-160.6\ci{-251.9}{-69.2}\sig$ & $-147.9\ci{-245.5}{-50.4}\sig$ & $+103.0\ci{+8.1}{+197.8}\sig$ \\
+A: pause/clean/zero & $-179.0\ci{-280.7}{-77.3}\sig$ & $-126.9\ci{-236.8}{-17.0}\sig$ & -- \\
+A: pause/damaged/donor & $-141.8\ci{-189.8}{-93.8}\sig$ & $-139.2\ci{-225.1}{-53.2}\sig$ & $+106.0\ci{+38.2}{+173.8}\sig$ \\
+A: pause/reset/donor & $-152.3\ci{-254.8}{-49.8}\sig$ & $-122.3\ci{-234.6}{-10.0}\sig$ & $+117.8\ci{+24.9}{+210.7}\sig$ \\
+\bottomrule
+\end{tabular}}
+\end{table}
