@@ -48,7 +48,7 @@ def main():
         if r is None:continue
         q=r['natural_vs_standardized']
         rows.append(f'{k}: {names[k]} & '+ci(q['natural_D_AUC'])+' & '+ci(q['standardized_DDD_AUC'])+' & '+ci(q['difference'])+' & '+f"$\\pm{q['margin']:.2f}$"+' & '+pv(q['TOST_joint'])+r' \\')
-    frags['natural']=table(r'Natural damaged continuation versus standardized-context DDD, paired over independent seeds. The natural cell is asserted equal over the full runner tree, not merely the parameters. Context-equivalence margin: $5\%$ of native clean mean AUC; TOST retains uncertainty/covariance in that scale. Nonsignificance alone is not evidence of context neutrality.','tab:p13natural','lccccc','study & natural D AUC & standardized DDD AUC & standardized $-$ natural & margin & TOST $p$',rows)
+    frags['natural']=table(r'Secondary natural/context diagnostic: natural damaged continuation versus standardized-context DDD, paired over independent seeds. The natural cell is asserted equal over the full runner tree, not merely the parameters. Context-equivalence margin: $5\%$ of native clean mean AUC; TOST retains uncertainty/covariance in that scale. Nonsignificance alone is not evidence of context neutrality.','tab:p13natural','lccccc','study & natural D AUC & standardized DDD AUC & standardized $-$ natural & margin & TOST $p$',rows)
     rows=[]
     for k in ['A','B','C']:
         r=R.get(k)
