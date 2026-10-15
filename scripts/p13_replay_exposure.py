@@ -85,10 +85,11 @@ def main():
     nonR={k:v for k,v in RR.items() if k!='train_state'}
     nonU={k:v for k,v in U.items() if k!='train_state'}
     assert same(nonR,nonU),'All non-learner states must match after complete overwrite'
+    assert same(RR['train_state'].step,U['train_state'].step),'Learner step counts must also match'
     remaining=np.asarray((RR['buffer']['tag']>=w0)&(RR['buffer']['tag']<w1)).mean()
     assert remaining==0,'Old labels must be fully gone'
     summary=dict(manifest=mp.name,seeds=a.seeds,protocol=proto,checks=dict(initial_only_reward_labels_differ=initial_other_equal,
-                 fixed_behavior_env_rng_equal=True,post_washout_all_nonlearner_states_equal=True,old_era_fraction_after_K=float(remaining)),
+                 fixed_behavior_env_rng_equal=True,post_washout_all_nonlearner_states_equal=True,learner_step_counts_equal=True,old_era_fraction_after_K=float(remaining)),
                  clean_removal=clean_removal,changed_reward_entries_per_seed=changed_per_seed,exposure=exposure,eval_updates=list(range(0,R+1,E)),arms={},status='running')
     zero=jax.vmap(lambda pp:RR['train_state'].tx.init(pp))(RR['train_state'].params)
     for arm in proto['arms']:
