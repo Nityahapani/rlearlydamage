@@ -1588,3 +1588,9 @@ Before any E target seed or E software run, the initial exposure buffer is clari
 
 ### Post-A reporting diagnostics (secondary; no primary decision change)
 The full planned factorials also permit optimizer effects conditional on actor source and actor effects conditional on optimizer source. All such background averages are now retained as secondary compatibility diagnostics, rather than presenting a main effect as background-invariant. State-level PPP minus the historical pause curve is retained as a reference-agreement diagnostic for both preselected contexts. These are not additional registered successes, do not select a preferred context, and never change the fixed primary IUT or five-claim family.
+
+### 2026-10-15 18:51 UTC: B complete at all 8 independent Asterix seeds
+- Natural pause-relative AUC [-1.5673828125, -1.83504551131357, -1.29972011368643]; last-five difference [-0.875, -1.5611766856164604, -0.1888233143835396] is negative at the nominal endpoint interval, not an irreversibility claim.
+- State-pause gap [-1.4372070312499998, -1.8436499064989955, -1.0307641560010041]; main effects {'actor': [-1.4695312499999997, -1.697746176930255, -1.2413163230697444], 'critic': [-0.2027832031249997, -0.3950084534356803, -0.010557952814319094], 'opt': [0.05551757812500002, -0.1470106678000203, 0.25804582405002036]}; actor share 98.08%. Paired dominance and native-harm conjunction p=3.43335e-05, current five-claim Holm p=0.000171667 with uncompleted studies p=1.
+- Natural DDD identity verified. Standardized minus natural D [0.015917968749999997, -0.3041458416764182, 0.33598177917641825]; practical context TOST p=0.043687, a marginal **secondary** 5%-scale result, not universal neutrality.
+- State-pause minus historical-pause reference agreement checks do NOT establish 5%-scale equivalence in either context (secondary). Both benchmarks and their distinctions remain visible.
