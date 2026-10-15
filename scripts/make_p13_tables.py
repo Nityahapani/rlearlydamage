@@ -86,6 +86,16 @@ def main():
       ['C noise replication','same-update gap (Tier I)','harm + actor effect + paired Shapley rank','8 fresh','same five-claim family','not a pause-localization test'],
       ['E label exposure','post-washout AUC','naturally matched RR minus UU','8 fresh','same five-claim family; delta=1','controlled assay, not legacy mediation proof'],
       ['D prospective diagnostic','held-out squared error','acute-gap versus acute-gap+KL','16 fresh','same five-claim family; 10% gain','fixed-coefficient cost prediction, not failure probability']]
+    # Never label a skipped prospective/assay study by its planned N as though collected.
+    for row in mapped:
+        if row[0].startswith('A/B'):
+            row[3]='/'.join(str(R[k]['n']) if R.get(k) else '0 of 8' for k in ['A','B'])
+        elif row[0].startswith('C noise'):
+            row[3]=str(R['C']['n'])+' fresh' if R.get('C') else '0 of 8 planned'
+        elif row[0].startswith('E label'):
+            row[3]=str(R['E']['n'])+' fresh' if R.get('E') else '0 of 8 planned'
+        elif row[0].startswith('D prospective'):
+            row[3]=str(R['D']['n'])+' fresh' if R.get('D') else '0 of 16 planned'
     # Avoid raw punctuation that has TeX semantics; readable formulas are defined in the methods.
     clean=lambda t:t.replace('&',r'\&').replace('%',r'\%').replace('_',r'\_')
     mrows=[' & '.join(clean(x) for x in row)+r' \\' for row in mapped]
