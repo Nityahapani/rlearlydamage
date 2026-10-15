@@ -69,6 +69,29 @@ def main():
             rr=d['rank'][m];rho='--' if rr is None else f'${rr:+.2f}$'
             rows.append(m.replace('_',r'\_')+f' & ${v:.2f}$ & '+rho+r' \\')
         frags['prediction']=table(r'Prospective held-out diagnostic performance ($n=16$). Coefficients and feature scales were frozen on the earlier 32 before any new validation run. No fitting or model selection uses these outcomes. Primary utility is acute-gap versus acute-gap+KL held-out squared error, with a $10\%$ point-gain requirement and the five-claim Holm criterion. Correlations are secondary; this is neither new-task nor failure-probability validation.','tab:p13prediction','lcc','frozen model & held-out MSE & rank correlation',rows)
+    # Concise manuscript map: estimand/contrast/n/family/status, not a uniform Confirmed label.
+    mapped=[
+      ['Main movement harm','historical pause AUC','D minus C(t-L), TOST +/-3','12 fresh','one estimand, two one-sided tests','bounded / inconclusive'],
+      ['Main same-task rate','competence-matched AUC','D minus C(t*+k)','12 fresh','single paired rate test','registered same-task support'],
+      ['Main PPO gap (Tier I)','same-update AUC gap','actor/critic/Adam factorial','12 (8 new)','Holm 3 effects','actor fresh subset; critic pooled only'],
+      ['SI flip pause (Tier II)','state-pause AUC gap','DDD minus PPP; component swaps','8 reused IDs','Holm 3 effects','specific procedural support'],
+      ['Legacy generalization','eligible same-update gaps','negative gap, actor effect, largest point share','8/setting','within-setting; no legacy global rate','conditional new contrasts, not fresh replication'],
+      ['Q network/buffer','same-update AUC gap','network-block x buffer','12 / 8','exploratory intervals','network block includes moments'],
+      ['Q parameter rescue','damaged-buffer recovery','parameter versus moment rescues','8 reused','Holm 2 rescues','parameter support; moment rescue inconclusive'],
+      ['Replay identity','matched-identity AUC','purge R minus matched U, TOST +/-1','32','one contrast / TOST IUT','marginal practical bound, not zero'],
+      ['Longest restriction','late historical pause gap','L300, TOST +/-5','8 + 32','study-specific; two-look sensitivity','both inconclusive, finite horizon'],
+      ['KL association','rank with recovery AUC','Spearman rho','32 fresh','Holm 4; two-look check','association; combined exclusion weaker'],
+      ['Extreme collapse','post-hoc phenotype count','flat-score phenotype, not all failures','1 / 44','descriptive binomial interval','rare-event probability imprecise'],
+      ['A/B pause replications','native + state-pause AUC','harm + actor effect + paired Shapley rank','8 each','fixed five-claim Phase-13 Holm','new independent IDs; compound test specified'],
+      ['C noise replication','same-update gap (Tier I)','harm + actor effect + paired Shapley rank','8 fresh','same five-claim family','not a pause-localization test'],
+      ['E label exposure','post-washout AUC','naturally matched RR minus UU','8 fresh','same five-claim family; delta=1','controlled assay, not legacy mediation proof'],
+      ['D prospective diagnostic','held-out squared error','acute-gap versus acute-gap+KL','16 fresh','same five-claim family; 10% gain','fixed-coefficient cost prediction, not failure probability']]
+    # Avoid raw punctuation that has TeX semantics; readable formulas are defined in the methods.
+    clean=lambda t:t.replace('&',r'\&').replace('%',r'\%').replace('_',r'\_')
+    mrows=[' & '.join(clean(x) for x in row)+r' \\' for row in mapped]
+    frags['inference_map']=table('Headline inference map. Legacy experiment-specific families do not imply one paper-wide error rate. Only the five new primary claims share the Phase-13 Holm family; missing/incomplete studies receive p=1. Status applies to the indicated estimand and contrast, never to all meanings of damage.','tab:p13map',
+        'p{2.3cm}p{2.1cm}p{3.0cm}p{1.0cm}p{2.5cm}p{2.8cm}',
+        'headline / tier & estimand & primary contrast & n & multiplicity scope & evidential status',mrows)
     out=S/'p13_tables.tex';out.write_text('\n'.join('% P13 TABLE '+k+'\n'+v for k,v in frags.items()))
     print('Rendered fragments:',list(frags))
 
