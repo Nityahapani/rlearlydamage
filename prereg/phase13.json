@@ -123,7 +123,9 @@
       "recovery": 300,
       "eval_every": 10,
       "eval_eps": 0.05,
-      "notes": "Identical damaged learner and D transitions; only original-window reward labels negative versus sign-restored. Collect 25 updates with the frozen clean fork behavior policy, same RNG/replay schedule. Assert buffers/env/obs/RNG/counter identical after overwrite. Then 2x2 parameter x RAdam state crossing, learning resumes normally."
+      "notes": "Common damaged learner; real clean-fork C transitions with original versus sign-corrupted old-window reward labels. Buffer, states/actions/ages, env/obs/RNG/counter are otherwise identical. Collect 25 updates with frozen C behavior and identical replay schedule; assert all non-learner states identical after overwrite. Then 2x2 parameter x RAdam crossing and secondary common-zero-moment controls.",
+      "transition_source": "real unrestricted clean-fork C buffer at removal, identical in both arms except selected reward labels",
+      "amendment": "Clarified before any E data: clean-source labels ensure a reward-bearing exposure; original D-era labels can be mostly zero after avoidance learning. No E result or outcome inspected; sample, endpoint and primary corrupted-minus-unmodified contrast unchanged."
     },
     "D": {
       "name": "Frozen prospective diagnostic comparison",

@@ -44,7 +44,7 @@ def main():
     cfg,init,run=make(base);spu=cfg['STEPS_PER_UPDATE']
     proto=dict(window=[w0,w1],exposure_updates=K,recovery=R,eval_every=E,eval_envs=64,eval_eps=.05,
                steps_per_update=spu,buffer_size=cfg['BUFFER_SIZE'],teacher='frozen clean fork parameters at removal; epsilon floor unchanged',
-               arms=['UU','RU','UR','RR','U0','R0'],reward_repair='only sign of original-window D rewards is restored',smoke=a.smoke)
+               arms=['UU','RU','UR','RR','U0','R0'],reward_repair='same genuine clean-fork transitions; only selected original-window reward signs are corrupted',smoke=a.smoke)
     m=build_manifest('p13-'+a.tag+'-pqnr-exposure',{**cfg,'protocol':proto},a.seeds)
     mp=write_manifest(m);out=Path('results/summary')/(mp.stem+'.json')
     iv=jax.jit(jax.vmap(init));rv=jax.jit(jax.vmap(lambda r:run(r,1)))
@@ -61,11 +61,15 @@ def main():
     C=z;D=dict(z,deficit_bounds=bounds(w0,w1));del z
     for _ in range(w1-w0):C,_=rv(C);D,_=rv(D)
     teacher=C['train_state'].params
-    clean_removal=ev(C).tolist();del C
-    D=dict(D,deficit_bounds=bounds(0,0),behavior_params=teacher,behavior_until=jnp.full((n,),w1+K,jnp.int32))
-    tag=D['buffer']['tag'];rew=D['buffer']['reward'];era=(tag>=w0)&(tag<w1)
-    restored=jnp.where(era,-rew,rew)
-    U=dict(D,buffer=dict(D['buffer'],reward=restored));RR=D;del D
+    clean_removal=ev(C).tolist()
+    # Genuine clean trajectories provide a reward-bearing, exactly label-matched exposure.
+    # Both arms start with the same damaged learner and the clean buffer's continuous env boundary.
+    U=dict(C,train_state=D['train_state'],deficit_bounds=bounds(0,0),behavior_params=teacher,
+           behavior_until=jnp.full((n,),w1+K,jnp.int32))
+    tag=U['buffer']['tag'];rew=U['buffer']['reward'];era=(tag>=w0)&(tag<w1)
+    corrupted=jnp.where(era,-rew,rew)
+    changed_per_seed=np.asarray((corrupted!=rew).reshape(n,-1).sum(1)).tolist()
+    RR=dict(U,buffer=dict(U['buffer'],reward=corrupted));del D,C
     # Sole initial difference is the old reward-label array.
     initial_other_equal=same({k:v for k,v in RR.items() if k!='buffer'},{k:v for k,v in U.items() if k!='buffer'})
     assert initial_other_equal
@@ -85,7 +89,7 @@ def main():
     assert remaining==0,'Old labels must be fully gone'
     summary=dict(manifest=mp.name,seeds=a.seeds,protocol=proto,checks=dict(initial_only_reward_labels_differ=initial_other_equal,
                  fixed_behavior_env_rng_equal=True,post_washout_all_nonlearner_states_equal=True,old_era_fraction_after_K=float(remaining)),
-                 clean_removal=clean_removal,exposure=exposure,eval_updates=list(range(0,R+1,E)),arms={},status='running')
+                 clean_removal=clean_removal,changed_reward_entries_per_seed=changed_per_seed,exposure=exposure,eval_updates=list(range(0,R+1,E)),arms={},status='running')
     zero=jax.vmap(lambda pp:RR['train_state'].tx.init(pp))(RR['train_state'].params)
     for arm in proto['arms']:
         srcP=RR if arm[0]=='R' else U
