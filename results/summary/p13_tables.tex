@@ -13,7 +13,7 @@ A: CartPole flip & 8 & $0.031$ & $0.093$ & complete \\
 B: Asterix flip & 8 & $<10^{-4}$ & $0.000$ & complete \\
 C: SI actuator noise & 8 & $0.001$ & $0.003$ & complete \\
 E: controlled replay labels & 8 & $0.189$ & $0.377$ & complete \\
-D: prospective diagnostic & -- & -- & -- & not completed \\
+D: prospective diagnostic & 16 & $0.887$ & $0.887$ & complete \\
 \bottomrule
 \end{tabular}}
 \end{table}
@@ -100,6 +100,27 @@ R--U with common fresh moments & $-0.72\ci{-2.75}{+1.32}$ \\
 \end{tabular}}
 \end{table}
 
+% P13 TABLE prediction
+\begin{table}[t]
+\centering
+\caption{Prospective held-out diagnostic performance ($n=16$). Coefficients and feature scales were frozen on the earlier 32 before any new validation run. No fitting or model selection uses these outcomes. Primary utility is acute-gap versus acute-gap+KL held-out squared error, with a $10\%$ point-gain requirement and the five-claim Holm criterion. Correlations are secondary; this is neither new-task nor failure-probability validation.}
+\label{tab:p13prediction}
+\scriptsize
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lcc}
+\toprule
+frozen model & held-out MSE & rank correlation \\
+\midrule
+training\_mean & $33.05$ & -- \\
+acute\_gap & $32.27$ & $+0.25$ \\
+removal\_entropy & $33.52$ & $+0.77$ \\
+KL & $61.64$ & $+0.24$ \\
+acute\_gap\_plus\_KL & $68.78$ & $+0.24$ \\
+removal\_score & $38.29$ & $+0.11$ \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
 % P13 TABLE inference_map
 \begin{table}[t]
 \centering
@@ -125,7 +146,7 @@ Extreme collapse & post-hoc phenotype count & flat-score phenotype, not all fail
 A/B pause replications & native + state-pause AUC & harm + actor effect + paired Shapley rank & 8/8 & fixed five-claim Phase-13 Holm & new independent IDs; compound test specified \\
 C noise replication & same-update gap (Tier I) & harm + actor effect + paired Shapley rank & 8 fresh & same five-claim family & not a pause-localization test \\
 E label exposure & post-washout AUC & naturally matched RR minus UU & 8 fresh & same five-claim family; delta=1 & controlled assay, not legacy mediation proof \\
-D prospective diagnostic & held-out squared error & acute-gap versus acute-gap+KL & 0 of 16 planned & same five-claim family; 10\% gain & fixed-coefficient cost prediction, not failure probability \\
+D prospective diagnostic & held-out squared error & acute-gap versus acute-gap+KL & 16 fresh & same five-claim family; 10\% gain & fixed-coefficient cost prediction, not failure probability \\
 \bottomrule
 \end{tabular}}
 \end{table}
