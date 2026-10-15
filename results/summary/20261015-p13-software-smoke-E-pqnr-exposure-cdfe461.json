@@ -1,0 +1,128 @@
+{
+ "manifest": "20261015-p13-software-smoke-E-pqnr-exposure-cdfe461.json",
+ "seeds": [
+  99991
+ ],
+ "protocol": {
+  "window": [
+   2,
+   4
+  ],
+  "exposure_updates": 2,
+  "recovery": 20,
+  "eval_every": 10,
+  "eval_envs": 64,
+  "eval_eps": 0.05,
+  "steps_per_update": 16,
+  "buffer_size": 32,
+  "teacher": "frozen clean fork parameters at removal; epsilon floor unchanged",
+  "arms": [
+   "UU",
+   "RU",
+   "UR",
+   "RR",
+   "U0",
+   "R0"
+  ],
+  "reward_repair": "same genuine clean-fork transitions; only selected original-window reward signs are corrupted",
+  "smoke": true
+ },
+ "checks": {
+  "initial_only_reward_labels_differ": true,
+  "fixed_behavior_env_rng_equal": true,
+  "post_washout_all_nonlearner_states_equal": true,
+  "learner_step_counts_equal": true,
+  "old_era_fraction_after_K": 0.0
+ },
+ "clean_removal": [
+  0.46875
+ ],
+ "changed_reward_entries_per_seed": [
+  1
+ ],
+ "exposure": {
+  "updates": [
+   0,
+   2
+  ],
+  "R": [
+   [
+    0.46875
+   ],
+   [
+    0.46875
+   ]
+  ],
+  "U": [
+   [
+    0.46875
+   ],
+   [
+    0.46875
+   ]
+  ]
+ },
+ "eval_updates": [
+  0,
+  10,
+  20
+ ],
+ "arms": {
+  "UU": {
+   "eval_return_mean": [
+    [
+     0.46875,
+     0.484375,
+     0.484375
+    ]
+   ]
+  },
+  "RU": {
+   "eval_return_mean": [
+    [
+     0.46875,
+     0.484375,
+     0.484375
+    ]
+   ]
+  },
+  "UR": {
+   "eval_return_mean": [
+    [
+     0.46875,
+     0.484375,
+     0.484375
+    ]
+   ]
+  },
+  "RR": {
+   "eval_return_mean": [
+    [
+     0.46875,
+     0.484375,
+     0.484375
+    ]
+   ]
+  },
+  "U0": {
+   "eval_return_mean": [
+    [
+     0.46875,
+     0.484375,
+     0.484375
+    ]
+   ]
+  },
+  "R0": {
+   "eval_return_mean": [
+    [
+     0.46875,
+     0.484375,
+     0.484375
+    ]
+   ]
+  }
+ },
+ "status": "complete",
+ "wallclock_s": 15.4
+}
