@@ -1,0 +1,8 @@
+manifest: runs/20261015-p7-p13-D-s908to911-ppo-SpaceInvaders-MinAtar-fc31fc3.json
+shared history + bank (4, 2000, 600) done, elapsed=111s
+C trajectory done: eval at onset [36.9 42.8 42.1 43.4]; at w0+d {300: 109.1} elapsed=711s
+D trajectory done: unmasked eval at w0+d {300: 13.7} elapsed=1035s
+removal evals per seed: {300: {'D': [21.421899795532227, 10.093799591064453, 10.531200408935547, 12.875], 'C': [114.9843978881836, 91.25, 104.09380340576172, 126.1093978881836]}}
+d=300      D_online: +0  13.7 +250 105.3 AUC  76.3 | delay-adj AUC  -1.6 late  -0.9 | raw AUC -50.0 elapsed=1308s
+Prospective feature rows archived (values withheld)
+summary: results/summary/20261015-p7-p13-D-s908to911-ppo-SpaceInvaders-MinAtar-fc31fc3.json

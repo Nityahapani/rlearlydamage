@@ -876,6 +876,86 @@
       "sha256": "4d8ac8dadca21a8b594b0e9d251cb89423e999734d9f1e58ff07e1377a790706"
     },
     {
+      "path": "results/20261015-p7-p13-D-s900to903-ppo-SpaceInvaders-MinAtar-e84eda3/C_u400.npz",
+      "bytes": 2789600,
+      "sha256": "1b6fba3a3c6eb9c538d499e08fe32ca9e12e1074f50e2ce267eb38e93e158077"
+    },
+    {
+      "path": "results/20261015-p7-p13-D-s900to903-ppo-SpaceInvaders-MinAtar-e84eda3/D_u400.npz",
+      "bytes": 2787033,
+      "sha256": "5b526cd7525ae3ea9d744ba8fe23e8d24f443648a6a254dd537e768e6f890a31"
+    },
+    {
+      "path": "results/20261015-p7-p13-D-s900to903-ppo-SpaceInvaders-MinAtar-e84eda3/bank.npz",
+      "bytes": 171603,
+      "sha256": "47e4431398dd032fea831a354dad8c6a5a9c15ccd06bb8c8707a09a5442d61bf"
+    },
+    {
+      "path": "results/20261015-p7-p13-D-s900to903-ppo-SpaceInvaders-MinAtar-e84eda3/onset_u100.npz",
+      "bytes": 2786598,
+      "sha256": "643ff808870bdf366655db480eed2c1c675d4d5108a87a8dfc058aeec72c5803"
+    },
+    {
+      "path": "results/20261015-p7-p13-D-s904to907-ppo-SpaceInvaders-MinAtar-2c647b4/C_u400.npz",
+      "bytes": 2789402,
+      "sha256": "d12be605b8c4e621dadf12aa2be3b600173e530631031ff636c809411a80e6dd"
+    },
+    {
+      "path": "results/20261015-p7-p13-D-s904to907-ppo-SpaceInvaders-MinAtar-2c647b4/D_u400.npz",
+      "bytes": 2786713,
+      "sha256": "c7c7d4cdd845df2b9aea993a9c00c11b40f6d4c93e91118cd2b7ef2deefb5ccf"
+    },
+    {
+      "path": "results/20261015-p7-p13-D-s904to907-ppo-SpaceInvaders-MinAtar-2c647b4/bank.npz",
+      "bytes": 166390,
+      "sha256": "ac06c03d4e36ebd1aed53b41b033f1a077bc07c683f139c2dca880e4f2d901e5"
+    },
+    {
+      "path": "results/20261015-p7-p13-D-s904to907-ppo-SpaceInvaders-MinAtar-2c647b4/onset_u100.npz",
+      "bytes": 2786436,
+      "sha256": "09edf14431994a426695bbb4b4f199ce8654b2c9aa0e54ebf109b55581a15e76"
+    },
+    {
+      "path": "results/20261015-p7-p13-D-s908to911-ppo-SpaceInvaders-MinAtar-fc31fc3/C_u400.npz",
+      "bytes": 2789655,
+      "sha256": "1b6f2689067ded1e5fb89f200fbfb03a70cb79d1e37b70361a29b5145513ab74"
+    },
+    {
+      "path": "results/20261015-p7-p13-D-s908to911-ppo-SpaceInvaders-MinAtar-fc31fc3/D_u400.npz",
+      "bytes": 2786496,
+      "sha256": "88d2d4c45128b907f54f23a0cf17a0ed257b67f960644d7e3702e5b770ac5643"
+    },
+    {
+      "path": "results/20261015-p7-p13-D-s908to911-ppo-SpaceInvaders-MinAtar-fc31fc3/bank.npz",
+      "bytes": 170155,
+      "sha256": "ab099d86cc15aa925d92d305099bc0fb4d5191340bf0e8402bc2c88aa36496de"
+    },
+    {
+      "path": "results/20261015-p7-p13-D-s908to911-ppo-SpaceInvaders-MinAtar-fc31fc3/onset_u100.npz",
+      "bytes": 2786381,
+      "sha256": "bc4b49cef96c8070e116269183dd4da7267ee50dcf6f2a0612cdf9b92c24b6b3"
+    },
+    {
+      "path": "results/20261015-p7-p13-D-s912to915-ppo-SpaceInvaders-MinAtar-360cc81/C_u400.npz",
+      "bytes": 2789406,
+      "sha256": "fb82924d62fdf65e8c58fab7ed35d83bb7bcd04b2fbbc440f5604c17b6a61652"
+    },
+    {
+      "path": "results/20261015-p7-p13-D-s912to915-ppo-SpaceInvaders-MinAtar-360cc81/D_u400.npz",
+      "bytes": 2786731,
+      "sha256": "20453fa87b35676cb7e1e5f8caa783b7048bdf9f89e75b4134cf46d5e29844c8"
+    },
+    {
+      "path": "results/20261015-p7-p13-D-s912to915-ppo-SpaceInvaders-MinAtar-360cc81/bank.npz",
+      "bytes": 167914,
+      "sha256": "0839c6f14d9f8450e14f0f9f2cb30d2b02e40ef029d7a80d5a8e87112ad45031"
+    },
+    {
+      "path": "results/20261015-p7-p13-D-s912to915-ppo-SpaceInvaders-MinAtar-360cc81/onset_u100.npz",
+      "bytes": 2786158,
+      "sha256": "6bcb2e66499a48de90d07609212e5f84df686ff2eead2e2c941f5a6463b2ef15"
+    },
+    {
       "path": "results/checks/p6d-rebuild-check-s0.manifest.json",
       "bytes": 2901,
       "sha256": "93abd123d0632dd5cefdc964ca1b307ef7bade89a1ba823ebb8bcc497f7ed3a2"
@@ -1631,6 +1711,76 @@
       "sha256": "b956cee5296f9bda9e369d299538a193685a9a4d58dd1e4673d7e489e0282119"
     },
     {
+      "path": "results/summary/20261015-p13-p13-A-s600to603-CartPole-v1-ec95b65.json",
+      "bytes": 49631,
+      "sha256": "57902ce16a8979003a896f3f31ded018e01fed76d1ba0dba890207b80b0168f4"
+    },
+    {
+      "path": "results/summary/20261015-p13-p13-A-s604to607-CartPole-v1-bda8f53.json",
+      "bytes": 49657,
+      "sha256": "77e80a45cf0ec89596424d07f47586c860e9927df837fb4cd07ea7412f43978c"
+    },
+    {
+      "path": "results/summary/20261015-p13-p13-B-s800to803-Asterix-MinAtar-a34a0fa.json",
+      "bytes": 20474,
+      "sha256": "20670b8eb1a6bf49e16680c667f7a28bb1ec83caf027e9482148454e0ae34ed7"
+    },
+    {
+      "path": "results/summary/20261015-p13-p13-B-s804to807-Asterix-MinAtar-172779a.json",
+      "bytes": 20483,
+      "sha256": "326c94b89644e97f1ea750ab5b2a5fba2d17a2e5ff9aca1d4787f079c7926b27"
+    },
+    {
+      "path": "results/summary/20261015-p13-p13-C-s700to703-SpaceInvaders-MinAtar-019f0ae.json",
+      "bytes": 21428,
+      "sha256": "514afdfb36a54681358a0ec56c781b3026369c9433fb0f51eb91ff211555a2da"
+    },
+    {
+      "path": "results/summary/20261015-p13-p13-C-s704to707-SpaceInvaders-MinAtar-75223a5.json",
+      "bytes": 21239,
+      "sha256": "6fed3dd44b472a6f3ea31c3dce15c49ea6ba375404ff79bb09f1930af7572fec"
+    },
+    {
+      "path": "results/summary/20261015-p13-p13-E-s1000to1003-pqnr-exposure-cdfe461.json",
+      "bytes": 13826,
+      "sha256": "08f3e1a4ab10ea1f68b05add2a46241304500722b7dd774d079f3bd8185c13e6"
+    },
+    {
+      "path": "results/summary/20261015-p13-p13-E-s1004to1007-pqnr-exposure-4bebe11.json",
+      "bytes": 13789,
+      "sha256": "b6e22daa25d6e1e34bd308871caf54b6faa204337f693b754eb8d97aa5596367"
+    },
+    {
+      "path": "results/summary/20261015-p13-smoke-CartPole-v1-b92ebe8.json",
+      "bytes": 2722,
+      "sha256": "e3aa5df70232c29e1a7b31853fbb060697734c87ccaddb90a50d9fc7454a5f8a"
+    },
+    {
+      "path": "results/summary/20261015-p13-software-smoke-E-pqnr-exposure-cdfe461.json",
+      "bytes": 1750,
+      "sha256": "80fa7131f9a531565589d4fbb842af64b818d49861c18b0ef42f59bb51aa5990"
+    },
+    {
+      "path": "results/summary/20261015-p7-p13-D-s900to903-ppo-SpaceInvaders-MinAtar-e84eda3.json",
+      "bytes": 48709,
+      "sha256": "ef27ed924752d653912a975270b5ff090053c0b9e7c4e6df7f61a00e0232231d"
+    },
+    {
+      "path": "results/summary/20261015-p7-p13-D-s904to907-ppo-SpaceInvaders-MinAtar-2c647b4.json",
+      "bytes": 48583,
+      "sha256": "5805439bc0428273908a2e637ca1269e811205cf99467927839b91be5bf3a941"
+    },
+    {
+      "path": "results/summary/20261015-p7-p13-D-s908to911-ppo-SpaceInvaders-MinAtar-fc31fc3.json",
+      "bytes": 48590,
+      "sha256": "2303e2cd4b72770f2823db3c5a87152bbd750975e89d1fac084eefb51a17c057"
+    },
+    {
+      "path": "results/summary/20261015-p7-p13-D-s912to915-ppo-SpaceInvaders-MinAtar-360cc81.json",
+      "bytes": 48553,
+      "sha256": "642b8d0e1bab489b7796cae2a9e02e913e25a72ac99bceac0468c061b7d73a57"
+    },
+    {
       "path": "results/summary/p10_interactions_move_n12-posthoc.md",
       "bytes": 1457,
       "sha256": "1b509b4c2fb6f32e30287e767d1483569fd0798e1f1eb6271d07c21617e59336"
@@ -1739,6 +1889,31 @@
       "path": "results/summary/p12_tables.tex",
       "bytes": 2360,
       "sha256": "d6bc4f6fe900525486f30578c4ae3cc4112e554464597622933e5f240910efd5"
+    },
+    {
+      "path": "results/summary/p13_D_prospective-analysis.json",
+      "bytes": 9963,
+      "sha256": "991f71f8964402bd122e1a23d47ce05a2b2be1acf049bedd0cdffe5166041c18"
+    },
+    {
+      "path": "results/summary/p13_D_prospective-analysis.md",
+      "bytes": 772,
+      "sha256": "94e3f579f7cdc4356d1a42c6adfd9a1879af52d0a4cea690c53df39d1ca78e06"
+    },
+    {
+      "path": "results/summary/p13_confirmatory-analysis.json",
+      "bytes": 277922,
+      "sha256": "9f76a6e4df9ea581997277b4843e1c7d9692b23c4669e71176c1a7d5f0248ef1"
+    },
+    {
+      "path": "results/summary/p13_confirmatory-analysis.md",
+      "bytes": 4548,
+      "sha256": "c95ccfa589663f82a8b88d1fbc8069d28f34c8b87eb4f1464c050c3c2d7cd474"
+    },
+    {
+      "path": "results/summary/p13_tables.tex",
+      "bytes": 10067,
+      "sha256": "1c895bad5490d432ce56e90826af274596554682124b5bded6de7f9298367d2b"
     },
     {
       "path": "results/summary/p2_recovery_all-analysis.md",
@@ -2631,6 +2806,76 @@
       "sha256": "906aeb4ae9f1fb1b0e1841f142e1513c738ec92b0562ac15e3e3c477e2ae7808"
     },
     {
+      "path": "runs/20261015-p13-p13-A-s600to603-CartPole-v1-ec95b65.json",
+      "bytes": 7381,
+      "sha256": "9c4e008c3e7056993ff21e54cf70ed0d498491dba18658e0cde7902c71b11a9b"
+    },
+    {
+      "path": "runs/20261015-p13-p13-A-s604to607-CartPole-v1-bda8f53.json",
+      "bytes": 7381,
+      "sha256": "fad780f49eafaacf093c50abd859bc7a8d76756e05699ee4b32e6f4f233379cf"
+    },
+    {
+      "path": "runs/20261015-p13-p13-B-s800to803-Asterix-MinAtar-a34a0fa.json",
+      "bytes": 3747,
+      "sha256": "cc0cca2af4eb97d3029da45201b1deb592ebd58f7c102966986277bd1fe917dd"
+    },
+    {
+      "path": "runs/20261015-p13-p13-B-s804to807-Asterix-MinAtar-172779a.json",
+      "bytes": 3747,
+      "sha256": "83e459b5e838d26fded2e613d0362b30f531206b1445c3972b7d2d4f7fe6989d"
+    },
+    {
+      "path": "runs/20261015-p13-p13-C-s700to703-SpaceInvaders-MinAtar-019f0ae.json",
+      "bytes": 4134,
+      "sha256": "4d4eabf8bda9070e4334128040a08afdff16a8343cd2e083742e540db1ec049b"
+    },
+    {
+      "path": "runs/20261015-p13-p13-C-s704to707-SpaceInvaders-MinAtar-75223a5.json",
+      "bytes": 4134,
+      "sha256": "d5c3c59d392c05af324b64e2e63b659702b94f49d48331a07af4daedf2c2df3d"
+    },
+    {
+      "path": "runs/20261015-p13-p13-E-s1000to1003-pqnr-exposure-cdfe461.json",
+      "bytes": 1903,
+      "sha256": "8ec019c637bac6f00deeeeab15119bedff381ec3fc9e976eca0fcb207ea89202"
+    },
+    {
+      "path": "runs/20261015-p13-p13-E-s1004to1007-pqnr-exposure-4bebe11.json",
+      "bytes": 1903,
+      "sha256": "29e4b6f978ca396527988d31dc397f2788dc8a9b9ad5052c2ae3e9c6d03e4b46"
+    },
+    {
+      "path": "runs/20261015-p13-smoke-CartPole-v1-b92ebe8.json",
+      "bytes": 2675,
+      "sha256": "09a466993157089c76239e2bbf20b1087b1937e2014702f0a437335265f97c3d"
+    },
+    {
+      "path": "runs/20261015-p13-software-smoke-E-pqnr-exposure-cdfe461.json",
+      "bytes": 1832,
+      "sha256": "a02dc08c37ffd288760da0d64332a734e6540f4c2283b17175cdc1e0307addae"
+    },
+    {
+      "path": "runs/20261015-p7-p13-D-s900to903-ppo-SpaceInvaders-MinAtar-e84eda3.json",
+      "bytes": 1691,
+      "sha256": "4911cb82b772049ae3b70ac7e425bd9a8b194431c54a7ef58a8ef1be4b2a2c20"
+    },
+    {
+      "path": "runs/20261015-p7-p13-D-s904to907-ppo-SpaceInvaders-MinAtar-2c647b4.json",
+      "bytes": 1691,
+      "sha256": "29b32f4f6322350654e79ab2c57cc201cc442d639e4f35fefe34916f30ae11d2"
+    },
+    {
+      "path": "runs/20261015-p7-p13-D-s908to911-ppo-SpaceInvaders-MinAtar-fc31fc3.json",
+      "bytes": 1691,
+      "sha256": "55d25b535baad9768cac9f3d4592f613a92d7ca56bbe77549e025e0211fe0f6f"
+    },
+    {
+      "path": "runs/20261015-p7-p13-D-s912to915-ppo-SpaceInvaders-MinAtar-360cc81.json",
+      "bytes": 1691,
+      "sha256": "99a21300062413d2afc2ce1eb87743609096c5b3c23413fefa27c5c36a557e17"
+    },
+    {
       "path": "runs/README.md",
       "bytes": 270,
       "sha256": "acbdfe433b44c8570faad4a91cda81ea7b6d1047572f00b4efaad467fc1c6adc"
@@ -2676,9 +2921,15 @@
         2,
         3
       ],
-      "status": "see protocol-specific summary",
-      "expected_arms": [],
-      "observed_arms": [],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "fire_early",
+        "fire_late"
+      ],
+      "observed_arms": [
+        "fire_early",
+        "fire_late"
+      ],
       "recorded_source_commit": "806d05a868fce04e1313217e73d30281146e624b",
       "source_commit_available": true
     },
@@ -2691,9 +2942,17 @@
         2,
         3
       ],
-      "status": "see protocol-specific summary",
-      "expected_arms": [],
-      "observed_arms": [],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "control",
+        "move_early",
+        "move_late"
+      ],
+      "observed_arms": [
+        "control",
+        "move_early",
+        "move_late"
+      ],
       "recorded_source_commit": "fea755e9d7498726939c97a0b824fb951061431b",
       "source_commit_available": true
     },
@@ -2955,9 +3214,13 @@
         2,
         3
       ],
-      "status": "see protocol-specific summary",
-      "expected_arms": [],
-      "observed_arms": [],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "control"
+      ],
+      "observed_arms": [
+        "control"
+      ],
       "recorded_source_commit": "f12598d18d4e9e8f6ef7b38cd7d031813c30aba8",
       "source_commit_available": true
     },
@@ -4863,13 +5126,14 @@
         102,
         103
       ],
-      "status": "partial requested arms",
+      "status": "complete requested arms",
       "expected_arms": [
-        "D_online",
-        "D_transplant"
+        "300/D_online",
+        "300/D_transplant"
       ],
       "observed_arms": [
-        "300"
+        "300/D_online",
+        "300/D_transplant"
       ],
       "recorded_source_commit": "975ad08ca0dd58026ec9d666a7b2b709598eeda8",
       "source_commit_available": true
@@ -4883,13 +5147,14 @@
         106,
         107
       ],
-      "status": "partial requested arms",
+      "status": "complete requested arms",
       "expected_arms": [
-        "D_online",
-        "D_transplant"
+        "300/D_online",
+        "300/D_transplant"
       ],
       "observed_arms": [
-        "300"
+        "300/D_online",
+        "300/D_transplant"
       ],
       "recorded_source_commit": "b634055abf0eba4219cb380c9e7500098366504c",
       "source_commit_available": true
@@ -4903,16 +5168,26 @@
         2,
         3
       ],
-      "status": "partial requested arms",
+      "status": "complete requested arms",
       "expected_arms": [
-        "D_online",
-        "D_transplant"
+        "50/D_online",
+        "50/D_transplant",
+        "100/D_online",
+        "100/D_transplant",
+        "200/D_online",
+        "200/D_transplant",
+        "300/D_online",
+        "300/D_transplant"
       ],
       "observed_arms": [
-        "50",
-        "100",
-        "200",
-        "300"
+        "50/D_online",
+        "50/D_transplant",
+        "100/D_online",
+        "100/D_transplant",
+        "200/D_online",
+        "200/D_transplant",
+        "300/D_online",
+        "300/D_transplant"
       ],
       "recorded_source_commit": "ba1802fd8272bc24f3d79716a68197dc54c17708",
       "source_commit_available": true
@@ -4926,9 +5201,13 @@
         2,
         3
       ],
-      "status": "see protocol-specific summary",
-      "expected_arms": [],
-      "observed_arms": [],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "control"
+      ],
+      "observed_arms": [
+        "control"
+      ],
       "recorded_source_commit": "7138fe2a40aeb7c7bc45130c08ddbdfdbf263a58",
       "source_commit_available": true
     },
@@ -4941,9 +5220,13 @@
         2,
         3
       ],
-      "status": "see protocol-specific summary",
-      "expected_arms": [],
-      "observed_arms": [],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "control"
+      ],
+      "observed_arms": [
+        "control"
+      ],
       "recorded_source_commit": "7138fe2a40aeb7c7bc45130c08ddbdfdbf263a58",
       "source_commit_available": true
     },
@@ -4956,9 +5239,13 @@
         2,
         3
       ],
-      "status": "see protocol-specific summary",
-      "expected_arms": [],
-      "observed_arms": [],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "control"
+      ],
+      "observed_arms": [
+        "control"
+      ],
       "recorded_source_commit": "7138fe2a40aeb7c7bc45130c08ddbdfdbf263a58",
       "source_commit_available": true
     },
@@ -4971,9 +5258,15 @@
         202,
         203
       ],
-      "status": "see protocol-specific summary",
-      "expected_arms": [],
-      "observed_arms": [],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "control",
+        "move_late"
+      ],
+      "observed_arms": [
+        "control",
+        "move_late"
+      ],
       "recorded_source_commit": "63a8f1d7a71b20472d73d3054b2c743a93a04cbc",
       "source_commit_available": true
     },
@@ -4986,9 +5279,15 @@
         206,
         207
       ],
-      "status": "see protocol-specific summary",
-      "expected_arms": [],
-      "observed_arms": [],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "control",
+        "move_late"
+      ],
+      "observed_arms": [
+        "control",
+        "move_late"
+      ],
       "recorded_source_commit": "63a8f1d7a71b20472d73d3054b2c743a93a04cbc",
       "source_commit_available": true
     },
@@ -5001,9 +5300,15 @@
         210,
         211
       ],
-      "status": "see protocol-specific summary",
-      "expected_arms": [],
-      "observed_arms": [],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "control",
+        "move_late"
+      ],
+      "observed_arms": [
+        "control",
+        "move_late"
+      ],
       "recorded_source_commit": "63a8f1d7a71b20472d73d3054b2c743a93a04cbc",
       "source_commit_available": true
     },
@@ -5649,12 +5954,12 @@
         302,
         303
       ],
-      "status": "partial requested arms",
+      "status": "complete requested arms",
       "expected_arms": [
-        "D_online"
+        "300/D_online"
       ],
       "observed_arms": [
-        "300"
+        "300/D_online"
       ],
       "recorded_source_commit": "63a8f1d7a71b20472d73d3054b2c743a93a04cbc",
       "source_commit_available": true
@@ -5668,12 +5973,12 @@
         306,
         307
       ],
-      "status": "partial requested arms",
+      "status": "complete requested arms",
       "expected_arms": [
-        "D_online"
+        "300/D_online"
       ],
       "observed_arms": [
-        "300"
+        "300/D_online"
       ],
       "recorded_source_commit": "4a02dd21a9e54afb41e4a2265cae3bedb0a32f46",
       "source_commit_available": true
@@ -5687,12 +5992,12 @@
         310,
         311
       ],
-      "status": "partial requested arms",
+      "status": "complete requested arms",
       "expected_arms": [
-        "D_online"
+        "300/D_online"
       ],
       "observed_arms": [
-        "300"
+        "300/D_online"
       ],
       "recorded_source_commit": "88383ca52553f021888348a62095735f4124f5cc",
       "source_commit_available": true
@@ -5706,12 +6011,12 @@
         314,
         315
       ],
-      "status": "partial requested arms",
+      "status": "complete requested arms",
       "expected_arms": [
-        "D_online"
+        "300/D_online"
       ],
       "observed_arms": [
-        "300"
+        "300/D_online"
       ],
       "recorded_source_commit": "88383ca52553f021888348a62095735f4124f5cc",
       "source_commit_available": true
@@ -5725,12 +6030,12 @@
         318,
         319
       ],
-      "status": "partial requested arms",
+      "status": "complete requested arms",
       "expected_arms": [
-        "D_online"
+        "300/D_online"
       ],
       "observed_arms": [
-        "300"
+        "300/D_online"
       ],
       "recorded_source_commit": "ac634597df1b91994e5425bb35217f3fdb7d9dc0",
       "source_commit_available": true
@@ -5744,12 +6049,12 @@
         322,
         323
       ],
-      "status": "partial requested arms",
+      "status": "complete requested arms",
       "expected_arms": [
-        "D_online"
+        "300/D_online"
       ],
       "observed_arms": [
-        "300"
+        "300/D_online"
       ],
       "recorded_source_commit": "adf81f2638d184af67b04424bb2b8116e2413482",
       "source_commit_available": true
@@ -5763,12 +6068,12 @@
         326,
         327
       ],
-      "status": "partial requested arms",
+      "status": "complete requested arms",
       "expected_arms": [
-        "D_online"
+        "300/D_online"
       ],
       "observed_arms": [
-        "300"
+        "300/D_online"
       ],
       "recorded_source_commit": "adf81f2638d184af67b04424bb2b8116e2413482",
       "source_commit_available": true
@@ -5782,14 +6087,576 @@
         330,
         331
       ],
-      "status": "partial requested arms",
+      "status": "complete requested arms",
       "expected_arms": [
-        "D_online"
+        "300/D_online"
       ],
       "observed_arms": [
-        "300"
+        "300/D_online"
       ],
       "recorded_source_commit": "adf81f2638d184af67b04424bb2b8116e2413482",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261015-p13-p13-A-s600to603-CartPole-v1-ec95b65.json",
+      "manifest": "runs/20261015-p13-p13-A-s600to603-CartPole-v1-ec95b65.json",
+      "seeds": [
+        600,
+        601,
+        602,
+        603
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "fork/clean/donor/CCC",
+        "fork/clean/donor/CCD",
+        "fork/clean/donor/CDC",
+        "fork/clean/donor/CDD",
+        "fork/clean/donor/DCC",
+        "fork/clean/donor/DCD",
+        "fork/clean/donor/DDC",
+        "fork/clean/donor/DDD",
+        "fork/damaged/donor/CCC",
+        "fork/damaged/donor/CCD",
+        "fork/damaged/donor/CDC",
+        "fork/damaged/donor/CDD",
+        "fork/damaged/donor/DCC",
+        "fork/damaged/donor/DCD",
+        "fork/damaged/donor/DDC",
+        "fork/damaged/donor/DDD",
+        "pause/clean/donor/CCC",
+        "pause/clean/donor/CCD",
+        "pause/clean/donor/CDC",
+        "pause/clean/donor/CDD",
+        "pause/clean/donor/DCC",
+        "pause/clean/donor/DCD",
+        "pause/clean/donor/DDC",
+        "pause/clean/donor/DDD",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/CCD",
+        "pause/damaged/donor/CDC",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/donor/DCD",
+        "pause/damaged/donor/DDC",
+        "pause/damaged/donor/DDD",
+        "pause/clean/zero/CCC",
+        "pause/clean/zero/CDC",
+        "pause/clean/zero/DCC",
+        "pause/clean/zero/DDC",
+        "pause/reset/donor/CCC",
+        "pause/reset/donor/DCC",
+        "pause/reset/donor/CDD",
+        "pause/reset/donor/DDD"
+      ],
+      "observed_arms": [
+        "fork/clean/donor/CCC",
+        "fork/clean/donor/CCD",
+        "fork/clean/donor/CDC",
+        "fork/clean/donor/CDD",
+        "fork/clean/donor/DCC",
+        "fork/clean/donor/DCD",
+        "fork/clean/donor/DDC",
+        "fork/clean/donor/DDD",
+        "fork/damaged/donor/CCC",
+        "fork/damaged/donor/CCD",
+        "fork/damaged/donor/CDC",
+        "fork/damaged/donor/CDD",
+        "fork/damaged/donor/DCC",
+        "fork/damaged/donor/DCD",
+        "fork/damaged/donor/DDC",
+        "fork/damaged/donor/DDD",
+        "pause/clean/donor/CCC",
+        "pause/clean/donor/CCD",
+        "pause/clean/donor/CDC",
+        "pause/clean/donor/CDD",
+        "pause/clean/donor/DCC",
+        "pause/clean/donor/DCD",
+        "pause/clean/donor/DDC",
+        "pause/clean/donor/DDD",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/CCD",
+        "pause/damaged/donor/CDC",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/donor/DCD",
+        "pause/damaged/donor/DDC",
+        "pause/damaged/donor/DDD",
+        "pause/clean/zero/CCC",
+        "pause/clean/zero/CDC",
+        "pause/clean/zero/DCC",
+        "pause/clean/zero/DDC",
+        "pause/reset/donor/CCC",
+        "pause/reset/donor/DCC",
+        "pause/reset/donor/CDD",
+        "pause/reset/donor/DDD"
+      ],
+      "recorded_source_commit": "ec95b6586db963f501daccf0d9f4d60d7c427025",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261015-p13-p13-A-s604to607-CartPole-v1-bda8f53.json",
+      "manifest": "runs/20261015-p13-p13-A-s604to607-CartPole-v1-bda8f53.json",
+      "seeds": [
+        604,
+        605,
+        606,
+        607
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "fork/clean/donor/CCC",
+        "fork/clean/donor/CCD",
+        "fork/clean/donor/CDC",
+        "fork/clean/donor/CDD",
+        "fork/clean/donor/DCC",
+        "fork/clean/donor/DCD",
+        "fork/clean/donor/DDC",
+        "fork/clean/donor/DDD",
+        "fork/damaged/donor/CCC",
+        "fork/damaged/donor/CCD",
+        "fork/damaged/donor/CDC",
+        "fork/damaged/donor/CDD",
+        "fork/damaged/donor/DCC",
+        "fork/damaged/donor/DCD",
+        "fork/damaged/donor/DDC",
+        "fork/damaged/donor/DDD",
+        "pause/clean/donor/CCC",
+        "pause/clean/donor/CCD",
+        "pause/clean/donor/CDC",
+        "pause/clean/donor/CDD",
+        "pause/clean/donor/DCC",
+        "pause/clean/donor/DCD",
+        "pause/clean/donor/DDC",
+        "pause/clean/donor/DDD",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/CCD",
+        "pause/damaged/donor/CDC",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/donor/DCD",
+        "pause/damaged/donor/DDC",
+        "pause/damaged/donor/DDD",
+        "pause/clean/zero/CCC",
+        "pause/clean/zero/CDC",
+        "pause/clean/zero/DCC",
+        "pause/clean/zero/DDC",
+        "pause/reset/donor/CCC",
+        "pause/reset/donor/DCC",
+        "pause/reset/donor/CDD",
+        "pause/reset/donor/DDD"
+      ],
+      "observed_arms": [
+        "fork/clean/donor/CCC",
+        "fork/clean/donor/CCD",
+        "fork/clean/donor/CDC",
+        "fork/clean/donor/CDD",
+        "fork/clean/donor/DCC",
+        "fork/clean/donor/DCD",
+        "fork/clean/donor/DDC",
+        "fork/clean/donor/DDD",
+        "fork/damaged/donor/CCC",
+        "fork/damaged/donor/CCD",
+        "fork/damaged/donor/CDC",
+        "fork/damaged/donor/CDD",
+        "fork/damaged/donor/DCC",
+        "fork/damaged/donor/DCD",
+        "fork/damaged/donor/DDC",
+        "fork/damaged/donor/DDD",
+        "pause/clean/donor/CCC",
+        "pause/clean/donor/CCD",
+        "pause/clean/donor/CDC",
+        "pause/clean/donor/CDD",
+        "pause/clean/donor/DCC",
+        "pause/clean/donor/DCD",
+        "pause/clean/donor/DDC",
+        "pause/clean/donor/DDD",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/CCD",
+        "pause/damaged/donor/CDC",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/donor/DCD",
+        "pause/damaged/donor/DDC",
+        "pause/damaged/donor/DDD",
+        "pause/clean/zero/CCC",
+        "pause/clean/zero/CDC",
+        "pause/clean/zero/DCC",
+        "pause/clean/zero/DDC",
+        "pause/reset/donor/CCC",
+        "pause/reset/donor/DCC",
+        "pause/reset/donor/CDD",
+        "pause/reset/donor/DDD"
+      ],
+      "recorded_source_commit": "bda8f53cdb93e83cb024531a2731aa48dc8c55f9",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261015-p13-p13-B-s800to803-Asterix-MinAtar-a34a0fa.json",
+      "manifest": "runs/20261015-p13-p13-B-s800to803-Asterix-MinAtar-a34a0fa.json",
+      "seeds": [
+        800,
+        801,
+        802,
+        803
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "fork/clean/donor/CCC",
+        "pause/clean/donor/CCC",
+        "pause/clean/donor/CCD",
+        "pause/clean/donor/CDC",
+        "pause/clean/donor/CDD",
+        "pause/clean/donor/DCC",
+        "pause/clean/donor/DCD",
+        "pause/clean/donor/DDC",
+        "pause/clean/donor/DDD",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DDD"
+      ],
+      "observed_arms": [
+        "fork/clean/donor/CCC",
+        "pause/clean/donor/CCC",
+        "pause/clean/donor/CCD",
+        "pause/clean/donor/CDC",
+        "pause/clean/donor/CDD",
+        "pause/clean/donor/DCC",
+        "pause/clean/donor/DCD",
+        "pause/clean/donor/DDC",
+        "pause/clean/donor/DDD",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DDD"
+      ],
+      "recorded_source_commit": "a34a0fad3936ec7e803407395ee5e4149bb4ffac",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261015-p13-p13-B-s804to807-Asterix-MinAtar-172779a.json",
+      "manifest": "runs/20261015-p13-p13-B-s804to807-Asterix-MinAtar-172779a.json",
+      "seeds": [
+        804,
+        805,
+        806,
+        807
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "fork/clean/donor/CCC",
+        "pause/clean/donor/CCC",
+        "pause/clean/donor/CCD",
+        "pause/clean/donor/CDC",
+        "pause/clean/donor/CDD",
+        "pause/clean/donor/DCC",
+        "pause/clean/donor/DCD",
+        "pause/clean/donor/DDC",
+        "pause/clean/donor/DDD",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DDD"
+      ],
+      "observed_arms": [
+        "fork/clean/donor/CCC",
+        "pause/clean/donor/CCC",
+        "pause/clean/donor/CCD",
+        "pause/clean/donor/CDC",
+        "pause/clean/donor/CDD",
+        "pause/clean/donor/DCC",
+        "pause/clean/donor/DCD",
+        "pause/clean/donor/DDC",
+        "pause/clean/donor/DDD",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DDD"
+      ],
+      "recorded_source_commit": "172779a0c2a68f84f5d72f6edeca802ece93a4be",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261015-p13-p13-C-s700to703-SpaceInvaders-MinAtar-019f0ae.json",
+      "manifest": "runs/20261015-p13-p13-C-s700to703-SpaceInvaders-MinAtar-019f0ae.json",
+      "seeds": [
+        700,
+        701,
+        702,
+        703
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "fork/clean/donor/CCC",
+        "fork/clean/donor/CCD",
+        "fork/clean/donor/CDC",
+        "fork/clean/donor/CDD",
+        "fork/clean/donor/DCC",
+        "fork/clean/donor/DCD",
+        "fork/clean/donor/DDC",
+        "fork/clean/donor/DDD",
+        "fork/damaged/donor/CCC",
+        "fork/damaged/donor/DCC",
+        "fork/damaged/donor/CDD",
+        "fork/damaged/donor/DDD",
+        "fork/clean/zero/CCC",
+        "fork/clean/zero/CDC",
+        "fork/clean/zero/DCC",
+        "fork/clean/zero/DDC"
+      ],
+      "observed_arms": [
+        "fork/clean/donor/CCC",
+        "fork/clean/donor/CCD",
+        "fork/clean/donor/CDC",
+        "fork/clean/donor/CDD",
+        "fork/clean/donor/DCC",
+        "fork/clean/donor/DCD",
+        "fork/clean/donor/DDC",
+        "fork/clean/donor/DDD",
+        "fork/damaged/donor/CCC",
+        "fork/damaged/donor/DCC",
+        "fork/damaged/donor/CDD",
+        "fork/damaged/donor/DDD",
+        "fork/clean/zero/CCC",
+        "fork/clean/zero/CDC",
+        "fork/clean/zero/DCC",
+        "fork/clean/zero/DDC"
+      ],
+      "recorded_source_commit": "019f0ae091158cfd3cac3819628874c0cc05520b",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261015-p13-p13-C-s704to707-SpaceInvaders-MinAtar-75223a5.json",
+      "manifest": "runs/20261015-p13-p13-C-s704to707-SpaceInvaders-MinAtar-75223a5.json",
+      "seeds": [
+        704,
+        705,
+        706,
+        707
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "fork/clean/donor/CCC",
+        "fork/clean/donor/CCD",
+        "fork/clean/donor/CDC",
+        "fork/clean/donor/CDD",
+        "fork/clean/donor/DCC",
+        "fork/clean/donor/DCD",
+        "fork/clean/donor/DDC",
+        "fork/clean/donor/DDD",
+        "fork/damaged/donor/CCC",
+        "fork/damaged/donor/DCC",
+        "fork/damaged/donor/CDD",
+        "fork/damaged/donor/DDD",
+        "fork/clean/zero/CCC",
+        "fork/clean/zero/CDC",
+        "fork/clean/zero/DCC",
+        "fork/clean/zero/DDC"
+      ],
+      "observed_arms": [
+        "fork/clean/donor/CCC",
+        "fork/clean/donor/CCD",
+        "fork/clean/donor/CDC",
+        "fork/clean/donor/CDD",
+        "fork/clean/donor/DCC",
+        "fork/clean/donor/DCD",
+        "fork/clean/donor/DDC",
+        "fork/clean/donor/DDD",
+        "fork/damaged/donor/CCC",
+        "fork/damaged/donor/DCC",
+        "fork/damaged/donor/CDD",
+        "fork/damaged/donor/DDD",
+        "fork/clean/zero/CCC",
+        "fork/clean/zero/CDC",
+        "fork/clean/zero/DCC",
+        "fork/clean/zero/DDC"
+      ],
+      "recorded_source_commit": "75223a5f1c8e7d23693bb41dfff0b8acef52e352",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261015-p13-p13-E-s1000to1003-pqnr-exposure-cdfe461.json",
+      "manifest": "runs/20261015-p13-p13-E-s1000to1003-pqnr-exposure-cdfe461.json",
+      "seeds": [
+        1000,
+        1001,
+        1002,
+        1003
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "UU",
+        "RU",
+        "UR",
+        "RR",
+        "U0",
+        "R0"
+      ],
+      "observed_arms": [
+        "UU",
+        "RU",
+        "UR",
+        "RR",
+        "U0",
+        "R0"
+      ],
+      "recorded_source_commit": "cdfe4619b3917bfb045526d910433e0de54431c9",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261015-p13-p13-E-s1004to1007-pqnr-exposure-4bebe11.json",
+      "manifest": "runs/20261015-p13-p13-E-s1004to1007-pqnr-exposure-4bebe11.json",
+      "seeds": [
+        1004,
+        1005,
+        1006,
+        1007
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "UU",
+        "RU",
+        "UR",
+        "RR",
+        "U0",
+        "R0"
+      ],
+      "observed_arms": [
+        "UU",
+        "RU",
+        "UR",
+        "RR",
+        "U0",
+        "R0"
+      ],
+      "recorded_source_commit": "4bebe1132d3ecda5f292990ab3eb56282f76d590",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261015-p13-smoke-CartPole-v1-b92ebe8.json",
+      "manifest": "runs/20261015-p13-smoke-CartPole-v1-b92ebe8.json",
+      "seeds": [
+        99990
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "fork/clean/donor/CCC",
+        "pause/clean/donor/DDD",
+        "fork/damaged/donor/DDD",
+        "pause/clean/zero/CCC",
+        "pause/reset/donor/DDD"
+      ],
+      "observed_arms": [
+        "fork/clean/donor/CCC",
+        "pause/clean/donor/DDD",
+        "fork/damaged/donor/DDD",
+        "pause/clean/zero/CCC",
+        "pause/reset/donor/DDD"
+      ],
+      "recorded_source_commit": "b92ebe8f19590efd72d01391b66b739a7eeb930e",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261015-p13-software-smoke-E-pqnr-exposure-cdfe461.json",
+      "manifest": "runs/20261015-p13-software-smoke-E-pqnr-exposure-cdfe461.json",
+      "seeds": [
+        99991
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "UU",
+        "RU",
+        "UR",
+        "RR",
+        "U0",
+        "R0"
+      ],
+      "observed_arms": [
+        "UU",
+        "RU",
+        "UR",
+        "RR",
+        "U0",
+        "R0"
+      ],
+      "recorded_source_commit": "cdfe4619b3917bfb045526d910433e0de54431c9",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261015-p7-p13-D-s900to903-ppo-SpaceInvaders-MinAtar-e84eda3.json",
+      "manifest": "runs/20261015-p7-p13-D-s900to903-ppo-SpaceInvaders-MinAtar-e84eda3.json",
+      "seeds": [
+        900,
+        901,
+        902,
+        903
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "300/D_online"
+      ],
+      "observed_arms": [
+        "300/D_online"
+      ],
+      "recorded_source_commit": "e84eda39cc4ae692a22b9d5b64dafa4cf354635e",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261015-p7-p13-D-s904to907-ppo-SpaceInvaders-MinAtar-2c647b4.json",
+      "manifest": "runs/20261015-p7-p13-D-s904to907-ppo-SpaceInvaders-MinAtar-2c647b4.json",
+      "seeds": [
+        904,
+        905,
+        906,
+        907
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "300/D_online"
+      ],
+      "observed_arms": [
+        "300/D_online"
+      ],
+      "recorded_source_commit": "2c647b4e77774986b0f44506a35a91f757916aeb",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261015-p7-p13-D-s908to911-ppo-SpaceInvaders-MinAtar-fc31fc3.json",
+      "manifest": "runs/20261015-p7-p13-D-s908to911-ppo-SpaceInvaders-MinAtar-fc31fc3.json",
+      "seeds": [
+        908,
+        909,
+        910,
+        911
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "300/D_online"
+      ],
+      "observed_arms": [
+        "300/D_online"
+      ],
+      "recorded_source_commit": "fc31fc3e6acb2a4d61a0b2ce1a00c70d4ab91e2a",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261015-p7-p13-D-s912to915-ppo-SpaceInvaders-MinAtar-360cc81.json",
+      "manifest": "runs/20261015-p7-p13-D-s912to915-ppo-SpaceInvaders-MinAtar-360cc81.json",
+      "seeds": [
+        912,
+        913,
+        914,
+        915
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "300/D_online"
+      ],
+      "observed_arms": [
+        "300/D_online"
+      ],
+      "recorded_source_commit": "360cc81c2cb9ba941ef75561a525331640698438",
       "source_commit_available": true
     }
   ]

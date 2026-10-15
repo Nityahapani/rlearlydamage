@@ -145,3 +145,19 @@ Six new settings reached their planned eight seeds; Freeway has only four comple
 - [File hashes and completion inventory](docs/result_inventory.json)
 
 All surviving saved NPZ arrays are included even though new generated outputs remain ignored by default. Full generated runner-state pickles are not archived; the availability note explains which artifacts must be regenerated.
+
+
+## Phase 13: reference-aware independent replication and prospective checks
+
+Updated manuscript: **Where Do Recovery Costs Live? Reference-Aware State Surgery in Deep Reinforcement Learning** ([PDF](paper/main.pdf), [source](paper/main.tex)). Two tiers are kept explicit: same-update gap attribution versus directly tested pause-relative recovery cost. A negative finite-window AUC is not an irreversible deficit.
+
+All five registered cohorts completed on two CPU cores: A/B/C/E each8 unused training seeds; D16 held-out seeds with coefficients frozen before its first run. The fixed five-claim Holm family supports the Asterix pause-reference and actuator-noise gap claims. CartPole's pause allocation differs materially from its same-update allocation (actor75% versus96%, critic32% in the pause comparison); its stronger compound dominance test does not pass that correction.
+
+The controlled label assay matches actual transitions, ages, collection and update schedules, then proves all non-learner states equal after washout. Its matched primary is inconclusive, not a mediation success. The prospective frozen acute+KL model has MSE68.78 versus32.27 for acute gap and fails the10% utility rule. Secondary correlations/swaps are not used to rescue failed primaries. These results remain scoped procedural effects, not unique internal encoding or a general deep-RL law.
+
+- [Pre-registration](prereg/phase13.json)
+- [Frozen diagnostic coefficients and training data](prereg/p13_frozen_predictors.json)
+- [Full primary-family analysis](results/summary/p13_confirmatory-analysis.md)
+- [Prospective comparison](results/summary/p13_D_prospective-analysis.md)
+- [Fifth-round response](docs/response_round5.md)
+- [Result inventory/availability](docs/result_availability.md)

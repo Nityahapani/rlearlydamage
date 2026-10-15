@@ -1,0 +1,7 @@
+manifest runs/20261015-p13-smoke-CartPole-v1-b92ebe8.json
+cell 1/5 fork/clean/donor/CCC saved; elapsed 14s (scores withheld)
+cell 2/5 pause/clean/donor/DDD saved; elapsed 15s (scores withheld)
+cell 3/5 fork/damaged/donor/DDD saved; elapsed 17s (scores withheld)
+cell 4/5 pause/clean/zero/CCC saved; elapsed 19s (scores withheld)
+cell 5/5 pause/reset/donor/DDD saved; elapsed 21s (scores withheld)
+complete results/summary/20261015-p13-smoke-CartPole-v1-b92ebe8.json seconds 21.1

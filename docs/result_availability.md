@@ -26,3 +26,9 @@ Some original local-only Git objects were lost before they could be pushed. Orig
 Recorded source commits unavailable in the restored clone: `01b2d55`, `343675e`, `4254b3e`, `685fd17`.
 
 A deterministic rerun must preserve each manifest’s seed group, configuration, checkpoint grid and package versions. The original experiment code and the published recovered source are both identified; no missing outcomes are imputed.
+
+## Phase 13 follow-up (all planned cohorts complete)
+
+The next registered phase completes A/B/C/E at 8 independent seeds each and prospective D at 16. Phase-12 H1/H2 were not retroactively completed: the formerly unused IDs are used in expanded Phase-13 protocols and the cohorts are not double-counted as additional tasks.
+The new inference family is fixed at five claims, with registered compound tests and Holm correction. Only B (Asterix pause) and C (actuator-noise gap) meet it. A has clear finite-window native harm but its stronger compound dominance test does not pass; E and D retain their null/inconclusive primary outcomes.
+Natural D identity and controlled washout checks, all cell curves, frozen predictor coefficients, all prospective feature rows and surviving checkpoint arrays are archived. No fresh-seed result is inferred from an unrun or partial cohort.

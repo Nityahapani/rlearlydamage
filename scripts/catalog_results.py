@@ -19,6 +19,15 @@ def main():
         expected=proto.get('arms',[])
         if isinstance(expected,str):expected=[expected]
         observed=list(d.get('arms',{}))
+        if 'cells' in d and proto.get('cells'):
+            expected=['/'.join(c[k] for k in ['reference','context','opt','code']) for c in proto['cells']]
+            observed=list(d['cells'])
+        elif d.get('durations') and isinstance(d.get('arms'),dict):
+            expected=[f'{dur}/{a}' for dur in d['durations'] for a in expected]
+            observed=[f'{dur}/{a}' for dur,arms in d['arms'].items() for a in arms]
+        elif 'configs' in d:
+            expected=list(proto.get('configs',d['configs']))
+            observed=list(d['configs'])
         status=('complete requested arms' if expected and set(expected).issubset(observed) else
                 'partial requested arms' if expected else 'see protocol-specific summary')
         h=md.get('git',{}).get('commit')
@@ -49,6 +58,10 @@ def main():
     lines += [f'| `{f}` | {c["matches_public_79700c2"]} |' for f,c in checks.items()]
     lines += ['', 'Recorded source commits unavailable in the restored clone: '+(', '.join('`'+h[:7]+'`' for h in missing) if missing else 'none')+'.',
               '', 'A deterministic rerun must preserve each manifest’s seed group, configuration, checkpoint grid and package versions. The original experiment code and the published recovered source are both identified; no missing outcomes are imputed.']
+    lines += ['', '## Phase 13 follow-up (all planned cohorts complete)', '',
+              'The next registered phase completes A/B/C/E at 8 independent seeds each and prospective D at 16. Phase-12 H1/H2 were not retroactively completed: the formerly unused IDs are used in expanded Phase-13 protocols and the cohorts are not double-counted as additional tasks.',
+              'The new inference family is fixed at five claims, with registered compound tests and Holm correction. Only B (Asterix pause) and C (actuator-noise gap) meet it. A has clear finite-window native harm but its stronger compound dominance test does not pass; E and D retain their null/inconclusive primary outcomes.',
+              'Natural D identity and controlled washout checks, all cell curves, frozen predictor coefficients, all prospective feature rows and surviving checkpoint arrays are archived. No fresh-seed result is inferred from an unrun or partial cohort.']
     P.write_text('\n'.join(lines)+'\n')
     print('Catalog:',len(files),'files,',len(runs),'run summaries; NPZ files:',sum(f['path'].endswith('.npz') for f in files))
     print('Phase-12 training files match public code:',all(c['matches_public_79700c2'] for c in checks.values()))

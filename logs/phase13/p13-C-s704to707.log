@@ -1,0 +1,18 @@
+manifest runs/20261015-p13-p13-C-s704to707-SpaceInvaders-MinAtar-75223a5.json
+cell 1/16 fork/clean/donor/CCC saved; elapsed 424s (scores withheld)
+cell 2/16 fork/clean/donor/CCD saved; elapsed 600s (scores withheld)
+cell 3/16 fork/clean/donor/CDC saved; elapsed 777s (scores withheld)
+cell 4/16 fork/clean/donor/CDD saved; elapsed 952s (scores withheld)
+cell 5/16 fork/clean/donor/DCC saved; elapsed 1127s (scores withheld)
+cell 6/16 fork/clean/donor/DCD saved; elapsed 1302s (scores withheld)
+cell 7/16 fork/clean/donor/DDC saved; elapsed 1478s (scores withheld)
+cell 8/16 fork/clean/donor/DDD saved; elapsed 1654s (scores withheld)
+cell 9/16 fork/damaged/donor/CCC saved; elapsed 1824s (scores withheld)
+cell 10/16 fork/damaged/donor/DCC saved; elapsed 2000s (scores withheld)
+cell 11/16 fork/damaged/donor/CDD saved; elapsed 2173s (scores withheld)
+cell 12/16 fork/damaged/donor/DDD saved; elapsed 2343s (scores withheld)
+cell 13/16 fork/clean/zero/CCC saved; elapsed 2511s (scores withheld)
+cell 14/16 fork/clean/zero/CDC saved; elapsed 2679s (scores withheld)
+cell 15/16 fork/clean/zero/DCC saved; elapsed 2849s (scores withheld)
+cell 16/16 fork/clean/zero/DDC saved; elapsed 3017s (scores withheld)
+complete results/summary/20261015-p13-p13-C-s704to707-SpaceInvaders-MinAtar-75223a5.json seconds 3017.2
