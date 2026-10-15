@@ -130,3 +130,18 @@ Full details, tables and caveats are in [`LOG.md`](LOG.md). Every number traces 
 - Decision point 2 (a peak-then-fall damage curve) is **not met yet**.
 - CIs are paired t-intervals over seeds (earlier bootstrap CIs were too narrow at n=4 and were corrected; see LOG).
 - Methodological note: while the control is still improving, raw final-return damage is confounded with lost time, so we report delay-adjusted damage.
+
+
+## Phase 12: expanded generalization and claim calibration
+
+The updated manuscript is [`paper/main.pdf`](paper/main.pdf), with source [`paper/main.tex`](paper/main.tex). The fourth-round response is [`docs/response_round4.md`](docs/response_round4.md).
+
+Six new settings reached their planned eight seeds; Freeway has only four complete seeds and is descriptive. Optional independent-seed replications did not run. New contrasts on reused IDs are not described as fresh-seed replication. The paper separates same-update cost from harm beyond lost training time and defines “carrier” only through the tested transplantation procedure.
+
+- [Generalization panel](results/summary/p12_panel-analysis.md)
+- [PQN-R reward-flip primary and matched-horizon analyses](results/summary/p12_g7_pqnr_rflip-analysis.md)
+- [Interim/outlier sensitivity](results/summary/p12_interim_predictors-posthoc.md)
+- [Result availability and reset limitations](docs/result_availability.md)
+- [File hashes and completion inventory](docs/result_inventory.json)
+
+All surviving saved NPZ arrays are included even though new generated outputs remain ignored by default. Full generated runner-state pickles are not archived; the availability note explains which artifacts must be regenerated.

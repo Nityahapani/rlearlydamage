@@ -87,6 +87,7 @@ def main():
     ap.add_argument("--fresh-seeds", type=int, nargs="*", default=None)
     ap.add_argument("--fork-eval", action="store_true")
     ap.add_argument("--title", default="")
+    ap.add_argument("--descriptive-only", action="store_true", help="incomplete registered n: report estimates without a confirmatory verdict")
     a = ap.parse_args()
 
     data, U0, meta = {}, None, {}
@@ -179,7 +180,10 @@ def main():
             verdict = "**REPLICATES** (total CI < 0, actor main-effect CI < 0, actor has the largest Shapley share)"
         else:
             verdict = (f"**DOES NOT REPLICATE** (actor main-effect upper bound {act_hi:+.1f}; largest Shapley share: {largest})")
-        L += ["", f"Pre-registered replication criterion: {verdict}"]
+        if a.descriptive_only:
+            L += ["", "**DESCRIPTIVE ONLY:** planned sample size was not reached. No confirmatory replication decision is applied."]
+        else:
+            L += ["", f"Pre-registered replication criterion: {verdict}"]
         L += ["", "## Single transplants and rescues (AUC)", "", "| contrast | AUC | +0 |", "|---|---|---|"]
         for lab, x, y in (("damaged actor only DCC - CCC", "DCC", "CCC"), ("clean actor into damaged CDD - DDD", "CDD", "DDD"),
                           ("damaged critic only CDC - CCC", "CDC", "CCC"), ("clean critic DCD - DDD", "DCD", "DDD"),

@@ -1,11 +1,23 @@
 % tab:general rows (Phase 12)
-CartPole, reward flip (G1) & 8 & $-448\ci{-502}{-394}\sig$ & $-223\ci{-347}{-100}\sig$ & $-197\ci{-323}{-70}\sig$ & $-206\sig$ & $-17$ & $+19$ & 95\%; replicates \\
-Acrobot, reward flip (G2) & 8 & $-134\ci{-217}{-52}\sig$ & $-109\ci{-237}{+19}$ & $-54\ci{-148}{+38}$ & $-42$ & $-67$ & $-11$ & n/a; no damage to localize \\
-SpaceInvaders, actuator noise (G3) & 8 & $-27.1\ci{-32.6}{-21.6}\sig$ & $-9.5\ci{-12.7}{-6.3}\sig$ & $+4.2\ci{+0.9}{+7.5}\sig$ & $-11.0\sig$ & $-0.5$ & $+1.8\sig$ & 115\%; replicates \\
-SpaceInvaders, observation noise (G5) & 8 & $-24.2\ci{-32.9}{-15.6}\sig$ & $-10.0\ci{-13.4}{-6.5}\sig$ & $+3.7\ci{+0.5}{+7.0}\sig$ & $-10.6\sig$ & $-0.3$ & $+1.0$ & 107\%; replicates \\
+CartPole, reward flip (G1) & 8 & $-223\ci{-347}{-99}\sig$ & $-197\ci{-323}{-70}\sig$ & 95\% & met \\
+Acrobot, reward flip (G2) & 8 & $-109\ci{-237}{+19}$ & $-54\ci{-147}{+39}$ & -- & no gap detected \\
+SpaceInvaders, actuator noise (G3) & 8 & $-9.5\ci{-12.7}{-6.3}\sig$ & $+4.2\ci{+0.9}{+7.5}\sig$ & 115\% & met \\
+Freeway, reward flip (G4) & 4 & $-38\ci{-40}{-36}\sig$ & $-34\ci{-35}{-32}\sig$ & 79\% & descriptive only \\
+SpaceInvaders, observation noise (G5) & 8 & $-10.0\ci{-13.4}{-6.5}\sig$ & $+3.7\ci{+0.5}{+7.0}\sig$ & 107\% & met \\
+SpaceInvaders, reward extinction (G6) & 8 & $-9.6\ci{-13.4}{-5.8}\sig$ & $+4.1\ci{+0.9}{+7.4}\sig$ & 104\% & met \\
+
+% tab:carriers rows (Phase 12)
+CartPole, reward flip (G1) & 8 & $-206\ci{-320}{-92}\sig$ & $-17\ci{-51}{+17}$ & $+19\ci{-3}{+40}$ & $0.011$ & $\pm47.9$ \\
+Acrobot, reward flip (G2) & 8 & $-43\ci{-94}{+9}$ & $-67\ci{-148}{+15}$ & $-11\ci{-27}{+6}$ & $0.279$ & $\pm10.4$ \\
+SpaceInvaders, actuator noise (G3) & 8 & $-11.0\ci{-13.8}{-8.2}\sig$ & $-0.5\ci{-2.1}{+1.0}$ & $+1.8\ci{+0.9}{+2.7}\sig$ & $0.0001$ & $\pm8.0$ \\
+Freeway, reward flip (G4) & 4 & $-30\ci{-35}{-26}\sig$ & $-7\ci{-12}{-3}\sig$ & $-2\ci{-4}{+1}$ & $0.0007$ & $\pm3.8$ \\
+SpaceInvaders, observation noise (G5) & 8 & $-10.6\ci{-12.7}{-8.5}\sig$ & $-0.3\ci{-2.1}{+1.6}$ & $+1.0\ci{-0.5}{+2.5}$ & $<10^{-4}$ & $\pm8.0$ \\
+SpaceInvaders, reward extinction (G6) & 8 & $-10.3\ci{-12.9}{-7.7}\sig$ & $+0.2\ci{-1.1}{+1.6}$ & $-0.4\ci{-1.6}{+0.9}$ & $<10^{-4}$ & $\pm8.0$ \\
 
 % tab:gap rows (Phase 12; prediction; hit)
-CartPole, reward flip (G1) & 8 & 98\% & $-223\ci{-347}{-100}\sig$ & $-49\%$ & $-197\ci{-323}{-70}\sig$ & damage; damage (hit) \\
-Acrobot, reward flip (G2) & 8 & 44\% & $-109\ci{-237}{+19}$ & $-35\%$ & $-54\ci{-148}{+38}$ & no prediction; no damage \\
-SpaceInvaders, actuator noise (G3) & 8 & 47\% & $-9.5\ci{-12.7}{-6.3}\sig$ & $-16\%$ & $+4.2\ci{+0.9}{+7.5}\sig$ & no prediction; damage \\
-SpaceInvaders, observation noise (G5) & 8 & 42\% & $-10.0\ci{-13.4}{-6.5}\sig$ & $-17\%$ & $+3.7\ci{+0.5}{+7.0}\sig$ & no prediction; damage \\
+CartPole, reward flip (G1) & 8 & 98\% & $-223\ci{-347}{-99}\sig$ & $-49\%$ & $-197\ci{-323}{-70}\sig$ & gap; gap (hit) \\
+Acrobot, reward flip (G2) & 8 & 44\% & $-109\ci{-237}{+19}$ & $-35\%$ & $-54\ci{-147}{+39}$ & no prediction; no gap \\
+SpaceInvaders, actuator noise (G3) & 8 & 47\% & $-9.5\ci{-12.7}{-6.3}\sig$ & $-16\%$ & $+4.2\ci{+0.9}{+7.5}\sig$ & no prediction; gap \\
+Freeway, reward flip (G4) & 4 & 100\% & $-38\ci{-40}{-36}\sig$ & $-123\%$ & $-34\ci{-35}{-32}\sig$ & gap (partial); descriptive only \\
+SpaceInvaders, observation noise (G5) & 8 & 42\% & $-10.0\ci{-13.4}{-6.5}\sig$ & $-17\%$ & $+3.7\ci{+0.5}{+7.0}\sig$ & no prediction; gap \\
+SpaceInvaders, reward extinction (G6) & 8 & 47\% & $-9.6\ci{-13.4}{-5.8}\sig$ & $-16\%$ & $+4.1\ci{+0.9}{+7.4}\sig$ & no prediction; gap \\

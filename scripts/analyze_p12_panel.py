@@ -112,6 +112,12 @@ def main():
         if not summ:
             rows.append((gid, env, deficit, None, "not run"))
             continue
+        completed = ready(name)
+        summ = [f for f in summ if all(c in json.loads(Path(f).read_text()).get("arms", {})
+                                   for c in ("CCC","CCD","CDC","CDD","DCC","DCD","DDC","DDD"))]
+        if not summ:
+            rows.append((gid, env, deficit, None, "no complete factorial chunk"))
+            continue
         ccc = []
         for p in summ:
             d = json.loads(Path(p).read_text())
@@ -122,6 +128,8 @@ def main():
         cmd = [sys.executable, "scripts/analyze_p8_surgery.py", "--summaries", *summ, "--tag", tag, "--fork-eval",
                "--sesoi", str(sesoi), "--title",
                f"Phase 12 {gid} (pre-registered): {env}, {deficit}. TOST margin = 10% of |CCC AUC| = ±{sesoi}."]
+        if not completed:
+            cmd += ["--descriptive-only"]
         subprocess.run(cmd, check=True, capture_output=True)
         r = parse(S / f"{tag}-analysis.md")
         r["sesoi"] = sesoi
@@ -150,7 +158,7 @@ def main():
                  f"{f(r.get('actor'))} | {f(r.get('critic'))} | {f(r.get('opt'))} | {r.get('actor_share', '–')}% "
                  f"({r.get('actor_seeds', '–')}) | {r.get('critic_tost', '–')} | {r.get('opt_tost', '–')} | "
                  f"{f(r.get('delay_auc'))} | {f(r.get('delay_end'))} | {r.get('verdict') or '–'} |")
-        if r.get("total") and r["total"][2] < 0:
+        if r.get("total") and r["total"][2] < 0 and (not gid.startswith("G") or r["n"] == 8):
             damaged.append(gid)
             largest = max(("actor", "critic", "opt"), key=lambda c: r.get(c + "_share", -999))
             shares.append((gid, r.get("actor_share"), largest))
@@ -170,14 +178,17 @@ def main():
             pred = "no damage" if rel < 0.25 else ("damage" if rel >= 0.60 else "none")
             hit = "–" if pred == "none" else ("yes" if (pred == "damage") == dmg else "NO")
             if pred != "none":
-                tot += 1
-                hits += hit == "yes"
-                if gid != "G1":  # acute CartPole values were seen before the addendum (audit correction 79c9c85)
+                if r["n"] == 8:
+                    tot += 1
+                    hits += hit == "yes"
+                if gid != "G1" and r["n"] == 8:  # acute CartPole values were seen before the addendum (audit correction 79c9c85)
                     untouched_n += 1
                     untouched_hits += hit == "yes"
+            if r["n"] != 8:
+                hit="descriptive only (incomplete n)"
             G.append(f"| {gid} | {env}, {deficit} | {100 * rel:.0f}% | {pred} | {'damage' if dmg else 'no damage'} | {hit} |")
     G.append("")
-    G.append(f"All planned settings: **{hits} of {tot}** hits where a prediction was issued (G1 acute values had been seen).")
+    G.append(f"Complete planned cohorts only: **{hits} of {tot}** hits where a prediction was issued (G1 acute values had been seen).")
     G.append(f"Untouched settings only (exclude G1): **{untouched_hits} of {untouched_n}** hits. Intermediate gaps receive no prediction.")
     G.append("The addendum predicts a same-update gap, not persistence beyond lost time. See disclosure correction 79c9c85.")
     if len(pts) >= 4:
@@ -187,7 +198,7 @@ def main():
                  "(negative = larger gap, more damage). Relative total = total AUC damage / C(w1) (range for Acrobot).")
     L += G
     L += ["", "## Pre-registered cross-setting summary", "",
-          f"- Settings with damage to localize (total CI < 0): {len(damaged)} — {', '.join(damaged)}",
+          f"- Complete settings with a same-update gap to localize (total CI < 0): {len(damaged)} — {', '.join(damaged)}",
           f"- Actor is the largest carrier in {sum(1 for _, _, c in shares if c == 'actor')} of {len(shares)}: "
           + ", ".join(f"{g} {s}%" for g, s, _ in shares),
           f"- Actor Shapley share range: {min(s for _, s, _ in shares)}–{max(s for _, s, _ in shares)}%" if shares else "",

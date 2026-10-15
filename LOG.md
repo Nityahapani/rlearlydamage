@@ -1500,3 +1500,55 @@ The original G7 primary remains AUC at +10..+650 PQN-R updates. Its horizon diff
 - The deficit duration is already equal (100 PQN updates = 50 PPO updates = 409,600 environment steps), with competence-based onsets.
 - Report the same total, network and buffer contrasts on this matched grid; do not change the original primary G7 decisions.
 - This analysis was selected to satisfy the horizon-matching instruction, after other Phase 12 tests were seen but before any G7 data. It is a target-specific registered secondary analysis, not a new global pre-registration.
+
+
+### 2026-10-14 20:41 UTC: H1 independent-seed replication registered (before any H1 data)
+G1 generalizes actor localization to a non-pixel task, but uses IDs 0–7 (including pilot controls), and acute values were seen in progress checks. To strengthen the headline with an independent replication rather than another ablation, we register **H1: CartPole reward-flip surgery on entirely unused seeds 600–607** (confirmed absent from all existing training manifests).
+- Hypothesis selected after the completed positive G1 result; H1 outcomes do not yet exist.
+- Unchanged G1 code/configuration: PPO 2^3 actor × critic × Adam, window [10,60), flip p=1, recovery 150, eval-fork, 64 unperturbed eval episodes per checkpoint, common evaluation key 10000.
+- Planned n=8, two sequential chunks of four. **No analysis until all eight finish.** Incomplete n is descriptive only; do not extend seeds based on the observed result.
+- Registered localization criterion: total same-update recovery-gap CI <0; actor main-effect CI <0; actor largest point-estimated Shapley share. Within-setting Holm across actor/critic/Adam; secondary TOST at ±10% of |CCC AUC| (same scaling rule as G1).
+- Secondary: delay-adjusted AUC/end, unlearning, relative effects. The primary decision uses H1 alone; pooling G1+H1 is not a primary test and the setting is counted once in cross-setting tallies.
+- **Budget rule (`queue_p12_fresh.py`):** run after G4–G7 finish, only if the whole H1 test starts by 2026-10-15 00:00 UTC. Estimated 14–16 min, leaving paper QA before the roughly 00:40 UTC eight-hour limit. Otherwise skip H1 and report it as not run.
+- The helper also implements the already stated Freeway new-chunk cutoff at 23:30 UTC with an external marker, preventing a midnight rollover from accidentally starting additional G4 chunks. It does not stop an active chunk or inspect training output.
+
+
+### 2026-10-14 21:06 UTC: Claim-precision audit of surgery contexts
+The manuscript's post-hoc hybrid-check paragraph incorrectly said that CCC and DDD reproduce both natural continuations bit-for-bit. `compose_ppo` takes environment state/obs/RNG/counter from C even for DDD; DDD therefore retains the damaged **learner** but has a standardized clean training context. That sentence is being corrected. Repeatability of DDD across surgery runs is not proof that changing the damaged agent's environment context is neutral.
+The onset-reference PPP is likewise an operational state-level pause under the surgery's future context, not exactly the historical delay-shifted C trajectory. The Phase 10 recorded difference is +1.21 [-0.59,+3.00] AUC; both reference contrasts show large harm, but the paper will state the distinction explicitly. No data, model or registered decision is changed.
+
+
+### 2026-10-14 21:36 UTC: H2 budget-conditional independent replication registered (before any H2 data)
+If time remains after the main panel and H1, prioritize more independent seeds rather than another ablation: **H2 repeats the G3 actuator-noise setting on unused IDs 700–707** (none appear in any existing training manifest).
+- Hypothesis selected after the completed positive G3 result. Fixed PPO configuration: SpaceInvaders, actuator-noise replacement probability 0.5, [100,150), recovery 150, 2^3 surgery, eval-fork, 64 true/clean evaluation episodes, key 10000.
+- n=8, two chunks of four, no formal primary analysis until all eight finish. Primary localization rule and within-setting Holm over three effects are unchanged from G3/H1; same control-scaled 10% TOST secondary. Primary decision uses H2 alone; do not pool old G3 data to rescue it.
+- Optional analysis: if both H1 and H2 finish, report a further Holm adjustment across their two actor tests as sensitivity, without changing either registered within-setting decision.
+- Budget gate: the **entire H2 test must start by 23:25 UTC on 2026-10-14**; estimated 50–55 min leaves roughly 20 min for final QA before the eight-hour limit. If it cannot start then, skip it; there is no partial budget-based n reduction.
+- The waiting `queue_p12_fresh.py` was restarted before any H1 or H2 run; the main training queue was not stopped. H1's seeds/configuration/rules and its own start gate remain unchanged.
+
+
+### 2026-10-14 21:50 UTC: G7 complete at planned n=8
+Source: `p12_g7_pqnr_rflip-analysis.md/.json`. Both four-seed chunks finished before primary analysis.
+- Primary total DD−CC: [-6.784646730769227, -9.415938611487922, -4.1533548500505315]; network: [-6.224655865384614, -8.321755884973793, -4.1275558457954356]; buffer: [-0.5599908653846124, -1.7342889668529216, 0.6143072360836968].
+- Registered criteria: gap True; network True; buffer False. Buffer TOST p=2.45712e-05, margin ±4.933.
+- Matched-horizon (registered secondary): total [-11.851178333333333, -15.114023036058086, -8.588333630608581]; network [-9.7111375, -11.939633942484935, -7.482641057515063]; buffer [-2.140040833333334, -4.002006641110165, -0.2780750255565032].
+
+
+### 2026-10-14 21:58 UTC: Artifact storage housekeeping (no inference change)
+Large **git-ignored** full runner-state pickles and redundant onset/short-duration weight dumps were moved, not deleted, to `/home/user/.cache/rled_raw_artifacts/` (43 files, 499.0 MB). This cache is temporary and intentionally outside persisted snapshots; its path map is `docs/generated_artifact_cache.csv`.
+- All versioned per-seed score curves, raw derived predictor values (32 seeds), manifests, scripts, figures and analyses remain in the repository.
+- Removal C/D parameter arrays and evaluation-state banks used for the predictor analysis stay in their original locations. The post-hoc raw predictor cache now permits redoing statistical tests without reloading model weights.
+- Full raw runner states were already excluded by `.gitignore`. They can be regenerated from the recorded seed/configuration/commit if a later mechanistic experiment needs them; do not treat the temporary cache as a permanent deliverable.
+- This is storage housekeeping to respect the snapshot size cap, not removal of an outcome or replacement of any experimental data.
+
+
+## 2026-10-15 03:38 UTC: Phase 12 stopped, recovered, and finalized for publication
+A further sandbox reset removed the runtime and rolled Git back to 02293d4. Saved regular files survived. The user requested the updated PDF and all missing saved results, **not more experiments**.
+- Origin/main was fetched to 79700c2; the local saved files were preserved before the mixed reset. Missing later local commit objects could not be recreated exactly; manifest hashes remain unchanged. `docs/result_availability.md` records this limitation and verifies identical content of the four training files against public 79700c2.
+- Six new tests completed at n=8: G1, G2, G3, G5, G6, G7. Freeway G4 has four complete factorial seeds (0–3), plus incomplete arms for 4–5. Only the four complete seeds enter its descriptive aggregate; no missing cell/outcome is imputed. The registered n=8 criterion is not applied to it.
+- H1/H2 independent-seed replications did not run. No claim of fresh-seed generalization replication is made. The earlier main-study fresh-seed tests remain identified separately.
+- The completed-setting PPO tally is eight actor-criterion successes among eight detected same-update gaps (ten completed settings overall). The partial Freeway actor share is 79%, with a substantial critic contribution, and is reported separately.
+- G7's primary network-block result and secondary matched-horizon buffer result are separated. The historical pause benchmark is post-hoc and is not used as a new network/buffer attribution.
+- Claim edits: statuses/sample counts/seed reuse; operational carrier definition; standardized future context (not natural DDD); practical margin justification/sensitivity; interim and combined outlier sensitivity; finite-budget extreme-collapse phenotype and its uncertain rate.
+- Added all saved missing summaries, manifests, analyses, source scripts, figures and available NPZ arrays. `docs/result_inventory.json` records hashes and completion; large generated states lost from the temporary cache are explicitly not claimed to be archived.
+- Paper built with Tectonic 0.15.0; visual/reference checks are part of the final verification. No additional training job was launched during finalization.

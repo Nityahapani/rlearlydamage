@@ -165,11 +165,14 @@ def main():
         r["gap_prediction_hit"]=None if pred is None else (pred=="gap")== (r["total"][2]<0)
         r["untouched_for_gap_addendum"] = gid != "G1"
         out[gid]=r
-    hp=holm(actor_ps)
-    for r,v in zip(out.values(),hp):
+    complete_rs=[r for r in out.values() if r["complete"]]
+    hp=holm([r["effect_p"]["actor"] for r in complete_rs])
+    for r in out.values():
+        r["panel_actor_holm_posthoc"]=None
+    for r,v in zip(complete_rs,hp):
         r["panel_actor_holm_posthoc"]=v
-    all_hits = [r["gap_prediction_hit"] for r in out.values() if r["gap_prediction_hit"] is not None]
-    untouched = [r["gap_prediction_hit"] for r in out.values() if r["untouched_for_gap_addendum"] and r["gap_prediction_hit"] is not None]
+    all_hits = [r["gap_prediction_hit"] for r in out.values() if r["complete"] and r["gap_prediction_hit"] is not None]
+    untouched = [r["gap_prediction_hit"] for r in out.values() if r["complete"] and r["untouched_for_gap_addendum"] and r["gap_prediction_hit"] is not None]
     summary={"status":"post-hoc audit; registered decisions unchanged","tests":out,
              "gap_all_planned":{"hits":sum(all_hits),"n_predictions":len(all_hits)},
              "gap_untouched":{"hits":sum(untouched),"n_predictions":len(untouched)},
@@ -182,7 +185,7 @@ def main():
        "|---|---|---|---|---|---|---|---|"]
     for gid,r in out.items():
         L.append(f"| {gid} {r['name']} | {r['n']} | {r['effect_p']['actor']:.5g} | {r['within_setting_holm']['actor']:.5g} | "
-                 f"{r['panel_actor_holm_posthoc']:.5g} | {r['margin']:.3f} | "
+                 f"{format(r['panel_actor_holm_posthoc'],'.5g') if r['panel_actor_holm_posthoc'] is not None else 'partial: not in tally'} | {r['margin']:.3f} | "
                  f"{r['tost_fixed_scale']['critic']['p']:.5g} / {r['tost_joint_scale']['critic']['p']:.5g} | "
                  f"{r['tost_fixed_scale']['opt']['p']:.5g} / {r['tost_joint_scale']['opt']['p']:.5g} |")
     L += ["",f"Gap-addendum hit count, all planned settings (G1 acute values had been seen): {sum(all_hits)}/{len(all_hits)}.",

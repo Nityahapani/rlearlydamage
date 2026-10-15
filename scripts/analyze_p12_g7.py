@@ -116,6 +116,24 @@ def main():
         overw[c]={"first_fraction":float(B[0]),"fraction_at_25":float(B[24]),"zero_update":zero,"mean_sample_fraction":float(P.mean())}
         L.append(f"| {c} | {B[0]:.4f} | {B[24]:.4f} | {zero} | {P.mean():.4f} |")
     result["overwrite"]=overw
+    # Additional post-hoc benchmarking against historical delay-shifted C; not a new surgery allocation.
+    pause=[]
+    for d in ds:
+        local={u:np.asarray(d["forks"]["C_eps05"],float)[:,i] for i,u in enumerate(d["fork_updates"])}
+        for i,u in enumerate(d["eval_updates"]):
+            local[u]=np.asarray(d["arms"]["CC"][METRIC],float)[:,i]
+        Lwin=d["protocol"]["window_updates"][1]-d["protocol"]["window_updates"][0]
+        dc=np.stack([local[u-Lwin] for u in d["eval_updates"]],axis=1)
+        pause.extend(np.asarray(d["arms"]["DD"][METRIC],float)-dc)
+    pause=np.asarray(pause,float)
+    result["pause_relative_posthoc"]={"full_auc":tci(pause[:,1:].mean(1)),
+        "matched_auc":tci(pause[:,matched_ix].mean(1)),"last_five":tci(pause[:,-5:].mean(1))}
+    L += ["", "## Historical pause benchmark (post-hoc)", "",
+          "This compares the standardized-context DD continuation with historical C shifted by 100 updates. "
+          "It is not a new attribution to network/buffer and does not change the registered same-update decisions.",
+          f"- Full-horizon pause-relative AUC: {fmt(pause[:,1:].mean(1))}.",
+          f"- Matched-horizon pause-relative AUC: {fmt(pause[:,matched_ix].mean(1))}.",
+          f"- Last five checkpoints: {fmt(pause[:,-5:].mean(1))}."]
     S=Path("results/summary")
     (S/"p12_g7_pqnr_rflip-analysis.json").write_text(json.dumps(result,indent=2)+"\n")
     (S/"p12_g7_pqnr_rflip-analysis.md").write_text("\n".join(L)+"\n")
