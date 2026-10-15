@@ -84,9 +84,11 @@ def load(f, with_predictors=True):
         rdir = Path("results") / Path(f).stem
         bank = np.load(rdir / "bank.npz")["bank"]
         allowed = s["protocol"]["allowed"]
-        n_act = pp.load_params(rdir / f"onset_u{w0}.npz")["Dense_0"]["kernel"].shape[-1]
-        masked = [i for i in range(n_act) if i not in allowed]
         pC_all, pD_all = pp.load_params(rdir / f"C_u{w0 + D}.npz"), pp.load_params(rdir / f"D_u{w0 + D}.npz")
+        # Action dimension is unchanged through training; no redundant onset checkpoint is required.
+        n_act = pC_all["Dense_0"]["kernel"].shape[-1]
+        assert n_act == pD_all["Dense_0"]["kernel"].shape[-1]
+        masked = [i for i in range(n_act) if i not in allowed]
         rows = []
         for i in range(len(s["seeds"])):
             pC, pD, b = pp.seed_slice(pC_all, i), pp.seed_slice(pD_all, i), bank[i]
