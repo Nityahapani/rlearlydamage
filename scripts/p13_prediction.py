@@ -19,6 +19,8 @@ def extract(files):
     pp=pure_predictor_functions();rows=[]
     for path in files:
         d=json.loads(Path(path).read_text());n=len(d['seeds'])
+        if d.get('prospective_features'):
+            rows.extend(d['prospective_features']);continue
         assert d['onset']==100 and d['durations']==[300] and d['recovery']==250
         D=np.asarray(d['arms']['300']['D_online']['eval_return_mean'],float)
         C=np.asarray(d['C']['eval_return_mean'],float)

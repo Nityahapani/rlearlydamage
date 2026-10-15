@@ -209,6 +209,15 @@ def main():
             print(f"d={d:3d} {arm:>13}: +0 {e[:,0].mean():5.1f} +{R} {e[:,-1].mean():5.1f} AUC {e[:,1:].mean():5.1f} | "
                   f"delay-adj AUC {(e[:,1:]-ref_delay).mean():+5.1f} late {(e[:,-L:]-ref_delay[:,-L:]).mean():+5.1f} | "
                   f"raw AUC {(e[:,1:]-ref_raw).mean():+5.1f} elapsed={time.time()-t0:.0f}s", flush=True)
+    if a.tag.startswith("p13-D-"):
+        # Measurement archival only: no fitting, model comparison or primary interim analysis.
+        # Preserve frozen feature definitions in a small versionable JSON even if large checkpoints are lost.
+        jax.clear_caches()
+        from p13_prediction import extract
+        summary["prospective_features"] = extract([summ_path])
+        summary["prospective_feature_schema"] = "prereg/p13_frozen_predictors.json"
+        save()
+        print("Prospective feature rows archived (values withheld)", flush=True)
     print("summary:", summ_path, flush=True)
 
 
