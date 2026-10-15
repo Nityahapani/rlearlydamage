@@ -1912,8 +1912,8 @@
     },
     {
       "path": "results/summary/p13_tables.tex",
-      "bytes": 10067,
-      "sha256": "1c895bad5490d432ce56e90826af274596554682124b5bded6de7f9298367d2b"
+      "bytes": 10105,
+      "sha256": "85dc0671495d0ab800b0970fd87004a6a522e33a63bb129840ee788c5ea8dfb2"
     },
     {
       "path": "results/summary/p2_recovery_all-analysis.md",

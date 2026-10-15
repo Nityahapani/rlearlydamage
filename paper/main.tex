@@ -21,7 +21,7 @@
 \newcommand{\Ddel}{\Delta^{\mathrm{delay}}}
 \newcommand{\repo}{\texttt{[anonymized repository]}}
 
-\title{Where Does Deficit Damage Live? Actor, Network, and Replay Carriers of Post-Competence Damage in Deep Reinforcement Learning}
+\title{Where Do Recovery Costs Live? Reference-Aware State Surgery in Deep Reinforcement Learning}
 
 \author{\name Anonymous authors \\
       \addr Paper under double-blind review}
@@ -35,12 +35,12 @@
 \maketitle
 
 \begin{abstract}
-In supervised deep networks, a temporary deficit early in training can cause permanent damage: a \emph{critical period}. We ask whether temporary deficits damage deep reinforcement-learning (RL) agents beyond the training time they consume, and if so, which part of the learner's state carries the damage. We use ``carries'' operationally: a component carries damage if transplanting it between a damaged agent and a matched clean agent changes recovery. Every damaged run is forked from the same history as a clean run. All agents are evaluated without the deficit using common random numbers, and recovery is scored against a delay-shifted control so that lost training time is not counted as damage. State surgery then transplants the actor, critic, optimizer moments, Q-network or replay buffer. The main setting is SpaceInvaders-MinAtar with PPO, PQN and a replay-based PQN variant (PQN-R) under a temporary action restriction. Registered carrier-generalization tests add Asterix, CartPole and Acrobot, three additional impairment families, and a wider network; a Freeway reward-flip test is incomplete and descriptive. Each claim below carries its evidence strength.
-(i) \emph{Timing} (exploratory, 4 seeds per learner). We saw no early critical period. Early restrictions cost only the time they occupy. Restrictions imposed after competence emerged caused \emph{unlearning}, which was then relearned. For PPO, a pre-registered test on 12 fresh seeds \emph{bounds} damage beyond lost time (harm larger than 3 AUC points rejected; equivalence not established) and \emph{confirms} that restricted agents relearn faster than clean agents first learned.
-(ii) \emph{Carriers} (confirmed). In PPO the recovery deficit is carried mainly by the actor's parameters (Shapley share 90\%, $n=12$). Under that movement restriction the critic adds a small, transient part, and Adam state is equivalent to zero within $\pm3$ AUC points. A separate onset-reference surgery localizes pause-relative harm to the actor under the SpaceInvaders reward flip (109\%, $n=8$). The actor is the largest point-estimated carrier in all eight completed settings with a detected same-update gap (82--115\% shares), spanning Asterix and CartPole reward flips, a wider network, actuator noise, observation noise and reward extinction. These are registered new settings or contrasts on reused seed IDs, not eight independent new-seed replications; Acrobot is inconclusive. Freeway has only four complete seeds and is descriptive.
-(iii) \emph{Replay} (bounded). In PQN-R the Q-network's parameters carry most of the damage. A ladder of increasingly matched purges shrinks the apparent effect of replay-data identity to $+0.46\ci{-0.19}{+1.11}$ ($n=32$). This excludes effects of 1 AUC point or more, but not smaller ones.
-(iv) \emph{Point of no return} (bounded). Two pre-registered tests detect no \emph{average} point of no return after 2.46M restricted steps (both inconclusive; harm worse than $-5$ rejected at $n=32$). One of 44 long-restricted agents (post-hoc observation; 95\% interval for the rate 0.06--12\%) collapsed to a near-deterministic policy and did not recover within the budget. In a pre-registered test, the policy's divergence from its clean fork at removal predicted per-agent recovery cost ($\rho=-0.48$). This is an association, with small out-of-sample gain.
-Our carrier results do not identify how damage is encoded, and we did not test plasticity on new tasks. All conclusions are scoped to small MLP agents, four completely tested gymnax tasks plus an incomplete fifth, and CPU-scale budgets, and later experimental designs and primary rules were registered in a commit-timestamped log; deviations and post-hoc analyses are explicitly identified.
+Temporary RL impairments can leave an agent behind a clean control simply because the control learned more. We separate \emph{Tier I}, attribution of that same-update gap, from \emph{Tier II}, attribution of detected harm beyond lost training time using direct pause/onset-reference interventions. Transplant effects are conditional on the reference, future context, update procedure and horizon, not a unique decomposition of naturally encoded damage.
+In the main SpaceInvaders movement setting, historical pause-relative AUC is $+1.9\ci{-0.7}{+4.4}$ on 12 independent seeds: harm worse than $-3$ is rejected, but equivalence is not established. Its 90\% actor share is therefore Tier I, not demonstrated persistent damage. The older eligible-setting gap count is conditional, not a prevalence estimate or independent-seed replication. Independent CartPole ($n=8$) has native pause-relative AUC $-155.0\ci{-220.1}{-90.0}$ and actor allocation 75\%; its compound criterion does not pass the new five-claim family. Independent Asterix ($n=8$) has native pause-relative AUC $-1.6\ci{-1.8}{-1.3}$ and actor allocation 98\%; its compound criterion passes the new five-claim family.
+Natural damaged continuations and alternative future/optimizer contexts are reported explicitly; procedural component effects are not asserted context-neutral or unique natural storage.
+Matched replay experiments bound identity effects within the selected $\pm1$ practical margin ($+0.46\ci{-0.19}{+1.11}$, $n=32$, TOST $p=0.0495$), not zero at every relevant scale; $\pm0.75$ fails. A controlled label-exposure assay yields $-0.43\ci{-1.50}{+0.65}$ after exact washout/state matching; its substantial-delayed-harm criterion is not met and $\pm1$ equivalence is not established ($p=0.124$).
+Policy divergence is a candidate rank diagnostic ($\rho=-0.48$, Holm $p=0.010$, $n=32$), with only 5\% within-cohort error reduction and a weaker combined exclusion/two-look sensitivity. Frozen independent-cohort validation ($n=16$) increases point MSE by 113\% over acute gap; the practical-utility rule fails.
+Early/late timing remains exploratory (four seeds per learner). No result proves irreversibility, preserved new-task learning capacity, a complete representation mechanism or a general law of deep RL. Conclusions concern the tested small agents and settings; the new five-claim family has phase-wise error control, not retrospective control over all legacy claims.
 \end{abstract}
 
 %=====================================================================
@@ -60,57 +60,66 @@ These carriers call for different remedies: resets, optimizer resets, buffer pur
 We ask three questions:
 \begin{enumerate}[label=\textbf{Q\arabic*.}]
 \item Does a temporary deficit cause damage beyond the training time it consumes, and does it depend on onset (early vs.\ late)?
-\item Where is any persistent damage stored: actor, critic, optimizer moments, Q-network, replay buffer, or the data-generating loop?
+\item Which component state changes the same-update recovery gap, and---where a direct pause-reference intervention and detected harm justify it---the recovery cost beyond lost time?
 \item Is there a restriction length beyond which damage becomes persistent (a ``point of no return''), and can it be predicted at removal time?
 \end{enumerate}
 
 We answer them with an interventional protocol (Figure~\ref{fig:protocol}). Every damaged trajectory is forked from the same training history as a matched clean trajectory. Evaluation never uses the training restriction. Recovery is compared with a delay-shifted control, so that lost training time is not counted as damage. At removal, \emph{state surgery} composes hybrid agents whose components come from either fork, and each component's causal contribution to recovery is estimated as a factorial main effect.
 
+\paragraph{Two evidence tiers, not one carrier claim.}
+\textbf{Tier I: gap attribution.} A clean-fork transplant at the same update asks which stored component accounts for a performance gap that includes the clean agent's additional learning progress. This is not, by itself, localization of persistent damage beyond lost training time.
+\textbf{Tier II: pause-harm attribution.} Only a pause/onset-reference intervention, in a setting with detected harm relative to the historical pause benchmark, supports a claim about a carrier of harm beyond lost time. It remains an intervention-specific statement under the chosen future context and recovery horizon, not a unique natural decomposition or proof of irreversibility.
+\emph{Finite-horizon terminology.} A negative pause-relative recovery AUC is extra cost over a specified recovery window. It does not establish that a deficit remains at that window's end, let alone irreversible damage. We report the final five checkpoints separately and reserve late-deficit language for that endpoint. In particular, a large mean AUC cost can coexist with inconclusive late impairment.
+
+In particular, our main movement restriction has $E_{\mathrm{damage}}=+1.9\ci{-0.7}{+4.4}$ on 12 independent seeds. It rejects harm worse than $-3$ but does not establish equivalence. Its 90\% actor share therefore belongs to Tier I, not a demonstrated persistent-damage effect. The earlier SpaceInvaders reward-flip onset-reference result ($-19.8$, actor 109\%, $n=8$) is a specific Tier-II procedural result; the old generalization panel is not a substitute for that intervention.
+
 \paragraph{Contributions.}
 \begin{enumerate}[leftmargin=*]
-\item \textbf{A protocol for causal localization of training damage in RL.} It combines bit-identical forks, unmasked common-random-number evaluation, delay-adjusted recovery metrics, and factorial state surgery over learner components (Section~\ref{sec:protocol}).
-\item \textbf{An inverted timing pattern (exploratory).} In 4-seed comparisons across PPO, PQN and PQN-R, early restrictions cost only time, and late restrictions cause unlearning of acquired competence that is then largely relearned (Section~\ref{sec:timing}). We detect no early critical period. For PPO, a registered test on 12 fresh seeds subsequently rejected mean harm beyond lost time worse than $-3$ AUC points; equivalence remained inconclusive.
-\item \textbf{Carrier localization.} In PPO the same-update deficit lives mainly in the actor (exact Shapley share 90\%, $n=12$), and so does the damage beyond lost time when it exists (reward flip; surgery against the onset state). The critic adds a small, significant, transient part (12\%), Adam state is equivalent to zero, and the apparent benefit of clean on-policy data is transmitted through the importance-weighted update (Section~\ref{sec:ppo}). In PQN-R the Q-network's parameters, not its optimizer state, carry most damage. A large buffer adds a data contribution, whose time course suggests that it acts through the network rather than as a separate store (an interpretation; Section~\ref{sec:pqnr}). The PPO localization was tested in registered generalization settings covering four complete tasks, an incomplete fifth, five deficit families and two network widths (Section~\ref{sec:general}). The actor criterion is met in all eight completed settings with a detected same-update gap; Acrobot is unresolved and Freeway is incomplete. Independent new-seed generalization replications were planned but did not run.
-\item \textbf{A replay ladder that controls the confounds.} Successively matched purge experiments, the later ones pre-registered with Holm correction and an equivalence margin, show how slot age and residence time inflate apparent data-identity effects (Section~\ref{sec:ladder}).
-\item \textbf{Bounds on a point of no return, one failure mode, and a predictor.} A pilot and two pre-registered tests detect no average point of no return and exclude large average persistent deficits. One of 44 long-restricted agents nevertheless collapsed and never recovered. Policy divergence from the clean fork at removal is a pre-registered, Holm-supported predictor of per-agent recovery cost; three other measurements were not supported (Section~\ref{sec:ponr}).
+\item \textbf{An estimand-aware state-intervention protocol.} Matched forks, unrestricted common-random-number evaluation, explicit same-update and historical pause benchmarks, and factorial transplantation give component effects under declared references and future contexts. Main effects, Shapley allocations and background-specific swaps are not treated as interchangeable or unique natural decompositions.
+\item \textbf{Tier I: attribution of the same-update gap.} The main PPO actor result (90\%, pooled $n=12$, including eight independent new IDs) and the older conditional generalization count concern performance cost including foregone progress. Settings without a detected gap remain unresolved. Phase~13 separately tests independent additional-task and impairment-family cohorts rather than calling new contrasts on reused IDs independent replications (Section~\ref{sec:p13}).
+\item \textbf{Tier II: direct pause-reference tests.} Only settings with an appropriate reference intervention and detected beyond-time harm support this tier. The earlier SpaceInvaders reward-flip case ($n=8$) is such a specific procedural result; the main movement setting is not. Phase~13 adds independent CartPole/Asterix pause-reference interventions, natural continuations, context checks and common-zero-Adam controls, with a stronger paired dominance criterion (Section~\ref{sec:p13}). The new compound tests are read with their phase-wise error control, not as a uniform confirmation label.
+\item \textbf{A replay ladder and a controlled-exposure assay.} The matched-identity study bounds the effect within its selected practical margin, with boundary sensitivity explicitly retained (Section~\ref{sec:ladder}). Overwrite time courses motivate, but do not uniquely demonstrate, a buffer-through-learning account. A separate controlled label-exposure assay tests a specified pathway while matching transition identity, ages, behavior and update schedules (Section~\ref{sec:p13}).
+\item \textbf{A candidate diagnostic with prospective comparison.} The registered within-cohort KL association does not establish practical future-failure prediction or causality. Phase~13 freezes coefficients and simple baselines before an independent validation cohort, with a predefined held-out error metric and utility threshold (Section~\ref{sec:p13}).
 \end{enumerate}
 
-\paragraph{How strong is each claim?} The evidence is uneven across claims. Table~\ref{tab:ledger} lists every headline claim with its evidence status, sample size and the wording strength we allow ourselves, and the abstract and conclusion follow it. \emph{Confirmed}: a registered decision rule was met for a new contrast or in an explicitly reported replication. This does not automatically imply independent new seeds; Table~\ref{tab:ledger} distinguishes new seed IDs from new contrasts on reused IDs. \emph{Bounded}: a pre-registered test excluded effects beyond a stated margin but established neither presence nor equivalence. \emph{Exploratory}: a consistent pattern in designs without a committed analysis plan, mostly with 4 seeds, which we treat as hypothesis-generating. \emph{Post-hoc}: an observation or analysis chosen after seeing the data.
+\paragraph{How strong is each claim?} The evidence is uneven across claims. Table~\ref{tab:ledger} lists every headline claim with its evidence status, sample size and the wording strength we allow ourselves, and the abstract and conclusion follow it. \emph{Registered support}: a registered decision rule was met for a new contrast or in an explicitly reported replication. This does not automatically imply independent new seeds; Table~\ref{tab:ledger} distinguishes new seed IDs from new contrasts on reused IDs. \emph{Bounded}: a pre-registered test excluded effects beyond a stated margin but established neither presence nor equivalence. \emph{Exploratory}: a consistent pattern in designs without a committed analysis plan, mostly with 4 seeds, which we treat as hypothesis-generating. \emph{Post-hoc}: an observation or analysis chosen after seeing the data.
 
 \begin{table}[t]
 \centering
-\caption{Claims ledger: sample size, seed independence and evidence strength. F = entirely new seed IDs; M = old data plus new-seed replication; R = registered new contrasts or settings on previously used seed IDs. R is not an independent-seed replication. Detailed analysis status: Table~\ref{tab:status}.}
+\caption{Headline inference map. Legacy experiment-specific families do not imply one paper-wide error rate. Only the five new primary claims share the Phase-13 Holm family; missing/incomplete studies receive p=1. Status applies to the indicated estimand and contrast, never to all meanings of damage.}
 \label{tab:ledger}
 \scriptsize
-\begin{tabular}{p{4.6cm}p{2.8cm}p{3.2cm}p{2.4cm}}
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{p{2.3cm}p{2.1cm}p{3.0cm}p{1.0cm}p{2.5cm}p{2.8cm}}
 \toprule
-headline claim (scope) & $n$; seed status & key estimate & strength \\
+headline / tier & estimand & primary contrast & n & multiplicity scope & evidential status \\
 \midrule
-no early critical period; early restrictions cost only time (PPO, PQN, PQN-R; SpaceInvaders, movement) & 4 per learner & Section~\ref{sec:timing} & Exploratory \\
-late restriction: no damage beyond lost time (PPO, SpaceInvaders, movement) & 12; F (200--211) & $E_{\mathrm{damage}}=+1.9\ci{-0.7}{+4.4}$; harm $>3$ rejected & Bounded \\
-late-restricted agents relearn faster than clean agents first learned (same setting) & 12; F (200--211) & $E_{\mathrm{plast}}=+14.2\sig$ & Confirmed \\
-PPO same-update deficit lives mainly in the actor; critic small and transient; Adam $\approx0$ (SpaceInvaders, movement) & 12; M (8 new) & actor 90\%; fresh-only actor $-14.2\sig$, critic n.s.; Adam TOST $\pm3$ & Confirmed \\
-damage beyond lost time lives in the actor (PPO, SpaceInvaders, reward flip, onset reference) & 8; R (new reference) & actor 109\% of $-19.8$ & Confirmed \\
-actor localization generalizes (PPO: wider net, reward flip, Asterix flip; Phase~12 panel) & 8 per setting; R & 8/8 detected gaps; 82--115\%; Acrobot unresolved; Freeway partial & Confirmed (registered contrasts; conditional on gap) \\
-larger gaps at removal tend to accompany larger recovery costs (PPO settings) & -- & Table~\ref{tab:gap} & Post-hoc \\
-PQN-R: parameter rescue supported; optimizer-only rescue inconclusive & 12 / 8; R (new split arms) & network 84\%; parameter rescue $+6.4\sig$, optimizer $+1.3$ n.s. & Exploratory / Confirmed \\
-replay-data identity effect is within $\pm1$ AUC point (PQN-R, movement restriction) & 32; new identity design (0--31) & $+0.46\ci{-0.19}{+1.11}$, TOST $p=0.0495$ & Bounded (marginal) \\
-no average point of no return at $d=300$ (PPO, SpaceInvaders, movement) & 8 + 32; F (100--107, 300--331)$^\dagger$ & $L_{300}=+2.3\ci{-4.6}{+9.2}$ & Bounded (inconclusive) \\
-extreme policy collapse without recovery improvement & 44 & 1/44 (95\% CI 0.06--12\%) & Post-hoc \\
-policy divergence at removal predicts recovery cost & 32; F (300--331) & $\rho=-0.48$, Holm $p=0.010$ & Confirmed (association)$^\dagger$ \\
+Main movement harm & historical pause AUC & D minus C(t-L), TOST +/-3 & 12 fresh & one estimand, two one-sided tests & bounded / inconclusive \\
+Main same-task rate & competence-matched AUC & D minus C(t*+k) & 12 fresh & single paired rate test & registered same-task support \\
+Main PPO gap (Tier I) & same-update AUC gap & actor/critic/Adam factorial & 12 (8 new) & Holm 3 effects & actor fresh subset; critic pooled only \\
+SI flip pause (Tier II) & state-pause AUC gap & DDD minus PPP; component swaps & 8 reused IDs & Holm 3 effects & specific procedural support \\
+Legacy generalization & eligible same-update gaps & negative gap, actor effect, largest point share & 8 each & within-setting; no legacy global rate & conditional new contrasts, not fresh replication \\
+Q network/buffer & same-update AUC gap & network-block x buffer & 12 / 8 & exploratory intervals & network block includes moments \\
+Q parameter rescue & damaged-buffer recovery & parameter versus moment rescues & 8 reused & Holm 2 rescues & parameter support; moment rescue inconclusive \\
+Replay identity & matched-identity AUC & purge R minus matched U, TOST +/-1 & 32 & one contrast / TOST IUT & marginal practical bound, not zero \\
+Longest restriction & late historical pause gap & L300, TOST +/-5 & 8 + 32 & study-specific; two-look sensitivity & both inconclusive, finite horizon \\
+KL association & rank with recovery AUC & Spearman rho & 32 fresh & Holm 4; two-look check & association; combined exclusion weaker \\
+Extreme collapse & post-hoc phenotype count & flat-score phenotype, not all failures & 1 / 44 & descriptive binomial interval & rare-event probability imprecise \\
+A/B pause replications & native + state-pause AUC & harm + actor effect + paired Shapley rank & 8/8 & fixed five-claim Phase-13 Holm & new independent IDs; compound test specified \\
+C noise replication & same-update gap (Tier I) & harm + actor effect + paired Shapley rank & 8 fresh & same five-claim family & not a pause-localization test \\
+E label exposure & post-washout AUC & naturally matched RR minus UU & 8 fresh & same five-claim family; delta=1 & controlled assay, not legacy mediation proof \\
+D prospective diagnostic & held-out squared error & acute-gap versus acute-gap+KL & 16 fresh & same five-claim family; 10\% gain & fixed-coefficient cost prediction, not failure probability \\
 \bottomrule
-\end{tabular}
-
-\smallskip
-{\scriptsize $^\dagger$Completed after an unblinded interim look; the decision survives a conservative two-look adjustment (Appendix~\ref{app:interim}).}
+\end{tabular}}
 \end{table}
+
 
 %=====================================================================
 \section{Related work}
 %=====================================================================
 
 \paragraph{Critical periods.}
-\citet{achille2019critical} showed that deficits early in training permanently impair deep networks, and that the damage depends on onset and duration. \citet{kleinman2024critical} found the same effect in deep linear networks and tied it to network depth and data structure. In RL, critical periods have mostly been studied as curriculum or guidance timing: when guidance is given matters for final performance \citep{park2021toddler,park2022multistage,dekleijn2022critical}. We instead impose a pure deficit (fewer actions) at different times and measure damage net of lost time. The answer is the opposite pattern: late, not early, deficits damage.
+\citet{achille2019critical} showed that deficits early in training permanently impair deep networks, and that the damage depends on onset and duration. \citet{kleinman2024critical} found the same effect in deep linear networks and tied it to network depth and data structure. In RL, critical periods have mostly been studied as curriculum or guidance timing: when guidance is given matters for final performance \citep{park2021toddler,park2022multistage,dekleijn2022critical}. We instead impose a pure deficit (fewer actions) at different times and measure damage net of lost time. The exploratory timing pattern instead shows late unlearning of acquired competence; it does not establish universal timing asymmetry or persistent harm beyond lost time.
 
 \paragraph{Plasticity loss and the primacy bias.}
 Deep RL agents can lose the ability to learn from new data. Proposed explanations include capacity loss \citep{lyle2022capacity}, dormant neurons \citep{sokar2023dormant,xu2024drm}, implicit under-parameterization \citep{kumar2021implicit}, and general plasticity loss under continual learning \citep{lyle2023plasticity,dohare2024loss,juliani2024onpolicy}; \citet{klein2024survey} survey this work. \citet{nikishin2022primacy} showed that agents overfit early experience. Periodically resetting the last layers while keeping the buffer restores performance, resetting the optimizer alone has no effect, and resetting the buffer prevents recovery. \citet{igl2021transient} showed that transient non-stationarity of targets damages generalization, and that distilling into a fresh network removes the damage. Warm-starting can also hurt generalization \citep{ash2020warm}, and connections between plasticity and grokking have been drawn \citep{lyle2025grokking}. Our protocol tests which stored component these accounts implicate, by intervention; it does not test their internal mechanisms. In our setting, resetting the damaged actor is strongly harmful, and the damaged network keeps a decodable copy of the competent policy. The damage we measure therefore does not \emph{require} plasticity loss as an explanation, although we did not measure plasticity on new tasks.
@@ -214,17 +223,24 @@ These definitions were adopted after the exploratory phases, in which the pause 
 
 At removal we save the complete learner state of both forks and compose hybrids.
 \begin{itemize}
-\item \textbf{PPO} ($2^3$ factorial): actor parameters, critic parameters and Adam moments, each taken from C or D. Arms are labelled by the source of (actor, critic, optimizer); e.g.\ DDD is the damaged agent and CDD the damaged agent with a clean actor.
+\item \textbf{PPO} ($2^3$ factorial): actor parameters, critic parameters and Adam moments, each taken from C or D. Arms are labelled by the source of (actor, critic, optimizer); e.g.\ DDD retains damaged learner components and CDD substitutes the reference actor. The future context is specified separately; DDD need not be the untouched natural D trajectory.
 \item \textbf{PQN-R} ($2^2$): \emph{network} (parameters together with RAdam state; this assignment was pre-specified) and \emph{buffer} (all buffer arrays). The labels CC, DC, CD and DD give the sources of (network, buffer).
 \end{itemize}
 In both cases environment state, current observation, RNG and update counter come from a single fork, so the hybrids differ only in the transplanted components. A carrier's main effect is the mean over cells with its D version minus the mean over cells with its C version. We also report single transplants and rescues.
 
-\paragraph{What ``carrier'' means in this paper (operational definition).} A component is a \emph{carrier} of damage in a given setting if transplanting it between the damaged and the clean fork at removal changes recovery. Formally, its factorial main effect, or its Shapley share of the total, differs from zero under our surgery procedure. ``Damage lives in X'', ``X carries the damage'' and ``X stores the damage'' are shorthand for this, and nothing more. The definition is interventional and relative to the procedure: it concerns the stored state of a component, swapped as a whole, in hybrids that do not occur in natural training (Section~\ref{sec:ppo}). It does \emph{not} identify how the damage is encoded (which units, features or directions change), why the component was affected, or whether plasticity is lost. Our evidence on those questions is limited to a decodability probe and a reset arm in PPO. Learning capacity on new tasks was not measured (Section~\ref{sec:limits}).
+\paragraph{Contrast-specific ``carrier'' (operational definition).}
+A component-state intervention has a causal performance effect if replacing that block changes recovery under the declared operator. We call it a \emph{gap carrier} for a same-update clean-fork comparison (Tier I). A \emph{pause-harm carrier} is a more restricted statement: an appropriate pause-reference intervention is performed in a setting with detected beyond-time recovery cost (Tier II). Neither term identifies a unique naturally stored quantity. The main effect averages swaps uniformly over the other components; Shapley uses order-dependent weights and partitions the specified total, not information mass. A rescue can supply a competent policy or the reference learner's progress without revealing which features, decision boundaries or learning capacities were damaged. We therefore avoid treating ``stored damage'' as a directly measured representation. The limited decoder/reset probes concern particular states and the same task; capacity to learn new tasks was not measured (Section~\ref{sec:limits}).
+
+\paragraph{A procedure-specific causal effect is not a unique natural decomposition.}
+A complete factorial defines a response surface conditional on the donor reference, the set of components, the future environment/observation/RNG/counter, the update rule and the horizon. Changing one of those choices can change its component effects. A uniform factorial main effect and an exact Shapley allocation weight background swaps differently; their numerical difference is not a contradiction. The critic can consequently have little effect with a clean actor and a negative effect with a damaged actor. Optimizer states also depend on their parameter histories: independently transplanted moments can be incompatible with the parameters they accompany. Neither a successful rescue nor a zero average optimizer effect identifies a particular encoded representation or proves that moments have no conditional role. Our new context and common-zero-moment checks test robustness of the procedural interpretation rather than eliminating these limits.
 
 \subsection{Statistics and pre-registration}
 All contrasts are paired by seed and reported as mean with a 95\% $t$-interval; $\sig$ marks intervals excluding 0. These are nominal, model-dependent intervals over training seeds, not distribution-free guarantees; extreme rare failures can make mean estimates particularly fragile. Seed counts are given for each experiment (4 to 32).
 
 Our first analyses used percentile-bootstrap intervals over 4 seeds. These are anti-conservative, and all numbers reported here are the corrected $t$-intervals. The correction mattered once: the PPO delay-adjusted residual at $+250$ updates, which the bootstrap had marked as significant, is not (Section~\ref{sec:timing}).
+
+\paragraph{Multiplicity scope.}
+Legacy Holm corrections apply only to their specified component, rescue or predictor families. They do not provide a single paper-wide false-positive rate for all historical headline claims. Confidence intervals are nominal paired-seed intervals unless explicitly stated otherwise. Phase~13 separately fixes five new primary compound claims and applies one Holm correction across them; unrun or incomplete studies receive $p=1$. This controls that new family, not every analysis in this paper. We therefore use evidence descriptions tied to a contrast, cohort and family rather than treating ``confirmed'' as a uniform evidential grade. The headline inference map states each estimand, contrast, sample and family explicitly.
 
 \paragraph{Power.} Many early contrasts use $n=4$. Large effects (the actor effect, unlearning at removal) are tight even so, but nulls at $n=4$ are weak evidence. We handled this in three ways. (i) The two $n=4$ nulls that carry the paper's claims were re-tested with more seeds, under a pre-registration: the PPO component surgery ($n=12$, with equivalence tests) and the point-of-no-return test (8 fresh seeds, then 32 more). (ii) For every remaining $n=4$ null, Appendix Table~\ref{tab:power} reports the minimum detectable effect at 80\% power and the largest harm its interval excludes. (iii) We phrase those results as bounds (``deficits worse than $x$ are excluded''), not as absence of effect. One revision followed directly from this: with 12 seeds, a small critic effect that the 4-seed analysis missed became detectable (Section~\ref{sec:ppo}).
 
@@ -386,7 +402,7 @@ $E_{\mathrm{total}}$ & total cost incl.\ lost time & same update, $C(w_1+k)$ & $
 The timing pattern is the reverse of a critical period. In our data, damage beyond lost time appeared only after something had been learned that could be lost, and even then it was largely relearned. Removing movement actions after the agent has learned to dodge is what hurts.
 
 %=====================================================================
-\section{In PPO, the damage lives mainly in the actor}\label{sec:ppo}
+\section{PPO: same-update gap attribution and a specific pause-harm case}\label{sec:ppo}
 %=====================================================================
 
 \noindent\textit{Evidence status.} The $2^3$ surgery under the movement restriction and its equivalence tests are \textbf{confirmatory} ($n=12$, 8 of them fresh seeds), and so is the onset-reference surgery under the reward flip ($n=8$, new reference on reused seed IDs). The drift-suppression, reset and fire-restriction arms are \textbf{exploratory} ($n=4$), and the interaction and normalized analyses are \textbf{post-hoc}.
@@ -394,13 +410,13 @@ The timing pattern is the reverse of a critical period. In our data, damage beyo
 \begin{figure}[t]
 \centering
 \includegraphics[width=0.78\linewidth]{figures/causal_summary.png}
-\caption{Summary of the causal contrasts (paired differences in post-removal return AUC, 95\% $t$-intervals). \textbf{A}: PPO actor/critic/optimizer surgery ($n=12$), clean-actor transplant, behaviour swap with and without importance weighting, the actor effect under the reward-flip deficit, and actor reset. \textbf{B}: PQN-R network vs.\ buffer surgery, and the parameter vs.\ optimizer-state split. \textbf{C}: the replay ladder, with the pre-registered equivalence margin $\pm1$ (grey). Filled markers: interval excludes 0; diamond: post-hoc. For main effects, negative values mean the component holds harm; for transplants and rescues, positive values mean the clean component helps; positive values in C mean removing or altering the data helps. AUC scales differ between PPO and PQN-R; Appendix Table~\ref{tab:relative} gives the effects relative to the clean agent's AUC.}
+\caption{\textbf{Mostly Tier-I contrasts: procedural performance-gap effects, not a common persistent-damage estimand.} Summary of the causal contrasts (paired differences in post-removal return AUC, 95\% $t$-intervals). \textbf{A}: PPO actor/critic/optimizer surgery ($n=12$), clean-actor transplant, behaviour swap with and without importance weighting, the actor effect under the reward-flip deficit, and actor reset. \textbf{B}: PQN-R network vs.\ buffer surgery, and the parameter vs.\ optimizer-state split. \textbf{C}: the replay ladder, with the pre-registered equivalence margin $\pm1$ (grey). Filled markers: interval excludes 0; diamond: post-hoc. For main effects, negative values mean the D component contributes negatively to the specified comparison; for transplants and rescues, positive values mean the clean component helps; positive values in C mean removing or altering the data helps. AUC scales differ between PPO and PQN-R; Appendix Table~\ref{tab:relative} gives the effects relative to the clean agent's AUC.}
 \label{fig:summary}
 \end{figure}
 
 \begin{table}[t]
 \centering
-\caption{PPO $2^3$ state surgery at removal of the late movement restriction ($n=12$: seeds 0--3 exploratory, seeds 4--11 pre-registered replication). Recovery AUC over 150 updates. Main effects are D$-$C averages over the other two components (Holm across the three). Shapley values are an exact additive decomposition of the total (they sum to it per seed), and the share is the ratio of means. Arm labels give the sources of (actor, critic, optimizer). Rows marked $^\dagger$ come from Phase 4 ($n=4$). Source: \url{p8_ppo_surgery_n12-analysis.md}.}
+\caption{\textbf{Tier I only: same-update gap, including foregone progress.} PPO $2^3$ state surgery at removal of the late movement restriction ($n=12$: seeds 0--3 exploratory, seeds 4--11 pre-registered replication). Recovery AUC over 150 updates. Main effects are D$-$C averages over the other two components (Holm across the three). Shapley values are an exact additive decomposition of the total (they sum to it per seed), and the share is the ratio of means. Arm labels give the sources of (actor, critic, optimizer). Rows marked $^\dagger$ come from Phase 4 ($n=4$). Source: \url{p8_ppo_surgery_n12-analysis.md}.}
 \label{tab:ppo_surgery}
 \small
 \resizebox{\linewidth}{!}{%
@@ -408,7 +424,7 @@ The timing pattern is the reverse of a critical period. In our data, damage beyo
 \toprule
 contrast & AUC & $+10$ & Shapley value (share) \\
 \midrule
-total damage DDD $-$ CCC & $-15.1\ci{-17.2}{-13.0}\sig$ & $-28.4\ci{-33.4}{-23.4}\sig$ & $-15.1$ (100\%) \\
+same-update gap DDD $-$ CCC & $-15.1\ci{-17.2}{-13.0}\sig$ & $-28.4\ci{-33.4}{-23.4}\sig$ & $-15.1$ (100\%) \\
 \midrule
 actor main effect   & $-13.7\ci{-14.9}{-12.5}\sig$ & $-18.5\ci{-23.2}{-13.9}\sig$ & $-13.6\ci{-15.0}{-12.2}\sig$ (90\%) \\
 critic main effect  & $-1.9\ci{-3.5}{-0.4}\sig$ & $-4.4\ci{-6.4}{-2.5}\sig$ & $-1.8\ci{-3.2}{-0.4}\sig$ (12\%) \\
@@ -515,7 +531,7 @@ What the importance weights add is a pull toward the behaviour policy. During th
 \toprule
 contrast & 100k buffer ($n=12$) & 1M buffer ($n=8$) \\
 \midrule
-total damage DD $-$ CC & $-6.7\ci{-8.0}{-5.3}\sig$ & $-5.6\ci{-7.0}{-4.2}\sig$ \\
+same-update gap DD $-$ CC & $-6.7\ci{-8.0}{-5.3}\sig$ & $-5.6\ci{-7.0}{-4.2}\sig$ \\
 network-block transfer DC $-$ CC & $-4.6\ci{-6.1}{-3.0}\sig$ & $-2.6\ci{-3.6}{-1.6}\sig$ \\
 data transfer CD $-$ CC & $+0.0\ci{-1.0}{+1.0}$ & $-1.7\ci{-3.3}{-0.2}\sig$ \\
 network main effect & $-5.6\ci{-6.3}{-4.9}\sig$ (84\%) & $-3.2\ci{-4.2}{-2.2}\sig$ (57\%) \\
@@ -549,7 +565,7 @@ A 1M buffer is not simply a longer memory. It holds restriction-era data for 245
 
 With 1M slots the buffer main effect becomes significant ($-2.4\ci{-3.4}{-1.4}$, 43\%). Its time course rules out the simplest reading, in which the old data is consumed and directly causes worse targets. The buffer effect is $-1.4\ci{-2.7}{-0.0}$ while restriction-era data are present ($+10$ to $+150$), and $-2.9\ci{-4.1}{-1.8}$ \emph{after they are gone} ($+250$ to $+650$; Figure~\ref{fig:pqnr1m}).
 
-The most economical reading is that training on the restricted buffer during the first 245 updates leaves its mark in the network, and that mark outlasts the data. On this reading the buffer shapes the damage but does not store it. This is an interpretation of the time course in this PQN-R configuration (1-step targets, replay ratio 2, 1M FIFO buffer), not a direct measurement. Other buffer sizes, replay ratios or prioritized replay may behave differently.
+The most economical reading is that training on the restricted buffer during the first 245 updates leaves its mark in the network, and that mark outlasts the data. This is a plausible buffer-through-learning interpretation, not a demonstrated unique mediation path or a finding that the buffer has no other causal role. This is an interpretation of the time course in this PQN-R configuration (1-step targets, replay ratio 2, 1M FIFO buffer), not a direct measurement. Other buffer sizes, replay ratios or prioritized replay may behave differently.
 
 %=====================================================================
 \section{A replay ladder: the data-identity effect shrinks under matching}\label{sec:ladder}
@@ -613,7 +629,7 @@ The two arms purge either R or U with identical pool trajectories. They are matc
 As confounds are matched, the apparent harm of restriction-era data falls from $+4.6$ to $+2.6$ to $+1.1$ to $+0.46$. The network term persists at every rung. This is consistent with restriction-era data mediating damage while the network trains on them (Section~\ref{sec:pqnr}). The ladder bounds the identity effect from above (below 1 AUC point). It does not show that the effect is zero: the point estimate is positive and in the direction of the earlier rungs. Removing restriction-era data may confer a small, early benefit beyond what any fresh, long-resident replacement data would.
 
 %=====================================================================
-\section{Point of no return and removal-time predictors}\label{sec:ponr}
+\section{Finite-horizon restriction outcomes and candidate diagnostics}\label{sec:ponr}
 %=====================================================================
 
 \noindent\textit{Evidence status.} The pilot gate ($n=4$), the confirmatory test ($n=8$) and the replication ($n=32$; completed after an unblinded interim look, Appendix~\ref{app:interim}) are \textbf{confirmatory}. The point-of-no-return verdicts are \textbf{bounds}, not findings of absence. The non-recovery diagnosis and the exclusion sensitivity are \textbf{post-hoc}.
@@ -667,7 +683,7 @@ In a second reviewer-response round we pre-registered an independent replication
 
 At $n=32$, $L_{300}=+2.3\ci{-4.6}{+9.2}$ (TOST $\pm5$: $p_{\text{lower}}=0.019$, $p_{\text{upper}}=0.21$). The verdict is \textbf{inconclusive}: harm worse than $-5$ is rejected, but neither equivalence nor a benefit above $+5$ can be established. The median agent ends ahead of the pause reference ($+5.7$), which is consistent with the small amount of learning under the restriction that the pause baseline does not credit (Section~\ref{sec:estimands}). The early-recovery cost is $A_{300}=-3.3\ci{-8.4}{+1.9}$ (split-half reliability 0.86). Pooled with the Phase~8 seeds (descriptive, $n=40$), $L_{300}=+2.1\ci{-3.5}{+7.6}$ and $A_{300}=-3.6\ci{-7.8}{+0.7}$.
 
-\paragraph{One agent did not recover.} Seed 330 accounts for most of the spread. Its restricted agent scored exactly 3.0 at all 26 evaluations over the 250-update recovery budget ($L_{300}=-92.0$, $A_{300}=-75.2$), while its clean fork rose normally from 46 to 114. The only other seed below $-10$ was 316 ($L_{300}=-11.2$). Post-hoc checks found no NaNs in the parameters and no entirely dead actor units on the evaluation-state bank. These checks do not rule out every numerical issue or establish a complete mechanism. Instead, at removal the actor had collapsed to a near-deterministic policy. Its entropy on the fixed evaluation-state bank was 0.19 nats, against 0.43--0.53 for the other restricted agents in its batch and 0.55--0.59 for clean agents, with 85\% of probability mass on \texttt{fire}. PPO did not escape this state within the budget. For this agent no evaluation improvement was observed within the recovery budget; we do not claim that further training could never repair it. This is the first such case in 44 agents restricted for $d=300$ (pilot 4, Phase~8 8, replication 32). Here the counted event is the post-hoc phenotype of an almost deterministic collapsed policy with no evaluation improvement throughout the recovery window, not every agent ending below its pause reference. Other seeds show smaller residual deficits. For this phenotype, a binomial calculation gives an exact 95\% interval of 0.06\%--12\% (Clopper--Pearson), assuming exchangeability under this protocol; one event does not establish a stable rare-event probability. Long-lived policy collapse is a candidate individual failure mode, not proof of an absorbing state or irreversible damage. Excluding seed 330 (post-hoc sensitivity, not a decision) gives $L_{300}=+5.3\ci{+2.3}{+8.4}$ and $A_{300}=-1.0\ci{-3.1}{+1.2}$.
+\paragraph{One agent did not recover.} Seed 330 accounts for most of the spread. Its restricted agent scored exactly 3.0 at all 26 evaluations over the 250-update recovery budget ($L_{300}=-92.0$, $A_{300}=-75.2$), while its clean fork rose normally from 46 to 114. The only other seed below $-10$ was 316 ($L_{300}=-11.2$). Post-hoc checks found no NaNs in the parameters and no entirely dead actor units on the evaluation-state bank. These checks do not rule out every numerical issue or establish a complete mechanism. Instead, at removal the actor had collapsed to a near-deterministic policy. Its entropy on the fixed evaluation-state bank was 0.19 nats, against 0.43--0.53 for the other restricted agents in its batch and 0.55--0.59 for clean agents, with 85\% of probability mass on \texttt{fire}. PPO did not escape this state within the budget. For this agent no evaluation improvement was observed within the recovery budget; we do not claim that further training could never repair it. This is the first such case in the 44 legacy duration-study agents restricted for $d=300$ (pilot 4, Phase~8 8, replication 32). Here the counted event is the post-hoc phenotype of an almost deterministic collapsed policy with no evaluation improvement throughout the recovery window, not every agent ending below its pause reference. Other seeds show smaller residual deficits. For this phenotype, a binomial calculation gives an exact 95\% interval of 0.06\%--12\% (Clopper--Pearson), assuming exchangeability under this protocol; one event does not establish a stable rare-event probability. Long-lived policy collapse is a candidate individual failure mode, not proof of an absorbing state or irreversible damage. Excluding seed 330 (post-hoc sensitivity, not a decision) gives $L_{300}=+5.3\ci{+2.3}{+8.4}$ and $A_{300}=-1.0\ci{-3.1}{+1.2}$.
 
 We therefore claim three things. No \emph{average} point of no return was detected up to 2.46M restricted steps, and average persistent deficits worse than about 5 return points are excluded at $d=300$. Individual agents can fail to recover within the budget. We observed one extreme flat-score collapse in 44 agents; its frequency is poorly determined, and the phenotype was classified post-hoc. We do not claim that a point of no return is absent at longer restrictions or in other settings.
 
@@ -704,7 +720,7 @@ critic error & $0.71$ & $+0.03$ & $[-0.32,+0.38]$ & $0.57$ & $-3\%$ \\
 
 \paragraph{What the predictor result does and does not show.}
 \begin{itemize}
-\item \emph{What we found.} Agents whose policy has drifted further from their clean fork by the time the restriction is removed tend to recover more slowly. The association is pre-registered and survives correction across four candidates. Its direction remains without the extreme collapsed agent, although the combined exclusion-plus-two-look sensitivity is weaker. A cheap, reliable (split-half 0.95) removal-time measurement therefore carries rank information about recovery cost.
+\item \emph{What we found.} Within the original 32-seed cohort, agents whose policy has drifted further from their clean fork at removal tend to recover more slowly. The association is pre-registered and survives correction across four candidates. Its direction remains without the extreme collapsed agent, although the combined exclusion-plus-two-look sensitivity is weaker. In that cohort, a cheap, reliable (split-half 0.95) measurement carries rank-associated information about recovery cost. It is not a validated future-failure measure; the frozen independent comparison in Section~\ref{sec:p13} does not establish incremental point-prediction utility.
 \item \emph{What we do not claim.} (i) Causality. In the exploratory drift-suppression arm (Section~\ref{sec:ppo}, $n=4$, a different deficit window), a KL anchor to the onset policy during the restriction did not detectably speed recovery. That arm limits a related form of divergence, not divergence from the clean fork. Divergence may therefore mark slow recovery rather than cause it; a causal test, for example anchoring toward a clean fork, is left to future work. (ii) Useful point prediction: the leave-one-out gain is $+5\%$. (iii) Failure of the other three measurements: their intervals still include moderate negative correlations. Detecting $\rho=-0.4$ with 80\% power under Holm correction needs about 59 agents.
 \end{itemize}
 In the pilot, which varied duration, no measurement predicted recovery beyond duration. The supported association is within a single duration.
@@ -712,7 +728,7 @@ In the pilot, which varied duration, no measurement predicted recovery beyond du
 Descriptively, early--late recovery-cost correlations are near zero in the pilot ($\rho=-0.01$, $n=4$) and Phase~8 ($-0.05$, $n=8$). These small samples do not establish independence or rule out a useful association. The outcome-reliability analysis is post-hoc. Its pilot estimate (Spearman--Brown 0.30, from 4-seed rankings at short durations) was contradicted by the Phase~8 seeds (0.95 at $d=300$), and we withdrew a ``predictor ceiling'' interpretation from an earlier draft.
 
 %=====================================================================
-\section{Does the localization generalize? (pre-registered)}\label{sec:general}
+\section{Generalization of same-update gap attribution (registered contrasts)}\label{sec:general}
 %=====================================================================
 
 \noindent\textit{Evidence status.} The completed generalization tests have registered contrasts and a fixed criterion, generally with 8 seeds. They are new settings or new contrasts on reused seed IDs, not independent new-seed replications. The Phase~12 onsets were selected from separate control-only pilot runs; seeds 0--3 of those pilots also enter the tests. CartPole acute checkpoint values were visible during progress checks (Appendix~\ref{app:prov}); any incomplete test is descriptive only. The gap--damage relation was first noticed \textbf{post-hoc} and then tested out of sample in Phase~12 under a pre-registered prediction.
@@ -726,7 +742,7 @@ All results so far come from one game, one deficit family and one network size. 
 
 \begin{table}[t]
 \centering
-\caption{Registered PPO carrier-generalization tests (paired 95\% $t$-intervals). The same-update gap includes lost training time; delay-adjusted AUC is relative to the pause baseline. Actor share is a ratio of Shapley and total means, not a fraction of encoded information, and can exceed 100\% when other components help. No share is interpreted when the mean gap is not detected. The criterion is defined in the text. Prior sources are the Phase~8 surgery analyses and \url{p9_asterix_rflip_surgery_n8-analysis.md}; Phase~12 sources: \url{p12_panel-analysis.md}. The Asterix flip was completed after an unblinded $n=4$ look.}
+\caption{\textbf{Tier I: clean-fork gap attribution, not direct pause-harm localization.} Registered PPO carrier-generalization tests (paired 95\% $t$-intervals). The same-update gap includes lost training time; delay-adjusted AUC is relative to the pause baseline. Actor share is a ratio of Shapley and total means, not a fraction of encoded information, and can exceed 100\% when other components help. No share is interpreted when the mean gap is not detected. The criterion is defined in the text. Prior sources are the Phase~8 surgery analyses and \url{p9_asterix_rflip_surgery_n8-analysis.md}; Phase~12 sources: \url{p12_panel-analysis.md}. The Asterix flip was completed after an unblinded $n=4$ look.}
 \label{tab:general}
 \small
 \resizebox{\linewidth}{!}{%
@@ -751,11 +767,13 @@ SpaceInvaders, reward extinction (G6) & 8 & $-9.6\ci{-13.4}{-5.8}\sig$ & $+4.1\c
 \end{tabular}}
 \end{table}
 
-\paragraph{Second game.} On Asterix the late movement restriction again caused unlearning during the window, but only a little: $-1.0\ci{-1.6}{-0.3}$, about 18\% of the clean agent's competence. It was followed by complete recovery. The restricted agent ends slightly \emph{ahead} of a paused control (delay-adjusted $+0.5\ci{+0.0}{+1.0}$), and there is no persistent damage to localize (total $-0.1\ci{-0.5}{+0.4}$). The short-lived deficit sits in the actor ($-1.0\ci{-1.3}{-0.6}$ at $+10$ updates) and has gone by $+50$.
+\paragraph{Second game.} On Asterix the late movement restriction again caused unlearning during the window, but only a little: $-1.0\ci{-1.6}{-0.3}$, about 18\% of the clean agent's competence. It was followed by complete recovery. The restricted agent ends slightly \emph{ahead} of a paused control (delay-adjusted $+0.5\ci{+0.0}{+1.0}$), and no same-update gap is detected (total $-0.1\ci{-0.5}{+0.4}$). This unresolved Tier-I localization target is not an irreversible-damage test. The short-lived deficit sits in the actor ($-1.0\ci{-1.3}{-0.6}$ at $+10$ updates) and has gone by $+50$.
 
-\paragraph{Different deficit.} Flipping the reward sign is a far harsher deficit. The agent learns to avoid reward, and its unmasked return drops to exactly 0 at removal. Unlike the action restriction, it causes damage beyond lost time within the 150-update budget (delay-adjusted AUC $-18.6\ci{-27.2}{-9.9}$). The carrier is the same: the actor's Shapley value equals the total damage ($-32.4$ of $-32.3$), neither critic nor optimizer state contributes detectably, and a clean-actor transplant restores the damaged agent to the clean agent's level ($-0.4\ci{-3.4}{+2.5}$ vs.\ clean).
+\paragraph{Different deficit.} Flipping the reward sign is a far harsher deficit. The agent learns to avoid reward, and its unmasked return drops to exactly 0 at removal. Unlike the action restriction, it causes damage beyond lost time within the 150-update budget (delay-adjusted AUC $-18.6\ci{-27.2}{-9.9}$). The following fork-reference result is Tier I: the actor's Shapley value equals the same-update gap ($-32.4$ of $-32.3$), neither critic nor optimizer state contributes detectably, and a clean-actor transplant restores the damaged agent to the clean agent's level ($-0.4\ci{-3.4}{+2.5}$ vs.\ clean).
 
-\paragraph{Wider network.} Doubling the width of both networks ($2\times256$) leaves the picture unchanged. The late movement restriction causes unlearning ($-28.7\ci{-36.4}{-21.0}$) and a recovery deficit of $-19.7$ AUC. The actor carries 82\% of it (Shapley $-16.1\ci{-18.0}{-14.1}$), the critic again adds a small, early contribution ($-2.9\ci{-5.4}{-0.4}$, 15\%; $-10.1$ at $+10$ updates, $+1.0$ at $+150$), and Adam state is equivalent to zero within $\pm3$ (TOST $p=0.013$). A clean-actor transplant rescues $+15.7\ci{+11.7}{+19.7}$.
+This fork-reference allocation is not itself a decomposition of the $-18.6$ pause-relative cost; the separate onset-reference surgery provides that procedural evidence for SpaceInvaders (Section~\ref{sec:ppo}).
+
+\paragraph{Wider network.} Doubling the width of both networks ($2\times256$) leaves the picture unchanged. The late movement restriction causes unlearning ($-28.7\ci{-36.4}{-21.0}$) and a recovery deficit of $-19.7$ AUC. The actor accounts for 82\% of this same-update gap, not a directly tested pause-reference decomposition (Shapley $-16.1\ci{-18.0}{-14.1}$), the critic again adds a small, early contribution ($-2.9\ci{-5.4}{-0.4}$, 15\%; $-10.1$ at $+10$ updates, $+1.0$ at $+150$), and Adam state is equivalent to zero within $\pm3$ (TOST $p=0.013$). A clean-actor transplant rescues $+15.7\ci{+11.7}{+19.7}$.
 
 \begin{figure}[t]
 \centering
@@ -812,13 +830,13 @@ interaction & $-2.35\ci{-4.51}{-0.19}\sig$ & $-3.11\ci{-6.53}{+0.32}$ \\
 
 
 
-\paragraph{Why Asterix showed no lasting damage under the movement restriction.}
-Asterix is counterevidence to any claim that late deficits \emph{always} cause lasting damage, and we make no such claim. Two features of that setting predicted a null under the lost-competence account of Section~\ref{sec:timing}.
+\paragraph{Why Asterix showed no detected recovery cost beyond time under movement restriction.}
+Asterix is counterevidence to any claim that late deficits \emph{always} cause recovery cost beyond lost time, and we make no such claim. Two features of that setting predicted a null under the lost-competence account of Section~\ref{sec:timing}.
 \begin{itemize}
 \item \emph{Little competence was lost.} Removing left and right in Asterix still leaves up and down movement, so the restricted policy kept most of its competence (gap at removal 18\%, against 63--100\% in the SpaceInvaders settings).
 \item \emph{There was no progress to lose.} The clean agent made no progress during the window (5.36 to 5.41), so the restricted agent had no lost progress to make up. In SpaceInvaders the clean agent improved by 28--45\% in the same window.
 \end{itemize}
-To test whether the null was specific to the game or to the deficit, we pre-registered the same surgery on Asterix with the harsher reward-flip deficit (Phase 9, 8 seeds; completed after an interim look at 4 seeds, which gave the same result). The flip removed 68\% of competence by removal ($-3.7\ci{-4.6}{-2.8}$), while the clean agent again made no progress. This time there was lasting damage beyond lost time: delay-adjusted AUC $-1.7\ci{-2.1}{-1.3}$, still $-1.2\ci{-1.7}{-0.6}$ at the end of the 200-update budget. The total was $-2.3\ci{-2.9}{-1.7}$, and the localization criterion was met. The actor's Shapley share is 94\% (8/8 seeds), critic and optimizer state are each equivalent to zero within $\pm3$ (TOST $p<10^{-4}$), and a clean actor restores the clean agent's level ($+0.0\ci{-0.4}{+0.5}$ vs.\ clean). The Asterix null was therefore a property of the mild deficit, not of the game.
+To test whether the null was specific to the game or to the deficit, we pre-registered the same surgery on Asterix with the harsher reward-flip deficit (Phase 9, 8 seeds; completed after an interim look at 4 seeds, which gave the same result). The flip removed 68\% of competence by removal ($-3.7\ci{-4.6}{-2.8}$), while the clean agent again made no progress. This time there was lasting damage beyond lost time: delay-adjusted AUC $-1.7\ci{-2.1}{-1.3}$, still $-1.2\ci{-1.7}{-0.6}$ at the end of the 200-update budget. The total was $-2.3\ci{-2.9}{-1.7}$, and the localization criterion was met. The actor's Tier-I share of the same-update $-2.3$ gap is 94\% (8/8 seeds), critic and optimizer state are each equivalent to zero within $\pm3$ (TOST $p<10^{-4}$), and a clean actor restores the clean agent's level ($+0.0\ci{-0.4}{+0.5}$ vs.\ clean). The game can therefore exhibit finite-budget harm under another impairment. This comparison does not isolate severity as a unique cause; Phase~13 separately tests direct pause-reference localization on independent Asterix seeds.
 
 \emph{Post-hoc, across settings} (Table~\ref{tab:gap}; descriptive, five settings): total damage grows with the fraction of competence lost at removal. It is $-2\%$ of the clean agent's competence at a gap of 18\%, $-26$ to $-43\%$ at 63--73\%, and $-55\%$ at 100\%. Damage beyond lost time appears in the settings with the largest gaps. The pattern is consistent with a simple account: lasting damage requires that the deficit destroys more competence than can be relearned within the budget, plus whatever progress the clean agent makes meanwhile. Whenever damage of either kind exists, the actor carries most of it.
 
@@ -863,9 +881,167 @@ SpaceInvaders, reward extinction (G6) & 8 & 47\% & $-9.6\ci{-13.4}{-5.8}\sig$ & 
 \end{tabular}}
 \end{table}
 
-Before Phase~12, the four settings with a detected same-update gap all had the actor as largest point-estimated carrier (82--100\%). In the two SpaceInvaders movement settings the critic added a small early share (12\%, 15\%); in the two reward-flip settings it was not detected. Across all ten completed PPO settings, eight have a detected same-update gap and all eight meet the registered actor criterion (82--115\%). The two unresolved settings are Asterix movement and Acrobot reward flip. Freeway, at $n=4$ of the planned 8, is excluded from this confirmatory tally. The additional panel-wide actor Holm sensitivity and covariance-aware equivalence checks leave the completed-setting calls unchanged (post-hoc; \url{p12_audit-posthoc.md}).
+Before Phase~12, the four settings with a detected same-update gap all had the actor as largest point-estimated carrier (82--100\%). In the two SpaceInvaders movement settings the critic added a small early share (12\%, 15\%); in the two reward-flip settings it was not detected. Across the ten completed legacy PPO settings (before Phase~13), eight have a detected same-update gap and all eight meet the registered actor criterion (82--115\%). The two unresolved legacy settings are Asterix movement and Acrobot reward flip. Repeated cohorts are not added as new tasks to inflate this conditional count, which is not an unconditional new-setting success probability. Freeway, at $n=4$ of the planned 8, is excluded from this confirmatory tally. The additional panel-wide actor Holm sensitivity and covariance-aware equivalence checks leave the completed-setting calls unchanged (post-hoc; \url{p12_audit-posthoc.md}).
 
 %=====================================================================
+\clearpage
+\section{Independent replications and context-sensitive pause-reference interventions}\label{sec:p13}
+\paragraph{Design and inference.}
+These experiments were registered before their target data (\url{prereg/phase13.json}; b92ebe8). All training cohorts use unused seed IDs. A: 600--607; B: 800--807; C: 700--707. Models for D were frozen on old seeds 300--331 before any seed 900--915. The controlled label assay E uses 1000--1007. Histories, schedules, references, contexts, sample sizes, checkpoint grids, utility thresholds and the five-claim family were fixed rather than extended after seeing a result. A software-only short-window test uses other IDs and does not enter inference. Every requested null, context and incomplete cohort is retained.
+
+A--C strengthen the old largest-point-estimate criterion. Their primary compound claim takes the maximum one-sided paired-$t$ $p$ for negative total gap, negative actor main effect, and paired actor Shapley allocation below critic and Adam; A/B also require negative native historical-pause AUC. The conjunction is one intersection-union test; Holm is over the five prespecified new claims, including E and D. Nominal component/context intervals are shown separately. Formal analysis waits for each full planned cohort; fixed gates, not outcomes, determine whether optional studies can start.
+
+\begin{table}[t]
+\centering
+\caption{Five \emph{new} Phase-13 primary claim tests. A--C use the registered intersection-union (maximum component $p$) construction, including paired Shapley dominance rather than only a largest point estimate. Holm is over this fixed family of five; unrun/incomplete tests receive $p=1$. This is not retrospective paper-wide control. E additionally requires a point effect $\leq-1$; D requires a point MSE reduction $\geq10\%$.}
+\label{tab:p13family}
+\scriptsize
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lcccc}
+\toprule
+study & $n$ & primary $p$ & phase-wise Holm $p$ & completion \\
+\midrule
+A: CartPole flip & 8 & $0.031$ & $0.093$ & complete \\
+B: Asterix flip & 8 & $<10^{-4}$ & $0.000$ & complete \\
+C: SI actuator noise & 8 & $0.001$ & $0.003$ & complete \\
+E: controlled replay labels & 8 & $0.189$ & $0.377$ & complete \\
+D: prospective diagnostic & 16 & $0.887$ & $0.887$ & complete \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Independent-seed localization at the planned sample. Native damage is natural D minus the unbroken historical clean pause. The surgery gap uses the indicated reference under the clean future context; it is not automatically identical to that native estimand. Pause-reference rows target Tier II, but support is asserted only when direct interventions and native-harm criteria pass; Tier-I actuator noise tests only same-update gap localization. Shares are descriptive allocations, not encoded information.}
+\label{tab:p13primary}
+\scriptsize
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lclcccc}
+\toprule
+study & $n$ & tier/reference & native pause-relative AUC & surgery AUC gap & actor main effect & actor share \\
+\midrule
+A: CartPole flip & 8 & Tier II & $-155.0\ci{-220.1}{-90.0}\sig$ & $-160.6\ci{-251.9}{-69.2}\sig$ & $-117.4\ci{-195.5}{-39.2}\sig$ & 75\% \\
+B: Asterix flip & 8 & Tier II & $-1.6\ci{-1.8}{-1.3}\sig$ & $-1.4\ci{-1.8}{-1.0}\sig$ & $-1.5\ci{-1.7}{-1.2}\sig$ & 98\% \\
+C: SI actuator noise & 8 & Tier I & $+3.5\ci{+0.2}{+6.8}\sig$ & $-12.5\ci{-18.4}{-6.5}\sig$ & $-11.8\ci{-16.5}{-7.2}\sig$ & 95\% \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\paragraph{CartPole reward flip: independent cohort (A, $n=8$).} Natural D has historical pause-relative recovery AUC $-155.0\ci{-220.1}{-90.0}$; the final-five-checkpoint comparison is $-22.5\ci{-78.9}{+33.8}$. The clean-context state-pause gap is $-160.6\ci{-251.9}{-69.2}$, with actor main effect $-117.4\ci{-195.5}{-39.2}$ and critic effect $-48.6\ci{-69.5}{-27.8}$. The point allocations are actor 75\%, critic 32\% and Adam -7\%. The prespecified compound primary has unadjusted $p=0.0310$ and does not clear the fixed five-claim Holm criterion ($0.093$). A negative component interval alone must not be substituted for that stronger compound decision. The reported Shapley ordering is a statement about this response surface, not information mass or a random-task prevalence.
+
+\paragraph{Asterix reward flip: independent cohort (B, $n=8$).} Natural D has historical pause-relative recovery AUC $-1.6\ci{-1.8}{-1.3}$; the final-five-checkpoint comparison is $-0.9\ci{-1.6}{-0.2}$. The clean-context state-pause gap is $-1.4\ci{-1.8}{-1.0}$, with actor main effect $-1.5\ci{-1.7}{-1.2}$ and critic effect $-0.2\ci{-0.4}{-0.0}$. The point allocations are actor 98\%, critic 10\% and Adam -8\%. The prespecified compound primary has unadjusted $p=0.0000$ and clears the fixed five-claim Holm criterion ($0.000$). A negative component interval alone must not be substituted for that stronger compound decision. The reported Shapley ordering is a statement about this response surface, not information mass or a random-task prevalence.
+
+\paragraph{SpaceInvaders actuator noise: independent cohort (C, $n=8$).} The same-update gap is $-12.5\ci{-18.4}{-6.5}$, with actor main effect $-11.8\ci{-16.5}{-7.2}$. This is Tier I, not a direct pause-reference localization. The point allocations are actor 95\%, critic 7\% and Adam -2\%. The prespecified compound primary has unadjusted $p=0.0008$ and clears the fixed five-claim Holm criterion ($0.003$). A negative component interval alone must not be substituted for that stronger compound decision. The reported Shapley ordering is a statement about this response surface, not information mass or a random-task prevalence.
+
+\paragraph{What natural and alternative contexts do and do not establish.}
+The damaged-context DDD is asserted equal to natural D over the entire runner tree, not just its parameters. The unbroken clean trace supplies the historical pause; an onset learner placed into a later environment is a separate state-level intervention. A has full fork/pause factorials in both C and D contexts, reset-world actor corners and a common-zero-Adam 2x2. B/C report their preselected damaged-context actor corners; C also uses common fresh moments. Fresh moments alter the subsequent optimizer history for every cell: they remove donor mismatch from that alternative procedure, not prove that the natural old optimizer is irrelevant. All results are reported, not a successful context selected after inspection. Context-equivalence thresholds are secondary nominal checks, not a family-wise proof of context invariance; a marginal pass is not upgraded to the primary evidence grade.
+
+\begin{table}[t]
+\centering
+\caption{Secondary natural/context diagnostic: natural damaged continuation versus standardized-context DDD, paired over independent seeds. The natural cell is asserted equal over the full runner tree, not merely the parameters. Context-equivalence margin: $5\%$ of native clean mean AUC; TOST retains uncertainty/covariance in that scale. Nonsignificance alone is not evidence of context neutrality.}
+\label{tab:p13natural}
+\scriptsize
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lccccc}
+\toprule
+study & natural D AUC & standardized DDD AUC & standardized $-$ natural & margin & TOST $p$ \\
+\midrule
+A: CartPole flip & $+297.6\ci{+233.9}{+361.4}\sig$ & $+285.1\ci{+191.2}{+379.0}\sig$ & $-12.5\ci{-44.2}{+19.1}$ & $\pm24.01$ & $0.211$ \\
+B: Asterix flip & $+4.0\ci{+3.6}{+4.5}\sig$ & $+4.0\ci{+3.7}{+4.4}\sig$ & $+0.0\ci{-0.3}{+0.3}$ & $\pm0.30$ & $0.044$ \\
+C: SI actuator noise & $+73.6\ci{+70.9}{+76.4}\sig$ & $+72.5\ci{+69.7}{+75.3}\sig$ & $-1.1\ci{-3.9}{+1.7}$ & $\pm4.25$ & $0.014$ \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\begin{table}[t]
+\centering
+\caption{Secondary context and compatibility checks, always reported. An actor-transfer contrast is not a unique natural decomposition. In zero-moment rows all cells restart Adam, and the actor column is the two-factor main effect; this is an alternative update procedure, not an untouched natural optimizer. All intervals are nominal paired $95\%$ $t$-intervals.}
+\label{tab:p13contexts}
+\scriptsize
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lccc}
+\toprule
+study: reference/context/moments & total AUC gap & bad actor effect / zero-moment main effect & good actor rescue \\
+\midrule
+A: fork/clean/donor & $-195.1\ci{-287.5}{-102.7}\sig$ & $-266.3\ci{-355.1}{-177.6}\sig$ & $+124.8\ci{+11.4}{+238.2}\sig$ \\
+A: fork/damaged/donor & $-181.4\ci{-245.8}{-116.9}\sig$ & $-253.0\ci{-332.4}{-173.6}\sig$ & $+97.7\ci{+8.5}{+186.8}\sig$ \\
+A: pause/clean/donor & $-160.6\ci{-251.9}{-69.2}\sig$ & $-147.9\ci{-245.5}{-50.4}\sig$ & $+103.0\ci{+8.1}{+197.8}\sig$ \\
+A: pause/clean/zero & $-179.0\ci{-280.7}{-77.3}\sig$ & $-126.9\ci{-236.8}{-17.0}\sig$ & -- \\
+A: pause/damaged/donor & $-141.8\ci{-189.8}{-93.8}\sig$ & $-139.2\ci{-225.1}{-53.2}\sig$ & $+106.0\ci{+38.2}{+173.8}\sig$ \\
+A: pause/reset/donor & $-152.3\ci{-254.8}{-49.8}\sig$ & $-122.3\ci{-234.6}{-10.0}\sig$ & $+117.8\ci{+24.9}{+210.7}\sig$ \\
+B: pause/clean/donor & $-1.4\ci{-1.8}{-1.0}\sig$ & $-1.3\ci{-1.7}{-1.0}\sig$ & $+1.2\ci{+1.0}{+1.5}\sig$ \\
+B: pause/damaged/donor & $-1.5\ci{-1.9}{-1.1}\sig$ & $-1.4\ci{-1.8}{-1.0}\sig$ & $+1.5\ci{+1.2}{+1.7}\sig$ \\
+C: fork/clean/donor & $-12.5\ci{-18.4}{-6.5}\sig$ & $-11.6\ci{-15.0}{-8.2}\sig$ & $+11.8\ci{+7.2}{+16.4}\sig$ \\
+C: fork/clean/zero & $-13.0\ci{-17.4}{-8.6}\sig$ & $-12.5\ci{-17.0}{-8.0}\sig$ & -- \\
+C: fork/damaged/donor & $-12.7\ci{-18.5}{-6.9}\sig$ & $-14.9\ci{-21.6}{-8.2}\sig$ & $+10.2\ci{+7.2}{+13.1}\sig$ \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+For A, standardized DDD minus natural D is $-12.5\ci{-44.2}{+19.1}$; the registered $5\%$-scale context TOST is $p=0.211$. Context neutrality is not established. 
+
+For B, standardized DDD minus natural D is $+0.0\ci{-0.3}{+0.3}$; the registered $5\%$-scale context TOST is $p=0.044$. The specified practical context-equivalence rule is met; this is not equality of all natural pathways. 
+
+For C, standardized DDD minus natural D is $-1.1\ci{-3.9}{+1.7}$; the registered $5\%$-scale context TOST is $p=0.014$. The specified practical context-equivalence rule is met; this is not equality of all natural pathways. 
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/p13_natural_contexts.png}
+\caption{Independent natural/context comparisons. Natural D is the full-state-verified damaged-context DDD; standardized DDD and onset-learner continuations use the declared contexts. The historical pause is the earlier unbroken clean trajectory. Bands are nominal pointwise 95\% seed intervals, not simultaneous guarantees. Curve proximity does not establish equivalence or a unique natural decomposition; paired context effects are in Table~\ref{tab:p13natural}.}
+\label{fig:p13natural}
+\end{figure}
+\paragraph{Controlled replay-label exposure (E): a specified pathway test.}
+A common damaged learner is exposed to the same genuine clean-fork transition tuples with original versus sign-corrupted rewards. State/action identities, slot ages, seams, behavior and replay/update schedules are matched. Frozen C behavior during $K=25$ updates prevents the exposure from changing the collected trajectories. The initial transition source was clarified before any E data to avoid a near-zero-label manipulation in an avoidance-trained D buffer; the original and amended registrations remain in Git history. This is a controlled label-corruption assay, not a claim that it recreates the entire natural movement-restriction mechanism.
+
+After complete overwrite, all non-learner fields, the full buffer and step counts are exactly equal. Thus any subsequent matched RR--UU difference travels through learner state under this assay. The delayed effect is $-0.43\ci{-1.50}{+0.65}$, with raw $p=0.1886$ and phase-wise Holm $0.377$. The prespecified substantial-delayed-harm criterion is not met; no general mediation success is claimed. The crossed parameter main effect is $-1.25\ci{-2.23}{-0.27}$, but this secondary result cannot rescue the matched-continuation primary. The common-fresh-moment comparison is $-0.72\ci{-2.75}{+1.32}$. Crossed states remain procedure-specific probes, whereas RR and UU preserve their own parameter/moment histories. TOST within $\pm1$ also has $p=0.124$, so lack of a significant net effect is not equivalence. The original movement-data overwrite time course remains a mechanistic interpretation; neither this assay nor a small identity contrast proves the buffer has no other role.
+
+\begin{table}[t]
+\centering
+\caption{Controlled replay-label exposure after complete washout ($n=8$). The genuine transition tuples, ages, state/action identities, collection policy and update schedule are matched. After $K=25$ the full buffer and every non-learner field are exactly equal; remaining differences are in the learner state. The RR--UU total compares naturally matched parameter/moment histories. Crossing and fresh moments are secondary procedure-specific probes, not a unique internal encoding analysis.}
+\label{tab:p13replay}
+\scriptsize
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lc}
+\toprule
+post-washout contrast & recovery AUC difference \\
+\midrule
+naturally matched R--U total & $-0.43\ci{-1.50}{+0.65}$ \\
+parameter main effect & $-1.25\ci{-2.23}{-0.27}\sig$ \\
+moment main effect & $+0.82\ci{-0.34}{+1.98}$ \\
+interaction & $+0.29\ci{-1.94}{+2.53}$ \\
+R--U with common fresh moments & $-0.72\ci{-2.75}{+1.32}$ \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+\paragraph{Frozen prospective diagnostic comparison (D, $n=16$).}
+Six models, feature definitions and scales were frozen on the old 32 before any validation trajectory; all models are compared without test-set fitting or selection. Acute-gap and score-only/entropy baselines prevent a KL association from being mistaken for information beyond current performance. The primary comparison is held-out squared error of acute+KL versus acute gap. Its practical criterion is a $10\%$ point reduction together with the phase-wise Holm requirement. This is a cost-prediction metric, not a validated probability of future irreversible failure, and it is an independent cohort in the same task rather than new-task transfer.
+
+The held-out point MSE reduction is -113.1\%, paired mean loss difference $-36.51\ci{-98.03}{+25.01}$, with raw $p=0.8874$ and phase-wise Holm $0.887$. The specified utility rule is not met; policy KL is not promoted to a practically validated predictor. The entropy baseline has a strong secondary feature rank relation ($\rho=+0.77$), but its frozen MSE does not beat the constant-mean baseline. It is not substituted for the failed primary utility comparison. The raw KL feature rank is $\rho=-0.24$. Feature rank and prediction rank are distinguished, and a causal KL claim would still require changing the relevant divergence by intervention.
+
+\begin{table}[t]
+\centering
+\caption{Prospective held-out diagnostic performance ($n=16$). Coefficients and feature scales were frozen on the earlier 32 before any new validation run. No fitting or model selection uses these outcomes. Primary utility is acute-gap versus acute-gap+KL held-out squared error, with a $10\%$ point-gain requirement and the five-claim Holm criterion. Correlations are secondary; this is neither new-task nor failure-probability validation.}
+\label{tab:p13prediction}
+\scriptsize
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lcc}
+\toprule
+frozen model & held-out MSE & rank correlation \\
+\midrule
+training\_mean & $33.05$ & -- \\
+acute\_gap & $32.27$ & $+0.25$ \\
+removal\_entropy & $33.52$ & $+0.77$ \\
+KL & $61.64$ & $+0.24$ \\
+acute\_gap\_plus\_KL & $68.78$ & $+0.24$ \\
+removal\_score & $38.29$ & $+0.11$ \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
+
+\clearpage
+
 \section{Discussion}
 %=====================================================================
 
@@ -888,6 +1064,12 @@ For PPO under the SpaceInvaders movement restriction, the fresh-seed estimand te
 This argues against a \emph{persistent relearning deficit for the main movement restriction within its recovery budget}. Reward flips in SpaceInvaders, Asterix and CartPole do produce pause-relative harm; we did not run a competence-matched rate test for all those settings. It does not show that plasticity in the broader sense is preserved. We did not measure learning on new tasks or under further distribution shifts, nor standard plasticity diagnostics (dormant units, feature rank, gradient statistics). A deficit could leave the agent able to relearn its old competence quickly while impairing what it can learn next. Both the savings effect and the reset result are indirect evidence.
 In PPO the main carrier is the actor's parameters (Shapley shares are summarized over settings with a detected same-update gap in Section~\ref{sec:general}). Under the SpaceInvaders movement restriction the critic is a minor carrier: significant in the pooled $n=12$ (12\%) and with the wider network (15\%), concentrated in early recovery; the fresh-only critic interval at $n=8$ includes zero. The main-study Adam contribution is equivalent to zero within $\pm3$. In the actuator-noise test Adam state instead gives a small positive contribution ($+1.8$), so ``equivalent within a practical margin'' must not be confused with ``uninvolved''. These results complement optimizer-state accounts in other settings \citep{dohare2023collapse,xu2026optimizer}. In PQN-R under the movement restriction, the parameter-versus-moment split locates most of the network effect in the parameters; the primary optimizer-only rescue is inconclusive, with a small secondary effect and a substantial short-lived interaction. A large buffer extends the period during which restricted data shape the network. Its effect outlasts the data, which in this configuration suggests that it mediates the damage rather than storing it.
 
+\paragraph{What the independent tests change.}
+The reference changes the scientific target, not just its numerical baseline. In independent CartPole the actor allocation is 96\% for the same-update gap but 75\% for the state-pause gap; the critic then accounts for 32\%, with a negative main-effect interval. Native pause-relative AUC cost is substantial, but late impairment is inconclusive and the stronger compound dominance claim does not pass phase-wise correction. The independent Asterix pause test does pass, with a 98\% actor allocation and a negative finite late-window comparison. This is direct additional Tier-II evidence in a named setting, not a license to reinterpret every Tier-I generalization row. The independent actuator-noise test instead supports Tier I while its native historical-pause AUC is positive. Its earlier apparent Adam benefit is not clearly replicated. Context and common-fresh-moment results constrain the interpretation but do not select a unique natural decomposition.
+
+\paragraph{Pathway and prospective checks do not automatically upgrade mechanisms.}
+The matched replay-label assay proves equality of the post-washout buffer, environment, observation, RNG and counters, but its naturally matched delayed-effect primary and $\pm1$ equivalence test are both inconclusive. A nominal crossed-parameter effect is not used to rescue that primary. Similarly, a strong old KL rank association and small within-cohort gain do not establish point-prediction utility: the frozen independent comparison worsens point MSE and fails the prespecified utility rule. These results are reasons to keep the original buffer-through-learning account interpretive and policy KL a candidate diagnostic, not to replace the failed primaries with a selected secondary contrast or entropy ranking.
+
 \paragraph{Relation to the primacy bias and resets.}
 \citet{nikishin2022primacy} found that resetting parts of an agent while keeping its buffer cures early overfitting. In our setting resets are harmful: an actor reset costs $-27.2$. The difference is informative. Primacy-bias damage is a network fitted to stale early data whose capacity to fit new data is impaired. Under our movement restriction, the PPO reset experiment instead concerns an agent that can quickly regain prior competence. A reset discards both the damage and the retained competence, and the second matters more.
 
@@ -902,16 +1084,16 @@ These are suggestions from the tested protocols, not general prescriptions for R
 
 \paragraph{Limitations.}\label{sec:limits}
 \begin{itemize}
-\item \textbf{Scope.} The tested space is listed at the start of this section. Most mechanistic detail (timing, PQN-R, the replay ladder, the point of no return) comes from SpaceInvaders-MinAtar in gymnax, whose dynamics differ from MinAtar. The carrier tests cover four complete tasks, one incomplete task and five deficit families, mostly with PPO and small MLPs. Completed generalization tests have 8 seeds; Freeway has only 4 complete seeds. The optional independent-seed replications did not run, so the new generalization evidence is from registered new contrasts on reused IDs, not independent new-seed replication. Lasting damage is not universal: it was absent when the deficit removed little competence. Larger convolutional agents, high replay ratios \citep{schwarzer2023bbf}, continuous control, longer training and other deficits may behave differently.
-\item \textbf{Seeds.} The main PPO surgery has 12 seeds and completed generalization tests 8; incomplete Freeway has 4. Several secondary results (drift suppression, PQN early/late recovery, fire restriction) still rest on 4 seeds. Appendix Table~\ref{tab:power} gives their minimum detectable effects, and we phrase them as bounds.
-\item \textbf{Point of no return and predictors.} Both pre-registered tests at $d=300$ were inconclusive. Average persistent deficits of a few return points are not excluded, and the frequency of the post-hoc extreme-collapse phenotype (1 of 44) is estimated very imprecisely. The non-recovery diagnosis (policy collapse) is post-hoc and rests on a single agent. Its recovery was tracked only within a 250-update budget. The policy-divergence predictor is an association with small out-of-sample gain. The predictor test was completed after an unblinded interim look (disclosed in Appendix~\ref{app:prov}), and the null results for the other three predictors are bounds.
+\item \textbf{Scope.} The tested space is listed at the start of this section. Most mechanistic detail (timing, PQN-R, the replay ladder, the point of no return) comes from SpaceInvaders-MinAtar in gymnax, whose dynamics differ from MinAtar. The carrier tests cover four complete tasks, one incomplete task and five deficit families, mostly with PPO and small MLPs. Completed generalization tests have 8 seeds; Freeway has only 4 complete seeds. The legacy optional replications did not run in Phase~12. Phase~13 adds independent selected-condition cohorts in CartPole, Asterix and actuator noise, but they are not a random sample of new tasks and do not establish a prevalence law. Beyond-time recovery cost is not universal, and the proposed severity relation remains a provisional observational hypothesis. Larger convolutional agents, high replay ratios \citep{schwarzer2023bbf}, continuous control, longer training and other deficits may behave differently.
+\item \textbf{Seeds.} The main PPO surgery has 12 seeds; complete generalization and new A/B/C/E cohorts have 8 each, prospective D has 16, and incomplete Freeway has 4. These samples support different estimands and strengths. Several secondary results (drift suppression, PQN early/late recovery, fire restriction) still rest on 4 seeds. Appendix Table~\ref{tab:power} gives their minimum detectable effects, and we phrase them as bounds.
+\item \textbf{Point of no return and predictors.} Both pre-registered tests at $d=300$ were inconclusive. Average persistent deficits of a few return points are not excluded, and the frequency of the post-hoc extreme-collapse phenotype (1 of 44 legacy duration-study agents) is estimated very imprecisely. The non-recovery diagnosis (policy collapse) is post-hoc and rests on a single agent. Its recovery was tracked only within a 250-update budget. The original policy-divergence result is an association with a small within-cohort gain; frozen independent-cohort validation in Phase~13 fails the prespecified practical-utility rule. The predictor test was completed after an unblinded interim look (disclosed in Appendix~\ref{app:prov}), and the null results for the other three predictors are bounds.
 \item \textbf{Data versus update rule in PPO.} The ratio-neutral swap removes importance weighting, but it applies on-policy updates to off-policy actions. Importance weighting and clipping change what a behaviour swap does. No PPO arm cleanly isolates data content from the update rule, and we draw no conclusion about the effect of data content alone in PPO.
 \item \textbf{Interventions.} Two deficit families, removing actions and flipping the reward sign, actively push the policy away from its competence. Phase~12 added actuator noise, observation noise and reward extinction, without an explicit adversarial reward objective, but tested each in one setting only. Other deficits may produce different damage: data starvation, other non-stationary dynamics, task switches that cause catastrophic forgetting, or repeated deficits. The same applies to surgery: transplants create hybrid states that do not occur in natural training (Section~\ref{sec:ppo}). Component effects are defined relative to that procedure, and the critic's effect depends on its context.
 \item \textbf{Plasticity.} Our evidence for relearning preserved competence is indirect and task-specific: savings and the reset result. It is not a test of plasticity in general. Learning capacity on new tasks was not measured.
 \item \textbf{Mechanistic readings.} ``Carrier'' is an operational, interventional notion (Section~\ref{sec:protocol}). ``The buffer acts through the network'' and ``the actor retains useful structure'' are interpretations of intervention results in these setups. They are not direct measurements, and they should not be generalized beyond the tested agents, buffers and deficits.
 \item \textbf{Effect scales.} AUC is measured in raw evaluation return, and PPO and PQN-R recover over different horizons and reach different returns. Raw AUC effects are therefore not comparable across algorithms. Normalization in Appendix Table~\ref{tab:relative} aids interpretation but does not equalize horizons or task difficulty. Phase~12 G7 additionally reports a recovery grid exactly matched to PPO in environment steps; it does not constitute a complete algorithm-by-task factorial.
-\item \textbf{Incomplete confirmatory evidence.} Several conclusions remain descriptive or exploratory (Table~\ref{tab:status}): the PQN and PQN-R timing results and the drift and reset arms ($n=4$), and every analysis labelled post-hoc. Only the results marked confirmatory met their pre-registered decision rules.
-\item \textbf{Counterfactual baseline.} Numerical ``damage'' depends on the counterfactual. We fix one estimand per question (Section~\ref{sec:estimands}) and test both primaries confirmatorily only for PPO's late movement restriction. For the other learners the comparison is post-hoc and rests on 4 seeds. The pause baseline assumes that a restricted update is worth nothing, whereas some learning does happen under the restriction (early windows, Table~\ref{tab:ppo_recovery}). It can therefore favour the restricted agent slightly. The fork-reference surgery decomposes the same-update deficit. The onset-reference surgery decomposes a state-level pause counterfactual under the standardized future context, complementary to the historical delay-adjusted primary, and it was run for one deficit with damage beyond lost time ($n=8$) and descriptively for the movement restriction ($n=4$).
+\item \textbf{Incomplete confirmatory evidence.} Several conclusions remain descriptive or exploratory (Table~\ref{tab:status}): the PQN and PQN-R timing results and the drift and reset arms ($n=4$), and every analysis labelled post-hoc. Here a registered or confirmatory design means that its plan preceded the target data, not that its null was rejected or its result equally strong. Registered inconclusive tests remain inconclusive. Support is tied to the specific contrast, sample, decision rule and multiplicity family in the inference map.
+\item \textbf{Counterfactual baseline.} Numerical ``damage'' depends on the counterfactual. We fix one estimand per question (Section~\ref{sec:estimands}) and test both original damage/rate primaries jointly for PPO's late movement restriction; the new pause and prospective studies have their own fixed contrasts and family. For the other learners the comparison is post-hoc and rests on 4 seeds. The pause baseline assumes that a restricted update is worth nothing, whereas some learning does happen under the restriction (early windows, Table~\ref{tab:ppo_recovery}). It can therefore favour the restricted agent slightly. The fork-reference surgery decomposes the same-update deficit. The onset-reference surgery decomposes a state-level pause counterfactual under the standardized future context, complementary to the historical delay-adjusted primary, It was first run for the SpaceInvaders reward flip ($n=8$), then extended in Phase~13 to independent CartPole and Asterix cohorts with natural/historical benchmarks; the movement-reference test remains descriptive ($n=4$). Direct pause-reference results do not automatically transfer to the rest of the Tier-I panel.
 \item \textbf{Replay identity is bounded, not zero.} The rung-4 equivalence result clears its $\pm1$ margin only narrowly (TOST $p=0.0495$), with a positive point estimate ($+0.46$). We claim only that identity effects of $\geq1$ AUC point are excluded. Smaller effects remain possible, and the results do not establish that replay-data identity has no effect.
 \item \textbf{Exploratory early phases.} The PPO and PQN phases before the purge study preceded our pre-registration practice. Their central PPO claim has since been replicated under pre-registration.
 \end{itemize}
@@ -919,14 +1101,16 @@ These are suggestions from the tested protocols, not general prescriptions for R
 %=====================================================================
 \section{Conclusion}
 %=====================================================================
-We summarize by evidence strength (Table~\ref{tab:ledger}); all statements concern the tested space listed under ``Scope of the conclusions'' in the Discussion (small MLP agents, four complete tasks and one incomplete task, CPU-scale budgets).
-\begin{itemize}
-\item \emph{Confirmed.} In PPO, the recovery deficit after a late deficit is carried mainly by the actor's parameters, in the operational sense of state surgery. The critic adds a small, transient share and Adam state adds nothing detectable. The onset-reference test also localizes pause-relative harm under the SpaceInvaders reward flip. Across the eight completed PPO settings with a detected same-update gap, the actor has the largest point-estimated share (82--115\%); this does not establish actor dominance in every task. Acrobot is unresolved, and the Freeway result is descriptive at $n=4$. A registered reward-flip test in PQN-R ($n=8$) also supports the joint network block as the largest carrier of the same-update gap (92\%); it does not separately test parameters versus moments in that new setting. Buffer effects depend on recovery horizon. Under the main movement restriction, fresh-seed PPO agents relearn faster than clean agents first learned. Policy divergence from the clean fork at removal is associated with slower recovery.
-\item \emph{Bounded.} In PPO under the movement restriction, damage beyond lost time larger than 3 AUC points is excluded. No average point of no return was detected after 2.46M restricted steps, and average deficits worse than about 5 points are excluded. In the matched PQN-R movement-restriction identity test, a 1-point effect is narrowly excluded by the prespecified TOST; smaller effects are not.
-\item \emph{Exploratory.} Early restrictions cost only time, across PPO, PQN and PQN-R (4 seeds each). In PQN-R, the Q-network rather than the buffer carries most of the damage under the movement restriction. 
-\item \emph{Post-hoc.} Whether lasting damage occurs tracks how much competence the deficit destroys (tested out of sample in Phase~12: no completed untouched setting fell in a prediction band; the relation remains provisional). One of 44 long-restricted agents collapsed and did not recover within the budget; how common such failures are is unknown (95\% interval 0.06--12\%).
-\end{itemize}
-These results locate damage in components; they do not reveal how it is encoded, and they do not establish that plasticity is preserved beyond relearning the same task. We hope the protocol (matched forks, unmasked common-random-number evaluation, delay-adjusted recovery and factorial state surgery) is useful for locating the carriers of other training pathologies in RL.
+
+The evidence must be read in two tiers. \textbf{Tier I} shows which component-state intervention changes the same-update recovery gap, including the clean learner's extra progress. It supports an actor-dominated pattern in the completed eligible PPO settings, not an unconditional law of deep RL. \textbf{Tier II} requires direct pause-reference interventions in settings with detected harm beyond lost time; the same-update generalization panel cannot establish it by itself. The primary movement result $+1.9\ci{-0.7}{+4.4}$ is bounded/inconclusive, not a demonstrated persistent deficit. Independent CartPole ($n=8$) has native pause-relative AUC $-155.0\ci{-220.1}{-90.0}$ and actor allocation 75\%; its compound criterion does not pass the new five-claim family. Independent Asterix ($n=8$) has native pause-relative AUC $-1.6\ci{-1.8}{-1.3}$ and actor allocation 98\%; its compound criterion passes the new five-claim family.
+
+Natural damaged continuations and alternative future/optimizer contexts are reported explicitly; procedural component effects are not asserted context-neutral or unique natural storage. Incomplete equivalence checks cannot be read as neutrality.
+
+The replay-identity result remains a narrow $\pm1$ practical bound with positive point estimate, not negligible identity at every relevant scale. The old after-overwrite time course remains a mechanistic interpretation. A controlled label-exposure assay yields $-0.43\ci{-1.50}{+0.65}$ after exact washout/state matching; its substantial-delayed-harm criterion is not met and $\pm1$ equivalence is not established ($p=0.124$).
+
+Policy divergence remains a candidate diagnostic or rank-associated measure, not a validated probability of permanent failure and not a causal mechanism. Frozen independent-cohort validation ($n=16$) increases point MSE by 113\% over acute gap; the practical-utility rule fails.
+
+None of these experiments identifies how damage is encoded, uniquely decomposes naturally occurring damage, tests learning capacity on new tasks, or excludes longer-horizon and other-environment failures. Evidence status, sample size, estimand and multiplicity scope are attached to each headline rather than summarized by a uniform ``confirmed'' label. We hope this distinction makes component-state interventions useful without asking them to prove more than they measure.
 
 \subsubsection*{Broader impact statement}
 This is basic research on training dynamics in small simulated environments. We do not foresee direct negative societal impacts. Understanding how agents recover from temporary constraints may inform the safe deployment of RL systems in which actions are sometimes disabled.
@@ -1010,6 +1194,10 @@ interim/outlier combined sensitivity & \url{p12_interim_predictors-posthoc.md/.j
 Table~\ref{tab:gap} & \url{p9_gap_vs_damage-posthoc.md} & post-hoc \\
 Table~\ref{tab:onsetref} & \url{p10_onsetref_rflip-analysis.md}, \url{p10_onsetref_move-analysis.md}, \url{p10_onsetref_rflip-checks.md} & pre-registered (f618d6c) \\
 Tables~\ref{tab:interactions}, \ref{tab:relative} & \url{p10_interactions_*-posthoc.md} & post-hoc \\
+Phase~13 Tables~\ref{tab:p13family}--\ref{tab:p13prediction}, Figure~\ref{fig:p13natural} & \url{p13_confirmatory-analysis.json}, \url{p13_tables.tex}, raw \url{p13-*.json} & initial design b92ebe8; fixed five-claim family \\
+prospective comparison & \url{p13_D_prospective-analysis.json}; \url{p13_frozen_predictors.json} & frozen before all validation data; SHA256 logged \\
+controlled label exposure & raw \url{p13-E-*.json}, state-equality checks & controlled assay; original movement mechanism not thereby proven \\
+
 Tables~\ref{tab:power}, \ref{tab:baselines}; rung-4 sensitivity & \url{p8_power-posthoc.md}, \url{p8_alt_baselines-posthoc.md}, \url{p8_6d_sensitivity-posthoc.md} & post-hoc \\
 \bottomrule
 \end{tabular}
@@ -1032,6 +1220,9 @@ Tables~\ref{tab:power}, \ref{tab:baselines}; rung-4 sensitivity & \url{p8_power-
 (v) The first Freeway chunk (4 seeds) ran out of memory on the 2\,GB machine and was killed. Freeway was rescheduled in 2-seed chunks (same seeds, same configuration), and its partial outputs were deleted unanalysed.
 (vi) While that chunk was being stopped, the queue's clean-tree guard rejected every remaining chunk, because a tracked file was modified at that moment. No runs were produced. The tests were requeued in the order G5, G6, G7, G4, so that the memory-heavy Freeway runs came last. A later sandbox reset terminated the queue during Freeway seeds 4--5. Only seeds 0--3 have all eight factorial arms; their analysis is descriptive, and incomplete arms for seeds 4--5 are retained in the data but not pooled into a factorial estimate. Seeds 6--7 and the optional independent-seed replications (600--607 for CartPole; 700--707 for actuator noise) never ran. No missing outcome was imputed or treated as a registered success.
 No formal interim primary-AUC analysis was performed: each test's final analysis was run only after all its chunks finished. This is distinct from the unblinded acute-outcome progress checks in (ii).
+\item Phase 13 (fifth review; new evidence, not a new label on the old panel). The five designs, unused seed cohorts, endpoints, contexts, practical thresholds and fixed five-claim Holm family were committed before their target data (b92ebe8). A/B/C/E completed 8 seeds each; D completed 16; no primary seed count was expanded. Exact natural-state and post-washout equality checks are recorded in the raw summaries. The inference-map table distinguishes registered design from an outcome meeting a rule.
+Three clarifications occurred before their own target data and are retained in Git history: the score-only secondary baseline and all model coefficients were frozen on the old 32 before D; common-zero-moment secondary exposure arms were fixed before E; and E's common transition source was changed from avoidance-trained D to genuine rewarding C transitions before any E run, without changing the label-only treatment, sample, endpoint, effect direction or global family. The latter avoided an ineffective mostly-zero-label manipulation and does not identify mediation of the original movement deficit. Background-conditional moment and pause-reference-agreement analyses were added after A and are secondary diagnostics, never primary gates. A pre-D budget-completion exception permitted finishing only the originally specified cohort within the same eight-hour deadline; it was not used.
+No formal primary analysis was run before the full planned cohort. A/B/C/E progress streams withheld scores. D's existing detailed training log was redirected and not examined to select a model or sample; fixed feature rows were archived for preservation, not fitted. The frozen coefficient hash was unchanged at evaluation. A's stronger compound, E's substantial-delayed-harm rule and D's practical-utility rule do not pass the final correction; none is rescued by a secondary comparison, selected context or pooled cohort. All execution logs and null/inconclusive results are archived.
 \item Two conclusions of the earlier draft changed with more seeds or better controls: the PPO critic is not uninvolved (a small transient effect at $n=12$), and the PPO data-swap benefit is not a data-content effect (it disappears without importance weighting).
 \end{enumerate}
 
