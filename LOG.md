@@ -1597,3 +1597,10 @@ The full planned factorials also permit optimizer effects conditional on actor s
 
 ### Phase 13 D pre-data budget-completion clarification
 The active queue's generic22:45 new-chunk cutoff could stop a16-seed cohort that began near its already registered21:55 whole-study gate, despite enough wall time for its last21-minute group. Before any D data, one narrow completion rule is recorded: if that happens, only the remaining **originally specified** D group(s) may start by23:00, with no primary model evaluation/selection before all16 and no seed expansion. This is a fixed-budget completion rule, not a result-triggered continuation. The whole-study gate and23:40 final deadline do not change; if completion is impossible, the study remains explicitly incomplete. The running queue code is not interrupted; a completion command is used only if needed.
+
+### 2026-10-15 20:33 UTC: C completed at independent n=8, primary analysis only now
+- Same-update gap [-12.452864583333334, -18.406139690437115, -6.499589476229551], actor main effect [-11.848177083333333, -16.452675176818644, -7.24367898984802], share 94.71%. Compound p=0.00083166, current fixed-family Holm p=0.00332664: passes even with pending studies p=1.
+- Native pause-relative AUC [3.4872395833333334, 0.2083801135775265, 6.766099053089141]; this is NOT a pause-reference state-surgery experiment and is not counted as persistent-damage localization. It again shows that Tier-I gap attribution is a distinct question.
+- Natural-context actor swaps and common fresh-moment checks remain negative at nominal intervals; fresh-Adam actor effect [-12.497916666666665, -16.993686169188052, -8.002147164145276]. Natural versus standardized context TOST p=0.01419 at the specified 5% practical scale.
+- The earlier noise cohort's positive Adam main effect is not clearly replicated: new Adam effect [0.15143229166666572, -1.661103769150236, 1.9639683524835674]. No universal optimizer-zero or optimizer-protection claim is made.
+- The serialized E software test passed all control checks before any E target update. E target cohort started20:31:18.
