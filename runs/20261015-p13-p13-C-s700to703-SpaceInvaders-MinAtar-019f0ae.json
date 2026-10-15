@@ -1,0 +1,174 @@
+{
+  "allow_dirty": false,
+  "config": {
+    "DEFICIT": "action_noise",
+    "DEFICIT_PARAMS": {
+      "prob": 0.5
+    },
+    "ENV_NAME": "SpaceInvaders-MinAtar",
+    "HIDDEN": 128,
+    "TOTAL_TIMESTEPS": 2457600,
+    "protocol": {
+      "cells": [
+        {
+          "code": "CCC",
+          "context": "clean",
+          "opt": "donor",
+          "reference": "fork"
+        },
+        {
+          "code": "CCD",
+          "context": "clean",
+          "opt": "donor",
+          "reference": "fork"
+        },
+        {
+          "code": "CDC",
+          "context": "clean",
+          "opt": "donor",
+          "reference": "fork"
+        },
+        {
+          "code": "CDD",
+          "context": "clean",
+          "opt": "donor",
+          "reference": "fork"
+        },
+        {
+          "code": "DCC",
+          "context": "clean",
+          "opt": "donor",
+          "reference": "fork"
+        },
+        {
+          "code": "DCD",
+          "context": "clean",
+          "opt": "donor",
+          "reference": "fork"
+        },
+        {
+          "code": "DDC",
+          "context": "clean",
+          "opt": "donor",
+          "reference": "fork"
+        },
+        {
+          "code": "DDD",
+          "context": "clean",
+          "opt": "donor",
+          "reference": "fork"
+        },
+        {
+          "code": "CCC",
+          "context": "damaged",
+          "opt": "donor",
+          "reference": "fork"
+        },
+        {
+          "code": "DCC",
+          "context": "damaged",
+          "opt": "donor",
+          "reference": "fork"
+        },
+        {
+          "code": "CDD",
+          "context": "damaged",
+          "opt": "donor",
+          "reference": "fork"
+        },
+        {
+          "code": "DDD",
+          "context": "damaged",
+          "opt": "donor",
+          "reference": "fork"
+        },
+        {
+          "code": "CCC",
+          "context": "clean",
+          "opt": "zero",
+          "reference": "fork"
+        },
+        {
+          "code": "CDC",
+          "context": "clean",
+          "opt": "zero",
+          "reference": "fork"
+        },
+        {
+          "code": "DCC",
+          "context": "clean",
+          "opt": "zero",
+          "reference": "fork"
+        },
+        {
+          "code": "DDC",
+          "context": "clean",
+          "opt": "zero",
+          "reference": "fork"
+        }
+      ],
+      "context_definition": "all non-learner fields from C or D; reset uses C RNG/counter with newly reset env/obs",
+      "contexts": [
+        "clean",
+        "damaged"
+      ],
+      "deficit": "action_noise",
+      "env": "SpaceInvaders-MinAtar",
+      "eval_envs": 64,
+      "eval_every": 10,
+      "eval_seed": 10000,
+      "fresh_reset_seed_offset": 900000,
+      "n": 8,
+      "name": "Actuator-noise independent impairment-family replication",
+      "no_score_logging": true,
+      "notes": "Full clean-context factorial; natural-D context actor corners; common fresh-Adam 2x2. Replacement probability .5, uniform over all actions.",
+      "pause_definition": "parameters and Adam state from shared onset; common future counter from context",
+      "primary_context": "clean",
+      "primary_reference": "fork",
+      "recovery": 150,
+      "references": [
+        "fork"
+      ],
+      "seeds": [
+        700,
+        701,
+        702,
+        703,
+        704,
+        705,
+        706,
+        707
+      ],
+      "smoke": false,
+      "steps_per_update": 8192,
+      "window": [
+        100,
+        150
+      ],
+      "zero_opt_definition": "all Adam states freshly initialized identically by procedure for all actor/critic cells"
+    }
+  },
+  "created_utc": "2026-10-15T18:49:01.635876+00:00",
+  "git": {
+    "commit": "019f0ae091158cfd3cac3819628874c0cc05520b",
+    "dirty": false
+  },
+  "name": "p13-p13-C-s700to703-SpaceInvaders-MinAtar",
+  "packages": {
+    "flax": "0.12.10",
+    "gymnax": "0.0.9",
+    "jax": "0.11.2",
+    "jaxlib": "0.11.2",
+    "numpy": "2.5.4",
+    "optax": "0.2.8",
+    "rliable": null
+  },
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.41",
+  "python": "3.13.16",
+  "seeds": [
+    700,
+    701,
+    702,
+    703
+  ]
+}
