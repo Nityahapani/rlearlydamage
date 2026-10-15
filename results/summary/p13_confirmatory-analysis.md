@@ -7,7 +7,7 @@ five NEW Phase 13 claims only, not retrospective paper-wide control
 | A | 8 | 0.0310171 | 0.0930512 | planned cohort complete |
 | B | 8 | 3.43335e-05 | 0.000171667 | planned cohort complete |
 | C | 8 | 0.00083166 | 0.00332664 | planned cohort complete |
-| E | 0 | 1 | 1 | not run / incomplete (no primary inference) |
+| E | 8 | 0.188592 | 0.377184 | planned cohort complete; substantial harm requires mean <= -1 |
 | D | 0 | 1 | 1 | not run / incomplete (no primary inference) |
 
 ## A: natural benchmark and contexts (n=8)

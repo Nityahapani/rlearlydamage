@@ -12,7 +12,7 @@ study & $n$ & primary $p$ & phase-wise Holm $p$ & completion \\
 A: CartPole flip & 8 & $0.031$ & $0.093$ & complete \\
 B: Asterix flip & 8 & $<10^{-4}$ & $0.000$ & complete \\
 C: SI actuator noise & 8 & $0.001$ & $0.003$ & complete \\
-E: controlled replay labels & -- & -- & -- & not completed \\
+E: controlled replay labels & 8 & $0.189$ & $0.377$ & complete \\
 D: prospective diagnostic & -- & -- & -- & not completed \\
 \bottomrule
 \end{tabular}}
@@ -80,6 +80,26 @@ C: fork/damaged/donor & $-12.7\ci{-18.5}{-6.9}\sig$ & $-14.9\ci{-21.6}{-8.2}\sig
 \end{tabular}}
 \end{table}
 
+% P13 TABLE replay
+\begin{table}[t]
+\centering
+\caption{Controlled replay-label exposure after complete washout ($n=8$). The genuine transition tuples, ages, state/action identities, collection policy and update schedule are matched. After $K=25$ the full buffer and every non-learner field are exactly equal; remaining differences are in the learner state. The RR--UU total compares naturally matched parameter/moment histories. Crossing and fresh moments are secondary procedure-specific probes, not a unique internal encoding analysis.}
+\label{tab:p13replay}
+\scriptsize
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{lc}
+\toprule
+post-washout contrast & recovery AUC difference \\
+\midrule
+naturally matched R--U total & $-0.43\ci{-1.50}{+0.65}$ \\
+parameter main effect & $-1.25\ci{-2.23}{-0.27}\sig$ \\
+moment main effect & $+0.82\ci{-0.34}{+1.98}$ \\
+interaction & $+0.29\ci{-1.94}{+2.53}$ \\
+R--U with common fresh moments & $-0.72\ci{-2.75}{+1.32}$ \\
+\bottomrule
+\end{tabular}}
+\end{table}
+
 % P13 TABLE inference_map
 \begin{table}[t]
 \centering
@@ -104,7 +124,7 @@ KL association & rank with recovery AUC & Spearman rho & 32 fresh & Holm 4; two-
 Extreme collapse & post-hoc phenotype count & flat-score phenotype, not all failures & 1 / 44 & descriptive binomial interval & rare-event probability imprecise \\
 A/B pause replications & native + state-pause AUC & harm + actor effect + paired Shapley rank & 8/8 & fixed five-claim Phase-13 Holm & new independent IDs; compound test specified \\
 C noise replication & same-update gap (Tier I) & harm + actor effect + paired Shapley rank & 8 fresh & same five-claim family & not a pause-localization test \\
-E label exposure & post-washout AUC & naturally matched RR minus UU & 0 of 8 planned & same five-claim family; delta=1 & controlled assay, not legacy mediation proof \\
+E label exposure & post-washout AUC & naturally matched RR minus UU & 8 fresh & same five-claim family; delta=1 & controlled assay, not legacy mediation proof \\
 D prospective diagnostic & held-out squared error & acute-gap versus acute-gap+KL & 0 of 16 planned & same five-claim family; 10\% gain & fixed-coefficient cost prediction, not failure probability \\
 \bottomrule
 \end{tabular}}
