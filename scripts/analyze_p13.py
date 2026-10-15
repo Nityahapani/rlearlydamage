@@ -49,7 +49,7 @@ def load_study(gid,npartial=False):
     pause=np.asarray(pause)
     native=(M[nativeDkey][:,1:]-pause[:,1:]).mean(1)
     out=dict(study=gid,n=len(seen),seeds=seen,complete=sorted(seen)==expected,natural_identity_checks_pass=True,
-             native_damage=tci(native),native_damage_per_seed=native.tolist(),groups={},contexts={},cells={k:v.tolist() for k,v in M.items()})
+             native_damage=tci(native),native_damage_per_seed=native.tolist(),native_late_damage=tci((M[nativeDkey][:,-5:]-pause[:,-5:]).mean(1)),groups={},contexts={},cells={k:v.tolist() for k,v in M.items()})
     for prefix in sorted({k.rsplit('/',1)[0] for k in M}):
         subset={k.rsplit('/',1)[1]:v[:,1:].mean(1) for k,v in M.items() if k.startswith(prefix+'/')}
         if all(c in subset for c in CODES):
@@ -125,7 +125,7 @@ def main():
     for k in ['A','B','C']:
         r=R[k]
         if r is None:continue
-        L += ['',f'## {k}: natural benchmark and contexts (n={r["n"]})','',f'Native damage beyond historical pause: {fmt(r["native_damage"])}.',
+        L += ['',f'## {k}: natural benchmark and contexts (n={r["n"]})','',f'Native damage beyond historical pause: {fmt(r["native_damage"])}; last five checkpoints {fmt(r["native_late_damage"])}.',
               f'Natural-state identity checks: {r["natural_identity_checks_pass"]}.',
               f'Context shift, standardized DDD minus natural D: {fmt(r["natural_vs_standardized"]["difference"])}; joint-scale TOST p={r["natural_vs_standardized"]["TOST_joint"]:.4g}.',
               '', '| reference/context/moments | total gap | actor effect / bad-actor transfer | good-actor rescue |','|---|---|---|---|']
