@@ -56,10 +56,17 @@ def load_study(gid,npartial=False):
             total=subset['DDD']-subset['CCC']
             main={c:np.mean([v for k,v in subset.items() if k[i]=='D'],axis=0)-np.mean([v for k,v in subset.items() if k[i]=='C'],axis=0) for i,c in enumerate(CARR)}
             ph=shapley(subset)
+            compat={}
+            for ac in ['C','D']:
+                xx=np.mean([v for c,v in subset.items() if c[0]==ac and c[2]=='D'],0)-np.mean([v for c,v in subset.items() if c[0]==ac and c[2]=='C'],0)
+                compat['optimizer_with_actor_'+ac]=tci(xx)
+            for op in ['C','D']:
+                xx=np.mean([v for c,v in subset.items() if c[0]=='D' and c[2]==op],0)-np.mean([v for c,v in subset.items() if c[0]=='C' and c[2]==op],0)
+                compat['actor_with_optimizer_'+op]=tci(xx)
             primaryparts={'total_negative':pneg(total),'actor_main_negative':pneg(main['actor']),
                           'actor_phi_below_critic':pneg(ph['actor']-ph['critic']),'actor_phi_below_Adam':pneg(ph['actor']-ph['opt'])}
             out['groups'][prefix]=dict(total=tci(total),effects={k:tci(x) for k,x in main.items()},
-                shapley={k:tci(x) for k,x in ph.items()},shares={k:float(x.mean()/total.mean()*100) for k,x in ph.items()} if tci(total)[2]<0 else None,
+                compatibility_secondary=compat,shapley={k:tci(x) for k,x in ph.items()},shares={k:float(x.mean()/total.mean()*100) for k,x in ph.items()} if tci(total)[2]<0 else None,
                 actor_in_clean_background=tci(subset['DCC']-subset['CCC']),actor_rescue_damaged_background=tci(subset['CDD']-subset['DDD']),
                 compound_parts=primaryparts,compound_p=max(primaryparts.values()),
                 per_seed={'total':total.tolist(),**{k:main[k].tolist() for k in CARR}})
@@ -81,6 +88,16 @@ def load_study(gid,npartial=False):
     stdkey=ref+'/clean/donor/DDD';delta=(M[stdkey][:,1:]-M[nativeDkey][:,1:]).mean(1)
     clean=M['fork/clean/donor/CCC'][:,1:].mean(1)
     plo=pneg(-(delta+.05*clean));phi=pneg(delta-.05*clean)
+    # Additional reference-agreement diagnostics; no registered primary is changed.
+    if gid in ['A','B']:
+        out['pause_reference_agreement_secondary']={}
+        for context in ['clean','damaged']:
+            key='pause/'+context+'/donor/CCC'
+            if key in M:
+                xx=(M[key][:,1:]-pause[:,1:]).mean(1)
+                out['pause_reference_agreement_secondary'][context]=dict(difference=tci(xx),
+                    TOST_joint=max(pneg(-(xx+.05*clean)),pneg(xx-.05*clean)),
+                    status='reference agreement diagnostic; not a primary gate or unique-pause proof')
     out['natural_vs_standardized']=dict(difference=tci(delta),margin_rule='5% of mean native clean AUC',margin=float(.05*clean.mean()),TOST_joint=max(plo,phi),
                                        natural_D_AUC=tci(M[nativeDkey][:,1:].mean(1)),standardized_DDD_AUC=tci(M[stdkey][:,1:].mean(1)))
     return out
