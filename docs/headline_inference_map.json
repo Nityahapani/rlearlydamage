@@ -1,0 +1,109 @@
+{
+  "scope": "Legacy families are separate; no single retrospectively globally controlled error rate. New Phase 13 has one fixed five-claim Holm family.",
+  "legacy_claims": [
+    {
+      "claim": "Early/late timing",
+      "estimand": "historical delay-shifted return",
+      "contrast": "early/late D \u2212 C(t\u2212L)",
+      "n": "4 per learner",
+      "family": "none across learners; exploratory CIs",
+      "status": "Exploratory; no general no-critical-period guarantee"
+    },
+    {
+      "claim": "Main movement: harm beyond time",
+      "estimand": "pause-relative AUC, +10..250",
+      "contrast": "D \u2212 historical C(t\u2212L); TOST \u00b13",
+      "n": "12 independent IDs",
+      "family": "one estimand; two one-sided tests",
+      "status": "Bounded/inconclusive; harm worse than \u22123 rejected, not equivalent"
+    },
+    {
+      "claim": "Same-task relearning rate",
+      "estimand": "competence-matched AUC",
+      "contrast": "D \u2212 C(t*+k)",
+      "n": "12 independent IDs",
+      "family": "single paired test, distinct question",
+      "status": "Registered rate support, not a new-task plasticity test"
+    },
+    {
+      "claim": "Main actor/critic/Adam",
+      "estimand": "same-update recovery gap",
+      "contrast": "2^3 factorial main effects / Shapley",
+      "n": "12 pooled; 8 new",
+      "family": "Holm over three component effects",
+      "status": "Actor supported on fresh subset; critic significant only in pooled 12"
+    },
+    {
+      "claim": "SI flip pause-reference actor",
+      "estimand": "state-level pause AUC",
+      "contrast": "DDD \u2212 PPP and donor component effects",
+      "n": "8 reused IDs, new reference",
+      "family": "Holm over component main effects",
+      "status": "Registered procedural localization; not identical to historical pause"
+    },
+    {
+      "claim": "Legacy generalization count",
+      "estimand": "same-update gap conditional on eligibility",
+      "contrast": "negative total, negative actor; largest point share",
+      "n": "8 per setting, plus main 12",
+      "family": "within-setting families, no paper-wide control",
+      "status": "New registered contrasts; not independent-seed replications; report null/unresolved settings"
+    },
+    {
+      "claim": "Q-network versus buffer",
+      "estimand": "same-update Q recovery gap",
+      "contrast": "2^2 network-block \u00d7 buffer",
+      "n": "12 / 8",
+      "family": "exploratory intervals",
+      "status": "Exploratory; network block includes moments"
+    },
+    {
+      "claim": "Q parameters versus moments",
+      "estimand": "rescue at damaged buffer",
+      "contrast": "parameter-only and moment-only rescues",
+      "n": "8 reused histories",
+      "family": "Holm over two primary rescues",
+      "status": "Registered parameter rescue; moment-only rescue inconclusive"
+    },
+    {
+      "claim": "Matched replay identity",
+      "estimand": "identity-only recovery AUC",
+      "contrast": "purge R \u2212 purge matched U; TOST \u00b11",
+      "n": "32",
+      "family": "one primary contrast; TOST IUT",
+      "status": "Marginal practical bound, p=.0495; fails \u00b1.75"
+    },
+    {
+      "claim": "Longest restriction",
+      "estimand": "late historical pause gap +210..250",
+      "contrast": "L_300; TOST \u00b15",
+      "n": "8 + 32 independent IDs",
+      "family": "per-study tests; two-look sensitivity for 32",
+      "status": "Both inconclusive; bounded mean, not absence or irreversibility"
+    },
+    {
+      "claim": "Extreme non-improving collapse",
+      "estimand": "post-hoc phenotype count",
+      "contrast": "one flat-score collapsed policy among long-restricted runs",
+      "n": "1 event / 44 agents",
+      "family": "descriptive count; exact binomial interval conditional on phenotype",
+      "status": "Post-hoc; not a precise rare-event or universal failure rate"
+    },
+    {
+      "claim": "KL diagnostic association",
+      "estimand": "rank relation to A_300",
+      "contrast": "Spearman rho against recovery AUC",
+      "n": "32 independent IDs",
+      "family": "Holm four; \u00d72-look sensitivity",
+      "status": "Association, not causality; combined exclusion/looks p=.062; 5% within-cohort MSE gain"
+    },
+    {
+      "claim": "Buffer-through-learning account",
+      "estimand": "time course after overwrite",
+      "contrast": "initial buffer effect after old entries gone",
+      "n": "8 / 12",
+      "family": "interpretive temporal analysis",
+      "status": "Mechanistic interpretation, not unique mediation proof"
+    }
+  ]
+}
