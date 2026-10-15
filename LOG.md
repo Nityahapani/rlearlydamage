@@ -1552,3 +1552,9 @@ A further sandbox reset removed the runtime and rolled Git back to 02293d4. Save
 - Claim edits: statuses/sample counts/seed reuse; operational carrier definition; standardized future context (not natural DDD); practical margin justification/sensitivity; interim and combined outlier sensitivity; finite-budget extreme-collapse phenotype and its uncertain rate.
 - Added all saved missing summaries, manifests, analyses, source scripts, figures and available NPZ arrays. `docs/result_inventory.json` records hashes and completion; large generated states lost from the temporary cache are explicitly not claimed to be archived.
 - Paper built with Tectonic 0.15.0; visual/reference checks are part of the final verification. No additional training job was launched during finalization.
+
+### 2026-10-15 03:54 UTC: Final PDF verification
+- Final PDF: 40 pages, 3323480 bytes, SHA256 `26753f81fdaa2c4d7d9a2c995af8667ef6b2da7e0e6834e15514259b571d5df8`.
+- No unresolved references, outcome placeholders, undefined local labels or overfull boxes. New figure titles/legends and main tables were visually checked.
+- All 527 inventoried saved files are versioned and their SHA256 checks pass, including 175 NPZ arrays.
+- Primary n=32 point-of-no-return and all four predictor rows were reproduced exactly from the archived removal weights/banks; a redundant onset file is no longer needed merely to infer action dimension.
