@@ -1,0 +1,429 @@
+{
+  "status": "FROZEN before all held-out seeds 900\u2013915",
+  "training_seeds": [
+    300,
+    301,
+    302,
+    303,
+    304,
+    305,
+    306,
+    307,
+    308,
+    309,
+    310,
+    311,
+    312,
+    313,
+    314,
+    315,
+    316,
+    317,
+    318,
+    319,
+    320,
+    321,
+    322,
+    323,
+    324,
+    325,
+    326,
+    327,
+    328,
+    329,
+    330,
+    331
+  ],
+  "validation_seeds": [
+    900,
+    901,
+    902,
+    903,
+    904,
+    905,
+    906,
+    907,
+    908,
+    909,
+    910,
+    911,
+    912,
+    913,
+    914,
+    915
+  ],
+  "training_rows": [
+    {
+      "seed": 300,
+      "A_300": 3.561879999999998,
+      "acute_gap": 86.79690000000001,
+      "removal_score": 11.2812,
+      "entropy": 0.504041025623905,
+      "KL": 1.5940338084615964
+    },
+    {
+      "seed": 301,
+      "A_300": 3.4968840000000005,
+      "acute_gap": 85.0,
+      "removal_score": 7.6875,
+      "entropy": 0.5010925460336768,
+      "KL": 1.670894032077236
+    },
+    {
+      "seed": 302,
+      "A_300": 7.2300080000000015,
+      "acute_gap": 109.65620000000001,
+      "removal_score": 7.7969,
+      "entropy": 0.4225350374531619,
+      "KL": 2.2012522259405505
+    },
+    {
+      "seed": 303,
+      "A_300": -0.6856199999999998,
+      "acute_gap": 84.4843,
+      "removal_score": 12.4688,
+      "entropy": 0.3974915204293088,
+      "KL": 1.691449553262808
+    },
+    {
+      "seed": 304,
+      "A_300": 4.016251999999999,
+      "acute_gap": 121.18740000000001,
+      "removal_score": 8.3438,
+      "entropy": 0.5027538181259925,
+      "KL": 1.7856948261071433
+    },
+    {
+      "seed": 305,
+      "A_300": -3.4618679999999977,
+      "acute_gap": 119.1094,
+      "removal_score": 6.4375,
+      "entropy": 0.5077236424972431,
+      "KL": 1.7112867739672553
+    },
+    {
+      "seed": 306,
+      "A_300": 5.753120000000001,
+      "acute_gap": 87.9531,
+      "removal_score": 14.1094,
+      "entropy": 0.4905203466380974,
+      "KL": 1.5155371397345083
+    },
+    {
+      "seed": 307,
+      "A_300": 7.9518759999999995,
+      "acute_gap": 85.7969,
+      "removal_score": 22.4219,
+      "entropy": 0.5498875041604675,
+      "KL": 1.0510807919460803
+    },
+    {
+      "seed": 308,
+      "A_300": -2.3493880000000007,
+      "acute_gap": 97.9375,
+      "removal_score": 7.3281,
+      "entropy": 0.5253613785184031,
+      "KL": 1.6597199718723468
+    },
+    {
+      "seed": 309,
+      "A_300": -4.374391999999999,
+      "acute_gap": 96.54679999999999,
+      "removal_score": 10.3594,
+      "entropy": 0.5121670214654684,
+      "KL": 1.7499928191645444
+    },
+    {
+      "seed": 310,
+      "A_300": 0.9706280000000007,
+      "acute_gap": 86.1094,
+      "removal_score": 12.375,
+      "entropy": 0.6434897298813129,
+      "KL": 1.4299515168145944
+    },
+    {
+      "seed": 311,
+      "A_300": -2.218119999999999,
+      "acute_gap": 84.84379999999999,
+      "removal_score": 13.8906,
+      "entropy": 0.39192057550911147,
+      "KL": 1.7218636920767225
+    },
+    {
+      "seed": 312,
+      "A_300": 1.5124959999999998,
+      "acute_gap": 89.0312,
+      "removal_score": 15.375,
+      "entropy": 0.5189247248906208,
+      "KL": 1.9791043729363547
+    },
+    {
+      "seed": 313,
+      "A_300": -1.4968759999999983,
+      "acute_gap": 101.25,
+      "removal_score": 8.0156,
+      "entropy": 0.36309252037604445,
+      "KL": 2.475870243245979
+    },
+    {
+      "seed": 314,
+      "A_300": -0.6137519999999997,
+      "acute_gap": 92.8437,
+      "removal_score": 5.1875,
+      "entropy": 0.7344719653730916,
+      "KL": 1.2695167121134645
+    },
+    {
+      "seed": 315,
+      "A_300": 1.7218559999999998,
+      "acute_gap": 102.26559999999999,
+      "removal_score": 5.2656,
+      "entropy": 0.4987297054272814,
+      "KL": 1.43307777277204
+    },
+    {
+      "seed": 316,
+      "A_300": -20.465012,
+      "acute_gap": 101.54690000000001,
+      "removal_score": 7.4219,
+      "entropy": 0.4261267339675933,
+      "KL": 2.259378497905978
+    },
+    {
+      "seed": 317,
+      "A_300": 2.5093799999999997,
+      "acute_gap": 91.75,
+      "removal_score": 14.9062,
+      "entropy": 0.6621938708360307,
+      "KL": 1.0762293554163187
+    },
+    {
+      "seed": 318,
+      "A_300": 5.533763999999999,
+      "acute_gap": 99.0469,
+      "removal_score": 12.3281,
+      "entropy": 0.5315027356951257,
+      "KL": 1.5363033913410677
+    },
+    {
+      "seed": 319,
+      "A_300": -3.4143760000000003,
+      "acute_gap": 91.21879999999999,
+      "removal_score": 10.8281,
+      "entropy": 0.41411619255928916,
+      "KL": 2.2745215836389323
+    },
+    {
+      "seed": 320,
+      "A_300": -3.3674919999999986,
+      "acute_gap": 92.1875,
+      "removal_score": 6.3906,
+      "entropy": 0.45387722379427997,
+      "KL": 2.1409337173033456
+    },
+    {
+      "seed": 321,
+      "A_300": -8.10688,
+      "acute_gap": 104.375,
+      "removal_score": 13.9688,
+      "entropy": 0.45958262066808797,
+      "KL": 1.5877713400723428
+    },
+    {
+      "seed": 322,
+      "A_300": -7.994999999999999,
+      "acute_gap": 106.6406,
+      "removal_score": 4.7344,
+      "entropy": 0.3960787036399336,
+      "KL": 2.269328247623499
+    },
+    {
+      "seed": 323,
+      "A_300": -8.065620000000001,
+      "acute_gap": 114.15620000000001,
+      "removal_score": 7.3594,
+      "entropy": 0.46915350631638214,
+      "KL": 2.163970437564005
+    },
+    {
+      "seed": 324,
+      "A_300": -4.868132,
+      "acute_gap": 93.5,
+      "removal_score": 6.1094,
+      "entropy": 0.4442997891606027,
+      "KL": 1.687349271948468
+    },
+    {
+      "seed": 325,
+      "A_300": -2.3756239999999997,
+      "acute_gap": 87.9375,
+      "removal_score": 10.0469,
+      "entropy": 0.5596552243559706,
+      "KL": 1.5007101885233491
+    },
+    {
+      "seed": 326,
+      "A_300": -5.997503999999999,
+      "acute_gap": 92.4219,
+      "removal_score": 13.1875,
+      "entropy": 0.3749209830585005,
+      "KL": 2.0990342709251983
+    },
+    {
+      "seed": 327,
+      "A_300": -1.3125120000000001,
+      "acute_gap": 80.6875,
+      "removal_score": 14.125,
+      "entropy": 0.595634136056453,
+      "KL": 1.2302299701836816
+    },
+    {
+      "seed": 328,
+      "A_300": -1.1137400000000013,
+      "acute_gap": 88.5469,
+      "removal_score": 10.8125,
+      "entropy": 0.49319832036293854,
+      "KL": 2.1408434582016147
+    },
+    {
+      "seed": 329,
+      "A_300": 9.070631999999998,
+      "acute_gap": 105.5781,
+      "removal_score": 9.0625,
+      "entropy": 0.5294291188396464,
+      "KL": 1.6141006506149733
+    },
+    {
+      "seed": 330,
+      "A_300": -75.188744,
+      "acute_gap": 99.9062,
+      "removal_score": 3.0,
+      "entropy": 0.19195825264205238,
+      "KL": 2.63731234308821
+    },
+    {
+      "seed": 331,
+      "A_300": -0.7443599999999995,
+      "acute_gap": 102.3126,
+      "removal_score": 7.7812,
+      "entropy": 0.4293650277750664,
+      "KL": 2.5154673179357983
+    }
+  ],
+  "models": {
+    "training_mean": {
+      "features": [],
+      "mean": [],
+      "sd": [],
+      "coefficients": [
+        -3.277694875000001
+      ]
+    },
+    "acute_gap": {
+      "features": [
+        "acute_gap"
+      ],
+      "mean": [
+        96.33202499999999
+      ],
+      "sd": [
+        10.215960767164782
+      ],
+      "coefficients": [
+        -3.277694875000001,
+        -1.6562301369757906
+      ]
+    },
+    "removal_entropy": {
+      "features": [
+        "entropy"
+      ],
+      "mean": [
+        0.4842279844415981
+      ],
+      "sd": [
+        0.09782670425803404
+      ],
+      "coefficients": [
+        -3.2776948750000012,
+        8.543731550430389
+      ]
+    },
+    "KL": {
+      "features": [
+        "KL"
+      ],
+      "mean": [
+        1.8023065717118751
+      ],
+      "sd": [
+        0.40985386003709373
+      ],
+      "coefficients": [
+        -3.2776948750000012,
+        -6.995470782456404
+      ]
+    },
+    "acute_gap_plus_KL": {
+      "features": [
+        "acute_gap",
+        "KL"
+      ],
+      "mean": [
+        96.33202499999999,
+        1.8023065717118756
+      ],
+      "sd": [
+        10.215960767164782,
+        0.40985386003709373
+      ],
+      "coefficients": [
+        -3.2776948750000012,
+        0.997554709251455,
+        -7.355383436053502
+      ]
+    },
+    "removal_score": {
+      "features": [
+        "removal_score"
+      ],
+      "mean": [
+        10.012696875
+      ],
+      "sd": [
+        3.988597348652498
+      ],
+      "coefficients": [
+        -3.277694875000001,
+        5.828620466454855
+      ]
+    }
+  },
+  "primary_comparison": [
+    "acute_gap",
+    "acute_gap_plus_KL"
+  ],
+  "primary_metric": "paired held-out squared-error reduction",
+  "practical_gain_threshold": 0.1,
+  "source_files": [
+    "results/summary/20261014-p7-p9-ponr-confirm2-s300to303-ppo-SpaceInvaders-MinAtar-63a8f1d.json",
+    "results/summary/20261014-p7-p9-ponr-confirm2-s304to307-ppo-SpaceInvaders-MinAtar-4a02dd2.json",
+    "results/summary/20261014-p7-p9-ponr-confirm2-s308to311-ppo-SpaceInvaders-MinAtar-88383ca.json",
+    "results/summary/20261014-p7-p9-ponr-confirm2-s312to315-ppo-SpaceInvaders-MinAtar-88383ca.json",
+    "results/summary/20261014-p7-p9-ponr-confirm2-s316to319-ppo-SpaceInvaders-MinAtar-ac63459.json",
+    "results/summary/20261014-p7-p9-ponr-confirm2-s320to323-ppo-SpaceInvaders-MinAtar-adf81f2.json",
+    "results/summary/20261014-p7-p9-ponr-confirm2-s324to327-ppo-SpaceInvaders-MinAtar-adf81f2.json",
+    "results/summary/20261014-p7-p9-ponr-confirm2-s328to331-ppo-SpaceInvaders-MinAtar-adf81f2.json"
+  ],
+  "source_hashes": {
+    "results/summary/20261014-p7-p9-ponr-confirm2-s300to303-ppo-SpaceInvaders-MinAtar-63a8f1d.json": "924bbebb222ba2a677331f2dad91d19c7b0f6d37c5fc8465a48761e376622cb4",
+    "results/summary/20261014-p7-p9-ponr-confirm2-s304to307-ppo-SpaceInvaders-MinAtar-4a02dd2.json": "6c03675f91a2df50ce52de78c381fa5ce4fb8ad028306c4c696e11911d11dda7",
+    "results/summary/20261014-p7-p9-ponr-confirm2-s308to311-ppo-SpaceInvaders-MinAtar-88383ca.json": "cda4dd339e2481320d015f660ada981054889bcb486bfcbba9a9da2ec751c820",
+    "results/summary/20261014-p7-p9-ponr-confirm2-s312to315-ppo-SpaceInvaders-MinAtar-88383ca.json": "a9dbd083bc1991f5f95895d7b13479ff5f2523f15aa8ff63614024ea96695d51",
+    "results/summary/20261014-p7-p9-ponr-confirm2-s316to319-ppo-SpaceInvaders-MinAtar-ac63459.json": "73668aa7d9cdc6cde528fb2b67238222823929921fd2b2432ad490816d86d818",
+    "results/summary/20261014-p7-p9-ponr-confirm2-s320to323-ppo-SpaceInvaders-MinAtar-adf81f2.json": "847a37e0930c6bc18a8de4b4aafb910fddda3f4af3f44c3dbe9ffbd07b39eb95",
+    "results/summary/20261014-p7-p9-ponr-confirm2-s324to327-ppo-SpaceInvaders-MinAtar-adf81f2.json": "19cc0af831183212813faec970379dc1f8a1aaf0278f3daa92a5f79e0078d72d",
+    "results/summary/20261014-p7-p9-ponr-confirm2-s328to331-ppo-SpaceInvaders-MinAtar-adf81f2.json": "b956cee5296f9bda9e369d299538a193685a9a4d58dd1e4673d7e489e0282119"
+  },
+  "score_only_baseline": "removal_score is an additional pre-validation secondary baseline; no oracle C required"
+}
