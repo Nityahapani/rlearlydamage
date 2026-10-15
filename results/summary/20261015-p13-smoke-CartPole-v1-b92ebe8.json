@@ -1,0 +1,161 @@
+{
+ "manifest": "20261015-p13-smoke-CartPole-v1-b92ebe8.json",
+ "seeds": [
+  99990
+ ],
+ "protocol": {
+  "name": "CartPole independent replication and pause/context localization",
+  "env": "CartPole-v1",
+  "deficit": "reward_flip",
+  "window": [
+   10,
+   20
+  ],
+  "recovery": 20,
+  "seeds": [
+   600,
+   601,
+   602,
+   603,
+   604,
+   605,
+   606,
+   607
+  ],
+  "n": 8,
+  "references": [
+   "fork",
+   "pause"
+  ],
+  "contexts": [
+   "clean",
+   "damaged",
+   "reset"
+  ],
+  "primary_reference": "pause",
+  "primary_context": "clean",
+  "notes": "Full 2^3 for fork/pause x clean/damaged; pause clean zero-Adam 2x2; reset-world pause actor corners. Natural D equals damaged-context DDD by full state assertion.",
+  "steps_per_update": 8192,
+  "eval_every": 10,
+  "eval_envs": 64,
+  "eval_seed": 10000,
+  "cells": [
+   {
+    "reference": "fork",
+    "context": "clean",
+    "opt": "donor",
+    "code": "CCC"
+   },
+   {
+    "reference": "pause",
+    "context": "clean",
+    "opt": "donor",
+    "code": "DDD"
+   },
+   {
+    "reference": "fork",
+    "context": "damaged",
+    "opt": "donor",
+    "code": "DDD"
+   },
+   {
+    "reference": "pause",
+    "context": "clean",
+    "opt": "zero",
+    "code": "CCC"
+   },
+   {
+    "reference": "pause",
+    "context": "reset",
+    "opt": "donor",
+    "code": "DDD"
+   }
+  ],
+  "fresh_reset_seed_offset": 900000,
+  "context_definition": "all non-learner fields from C or D; reset uses C RNG/counter with newly reset env/obs",
+  "pause_definition": "parameters and Adam state from shared onset; common future counter from context",
+  "zero_opt_definition": "all Adam states freshly initialized identically by procedure for all actor/critic cells",
+  "no_score_logging": true,
+  "smoke": true
+ },
+ "eval_updates": [
+  20,
+  30,
+  40
+ ],
+ "fork_eval": {
+  "updates": [
+   10,
+   20
+  ],
+  "C": [
+   [
+    309.34375
+   ],
+   [
+    349.375
+   ]
+  ],
+  "D": [
+   [
+    309.34375
+   ],
+   [
+    15.46875
+   ]
+  ]
+ },
+ "cells": {
+  "fork/clean/donor/CCC": {
+   "eval_return_mean": [
+    [
+     349.375,
+     267.40625,
+     282.984375
+    ]
+   ]
+  },
+  "pause/clean/donor/DDD": {
+   "eval_return_mean": [
+    [
+     15.46875,
+     180.9375,
+     200.859375
+    ]
+   ]
+  },
+  "fork/damaged/donor/DDD": {
+   "eval_return_mean": [
+    [
+     15.46875,
+     235.203125,
+     308.9375
+    ]
+   ]
+  },
+  "pause/clean/zero/CCC": {
+   "eval_return_mean": [
+    [
+     309.34375,
+     338.171875,
+     326.21875
+    ]
+   ]
+  },
+  "pause/reset/donor/DDD": {
+   "eval_return_mean": [
+    [
+     15.46875,
+     260.78125,
+     198.3125
+    ]
+   ]
+  }
+ },
+ "checks": {
+  "clean_CCC_equals_natural_C": true,
+  "fork/damaged/donor/DDD_equals_natural_D": true
+ },
+ "status": "complete",
+ "wallclock_s": 21.1
+}
