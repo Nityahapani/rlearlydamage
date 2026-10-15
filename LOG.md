@@ -1604,3 +1604,10 @@ The active queue's generic22:45 new-chunk cutoff could stop a16-seed cohort that
 - Natural-context actor swaps and common fresh-moment checks remain negative at nominal intervals; fresh-Adam actor effect [-12.497916666666665, -16.993686169188052, -8.002147164145276]. Natural versus standardized context TOST p=0.01419 at the specified 5% practical scale.
 - The earlier noise cohort's positive Adam main effect is not clearly replicated: new Adam effect [0.15143229166666572, -1.661103769150236, 1.9639683524835674]. No universal optimizer-zero or optimizer-protection claim is made.
 - The serialized E software test passed all control checks before any E target update. E target cohort started20:31:18.
+
+### 2026-10-15 21:03 UTC: E complete at planned n=8; controlled pathway test is inconclusive
+- Manipulation changed 11,442–12,170 genuine old-window reward labels per seed, without changing transition identities/ages. All fixed-collector env/obs/RNG and post-washout full-buffer/non-learner/step assertions pass. No old-era entry remains afterK25.
+- Matched natural RR−UU delayed AUC [-0.42838541666666785, -1.5028348216669807, 0.646063988333645]; p=0.188592, current five-claim Holm=0.377184. Point effect does not reach the prespecified−1 threshold.
+- TOST±1 p=0.124365: also no equivalence claim. The data neither demonstrate substantial net delayed harm nor establish zero effect at one point.
+- Crossed parameter contrast [-1.2495442708333342, -2.2313122503335183, -0.2677762913331502] is nominally negative, moments [0.8211588541666668, -0.3410849734827037, 1.9834026818160373]; common-fresh-moment contrast [-0.7190755208333348, -2.7543755265149343, 1.3162244848482647] remains uncertain. These secondary procedure-specific effects do NOT rescue the failed matched-continuation primary or prove unique encoding. Original movement buffer mediation remains an interpretation.
+- Frozen prospective D cohort began21:02:19; no validation model refit or primary analysis until all16.
