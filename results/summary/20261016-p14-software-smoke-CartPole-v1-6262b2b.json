@@ -1,0 +1,272 @@
+{
+ "manifest": "20261016-p14-software-smoke-CartPole-v1-6262b2b.json",
+ "seeds": [
+  99992
+ ],
+ "protocol": {
+  "schema": "p14-v1",
+  "env": "CartPole-v1",
+  "window": [
+   10,
+   20
+  ],
+  "recovery": 20,
+  "eval_every": 10,
+  "eval_envs": 64,
+  "eval_seed": 10000,
+  "second_eval_seed": 54321,
+  "second_eval_cells": [
+   "fork/clean/donor/CCC",
+   "pause/damaged/donor/CDD",
+   "pause/damaged/donor/DDD"
+  ],
+  "cells": [
+   {
+    "reference": "fork",
+    "context": "clean",
+    "opt": "donor",
+    "code": "CCC"
+   },
+   {
+    "reference": "pause",
+    "context": "damaged",
+    "opt": "donor",
+    "code": "CCC"
+   },
+   {
+    "reference": "pause",
+    "context": "damaged",
+    "opt": "donor",
+    "code": "DDD"
+   },
+   {
+    "reference": "pause",
+    "context": "damaged",
+    "opt": "donor",
+    "code": "CDD"
+   },
+   {
+    "reference": "pause",
+    "context": "damaged",
+    "opt": "donor",
+    "code": "DCC"
+   },
+   {
+    "reference": "pause",
+    "context": "damaged",
+    "opt": "zero",
+    "code": "CCC"
+   },
+   {
+    "reference": "pause",
+    "context": "damaged",
+    "opt": "zero",
+    "code": "CDC"
+   },
+   {
+    "reference": "pause",
+    "context": "damaged",
+    "opt": "zero",
+    "code": "DCC"
+   },
+   {
+    "reference": "pause",
+    "context": "damaged",
+    "opt": "zero",
+    "code": "DDC"
+   },
+   {
+    "reference": "pause",
+    "context": "reset",
+    "opt": "donor",
+    "code": "DDD"
+   },
+   {
+    "reference": "pause",
+    "context": "reset",
+    "opt": "donor",
+    "code": "CDD"
+   }
+  ],
+  "steps_per_update": 8192,
+  "smoke": true,
+  "actor_donor": "shared onset; no extra clean progress",
+  "context": "natural D for main swaps; reset changes only env/obs, keeps D RNG/counter",
+  "optimizer_control": "common fresh Adam for all4 actor x critic combinations"
+ },
+ "eval_updates": [
+  20,
+  30,
+  40
+ ],
+ "fork_eval": {
+  "updates": [
+   10,
+   20
+  ],
+  "C": [
+   [
+    249.640625
+   ],
+   [
+    257.5625
+   ]
+  ],
+  "D": [
+   [
+    249.640625
+   ],
+   [
+    15.75
+   ]
+  ]
+ },
+ "fork_eval_alt": {
+  "updates": [
+   10,
+   20
+  ],
+  "C": [
+   [
+    257.015625
+   ],
+   [
+    250.0625
+   ]
+  ]
+ },
+ "state_fingerprints": {
+  "C": "df80c3bccd2852ca45aaa92b9af3f9f13857942b8373a9b202df3b7e426739df",
+  "D": "29d76b37d2fbbbd7289dd34bfa1ddcc0dc9b384ae6fb9c63bba567d61d9cb40e",
+  "P": "074b9429f5be100dc3ccc19ecf0b5bfe448f865e82d5a05a0accb5e1e6de3f68"
+ },
+ "cells": {
+  "fork/clean/donor/CCC": {
+   "eval_return_mean": [
+    [
+     257.5625,
+     430.734375,
+     480.984375
+    ]
+   ],
+   "eval_alt_return_mean": [
+    [
+     250.0625,
+     405.65625,
+     478.140625
+    ]
+   ]
+  },
+  "pause/damaged/donor/CCC": {
+   "eval_return_mean": [
+    [
+     249.640625,
+     433.9375,
+     426.3125
+    ]
+   ]
+  },
+  "pause/damaged/donor/DDD": {
+   "eval_return_mean": [
+    [
+     15.75,
+     237.234375,
+     308.140625
+    ]
+   ],
+   "eval_alt_return_mean": [
+    [
+     16.265625,
+     234.359375,
+     304.046875
+    ]
+   ]
+  },
+  "pause/damaged/donor/CDD": {
+   "eval_return_mean": [
+    [
+     249.640625,
+     302.65625,
+     334.96875
+    ]
+   ],
+   "eval_alt_return_mean": [
+    [
+     257.015625,
+     317.8125,
+     309.578125
+    ]
+   ]
+  },
+  "pause/damaged/donor/DCC": {
+   "eval_return_mean": [
+    [
+     15.75,
+     204.53125,
+     306.09375
+    ]
+   ]
+  },
+  "pause/damaged/zero/CCC": {
+   "eval_return_mean": [
+    [
+     249.640625,
+     337.109375,
+     463.484375
+    ]
+   ]
+  },
+  "pause/damaged/zero/CDC": {
+   "eval_return_mean": [
+    [
+     249.640625,
+     398.390625,
+     323.40625
+    ]
+   ]
+  },
+  "pause/damaged/zero/DCC": {
+   "eval_return_mean": [
+    [
+     15.75,
+     243.84375,
+     310.96875
+    ]
+   ]
+  },
+  "pause/damaged/zero/DDC": {
+   "eval_return_mean": [
+    [
+     15.75,
+     268.171875,
+     441.734375
+    ]
+   ]
+  },
+  "pause/reset/donor/DDD": {
+   "eval_return_mean": [
+    [
+     15.75,
+     236.75,
+     326.1875
+    ]
+   ]
+  },
+  "pause/reset/donor/CDD": {
+   "eval_return_mean": [
+    [
+     249.640625,
+     271.390625,
+     376.953125
+    ]
+   ]
+  }
+ },
+ "checks": {
+  "CCC_equals_untouched_natural_C": true,
+  "DDD_equals_untouched_natural_D": true
+ },
+ "status": "complete",
+ "resumed_from": null,
+ "wallclock_s": 39.8
+}
