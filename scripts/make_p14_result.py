@@ -24,6 +24,7 @@ def main():
     f,(a,b)=plt.subplots(1,2,figsize=(12,5.6),constrained_layout=True)
     for key,label,color,ls in [
         (None,'Historical pause','#24282B','--'),
+        ('pause/damaged/donor/CCC','Onset-state reference','#737B80',':'),
         ('pause/damaged/donor/DDD','Natural impaired','#B14A43','-'),
         ('pause/damaged/donor/CDD','Onset actor only','#1B7282','-'),
         ('pause/damaged/donor/DCC','Reciprocal bad actor','#CA963A',':')]:
@@ -79,7 +80,7 @@ We chose one previously supported setting rather than screen additional games or
     text+=r'''\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{figures/p14_actor_repair.png}
-\caption{One prespecified actor-repair result. At removal, the impaired and actor-repaired learners have identical natural D world/RNG/counter, critic and moments; only actor parameters change. Both then learn unrestrictedly, so downstream experience and learner fields can diverge. The reciprocal swap uses onset critic/moments. Historical pause is the earlier unbroken clean trajectory. Panel A bands are nominal 99\% seed intervals. Panel B shows 95\% intervals and, for primary components, thin 99\% whiskers. Small points in the four primary rows are all 32 paired seed effects, not selected examples. Secondary robustness is not a new primary success.}
+\caption{One prespecified actor-repair result. At removal, the impaired and actor-repaired learners have identical natural D world/RNG/counter, critic and moments; only actor parameters change. Both then learn unrestrictedly, so downstream experience and learner fields can diverge. The reciprocal contrast is against the matched onset-state reference (CCC), not an assumed-identical historical pause. Historical pause is the earlier unbroken clean trajectory. Panel A bands are nominal pointwise 99\% seed intervals. Panel B shows 95\% intervals and, for primary components, thin 99\% whiskers. Small points in the four primary rows are all 32 paired seed effects, not selected examples. Secondary robustness is not a new primary success.}
 \label{fig:p14solid}
 \end{figure}
 
