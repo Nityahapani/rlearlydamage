@@ -1781,6 +1781,51 @@
       "sha256": "642b8d0e1bab489b7796cae2a9e02e913e25a72ac99bceac0468c061b7d73a57"
     },
     {
+      "path": "results/summary/20261016-p14-actor-repair-s1200to1203-Asterix-MinAtar-a39d1bc.json",
+      "bytes": 21730,
+      "sha256": "fcdf0a6e51a89cfa46e0b2b5d1f251d11779d231d588ac6260bd5558562e9247"
+    },
+    {
+      "path": "results/summary/20261016-p14-actor-repair-s1204to1207-Asterix-MinAtar-bb164a1.json",
+      "bytes": 21853,
+      "sha256": "12335f769467493ac5ba402fce2b57eceb0543aa0a4fd2b4cb18ebf57f169ef6"
+    },
+    {
+      "path": "results/summary/20261016-p14-actor-repair-s1208to1211-Asterix-MinAtar-7ff5854.json",
+      "bytes": 21806,
+      "sha256": "47d8855c556ce25fc2457ce3f30c32dfea89ac68e02afd947a8ed4521a233399"
+    },
+    {
+      "path": "results/summary/20261016-p14-actor-repair-s1212to1215-Asterix-MinAtar-c0e8164.json",
+      "bytes": 21796,
+      "sha256": "301e2a15dd84b38f20180cdf054efb59a8b6fcdaa4d45ab94c5f14eced684408"
+    },
+    {
+      "path": "results/summary/20261016-p14-actor-repair-s1216to1219-Asterix-MinAtar-9b5538b.json",
+      "bytes": 21742,
+      "sha256": "a7f4a4cf85aaf8129fa33e31cfaf8ca286403c344957e43f6be04cc822e56ee6"
+    },
+    {
+      "path": "results/summary/20261016-p14-actor-repair-s1220to1223-Asterix-MinAtar-1464c4a.json",
+      "bytes": 21746,
+      "sha256": "e15b2e3f17c6dd97ec64da485e56eb16cdf08f29cc2c6f30ff93eb8515fd6f3c"
+    },
+    {
+      "path": "results/summary/20261016-p14-actor-repair-s1224to1227-Asterix-MinAtar-43d9ba4.json",
+      "bytes": 21778,
+      "sha256": "096057e25313c9df55365c7b73061283e47683de591e53ef6ef7269ebe01e374"
+    },
+    {
+      "path": "results/summary/20261016-p14-actor-repair-s1228to1231-Asterix-MinAtar-8e13b34.json",
+      "bytes": 21851,
+      "sha256": "9995455589dfa5bead73cf46472ebb4a8105487e1f04357cf157ec8a48fe3ff0"
+    },
+    {
+      "path": "results/summary/20261016-p14-software-smoke-CartPole-v1-6262b2b.json",
+      "bytes": 4214,
+      "sha256": "2b1e602f1681cd2ad9aa49102a90bd0f19383fa5c6641ed4f04e31e9de340761"
+    },
+    {
       "path": "results/summary/p10_interactions_move_n12-posthoc.md",
       "bytes": 1457,
       "sha256": "1b509b4c2fb6f32e30287e767d1483569fd0798e1f1eb6271d07c21617e59336"
@@ -1914,6 +1959,21 @@
       "path": "results/summary/p13_tables.tex",
       "bytes": 10105,
       "sha256": "85dc0671495d0ab800b0970fd87004a6a522e33a63bb129840ee788c5ea8dfb2"
+    },
+    {
+      "path": "results/summary/p14_single_result-analysis.json",
+      "bytes": 154691,
+      "sha256": "66547f527c789b689cbb13a1a9b3af40f839435c816235b4801fd51a78c229cc"
+    },
+    {
+      "path": "results/summary/p14_single_result-analysis.md",
+      "bytes": 2519,
+      "sha256": "7771a508888e4b7c8fe00d8ee659dd00e8f9eaa9c22b73280c8de5bee8fcac33"
+    },
+    {
+      "path": "results/summary/p14_single_result.tex",
+      "bytes": 5018,
+      "sha256": "db4b6b87d5b5dafc8e18c3579751e6cd0d1add75904cad1a7c96d6729b9c5eba"
     },
     {
       "path": "results/summary/p2_recovery_all-analysis.md",
@@ -2874,6 +2934,51 @@
       "path": "runs/20261015-p7-p13-D-s912to915-ppo-SpaceInvaders-MinAtar-360cc81.json",
       "bytes": 1691,
       "sha256": "99a21300062413d2afc2ce1eb87743609096c5b3c23413fefa27c5c36a557e17"
+    },
+    {
+      "path": "runs/20261016-p14-actor-repair-s1200to1203-Asterix-MinAtar-a39d1bc.json",
+      "bytes": 2919,
+      "sha256": "708ab10f0f91947cb296f6b447a1c159b5d1abe91386444f470fe90ccfc4aa4f"
+    },
+    {
+      "path": "runs/20261016-p14-actor-repair-s1204to1207-Asterix-MinAtar-bb164a1.json",
+      "bytes": 2919,
+      "sha256": "b4293de948bbc34094ab4a463022fb260527271e4c133bd15c63079560e41b1f"
+    },
+    {
+      "path": "runs/20261016-p14-actor-repair-s1208to1211-Asterix-MinAtar-7ff5854.json",
+      "bytes": 2919,
+      "sha256": "8bcae23ed34c1ad2ecab7689764adec8777c822e3a6e6a05df891574754f3fe5"
+    },
+    {
+      "path": "runs/20261016-p14-actor-repair-s1212to1215-Asterix-MinAtar-c0e8164.json",
+      "bytes": 2919,
+      "sha256": "56acf91284a0d9c9657a08fd1e80b12e67967f6c28f286eb5f22c7aee05562a6"
+    },
+    {
+      "path": "runs/20261016-p14-actor-repair-s1216to1219-Asterix-MinAtar-9b5538b.json",
+      "bytes": 2919,
+      "sha256": "25917521a0dc827d2f1a73cfb200a15ec2cfa00130882254b91dde1081407ac1"
+    },
+    {
+      "path": "runs/20261016-p14-actor-repair-s1220to1223-Asterix-MinAtar-1464c4a.json",
+      "bytes": 2919,
+      "sha256": "5e4d693a3bc0a5f0740c48b32be54e87498655d85fd4fdf3c2f55e0c48afd0d1"
+    },
+    {
+      "path": "runs/20261016-p14-actor-repair-s1224to1227-Asterix-MinAtar-43d9ba4.json",
+      "bytes": 2919,
+      "sha256": "fbf3ab472c1f1f53e23198e5b7c8dc19d4cb591162bfc018968c60456959da38"
+    },
+    {
+      "path": "runs/20261016-p14-actor-repair-s1228to1231-Asterix-MinAtar-8e13b34.json",
+      "bytes": 2919,
+      "sha256": "d588ddc27fa18f566cccba8b2da86c1456bd173d95322c1bc42dbfe169f3fc80"
+    },
+    {
+      "path": "runs/20261016-p14-software-smoke-CartPole-v1-6262b2b.json",
+      "bytes": 2863,
+      "sha256": "4d57c26dfff935a0b05fdff8d369e7348a06d3dbf9e0ddf7717a6c260c9ed328"
     },
     {
       "path": "runs/README.md",
@@ -6657,6 +6762,354 @@
         "300/D_online"
       ],
       "recorded_source_commit": "360cc81c2cb9ba941ef75561a525331640698438",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261016-p14-actor-repair-s1200to1203-Asterix-MinAtar-a39d1bc.json",
+      "manifest": "runs/20261016-p14-actor-repair-s1200to1203-Asterix-MinAtar-a39d1bc.json",
+      "seeds": [
+        1200,
+        1201,
+        1202,
+        1203
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DDD",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/zero/CCC",
+        "pause/damaged/zero/CDC",
+        "pause/damaged/zero/DCC",
+        "pause/damaged/zero/DDC",
+        "pause/reset/donor/DDD",
+        "pause/reset/donor/CDD"
+      ],
+      "observed_arms": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DDD",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/zero/CCC",
+        "pause/damaged/zero/CDC",
+        "pause/damaged/zero/DCC",
+        "pause/damaged/zero/DDC",
+        "pause/reset/donor/DDD",
+        "pause/reset/donor/CDD"
+      ],
+      "recorded_source_commit": "a39d1bcf8cd99c1ece42046d8c1f7a567fea029e",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261016-p14-actor-repair-s1204to1207-Asterix-MinAtar-bb164a1.json",
+      "manifest": "runs/20261016-p14-actor-repair-s1204to1207-Asterix-MinAtar-bb164a1.json",
+      "seeds": [
+        1204,
+        1205,
+        1206,
+        1207
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DDD",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/zero/CCC",
+        "pause/damaged/zero/CDC",
+        "pause/damaged/zero/DCC",
+        "pause/damaged/zero/DDC",
+        "pause/reset/donor/DDD",
+        "pause/reset/donor/CDD"
+      ],
+      "observed_arms": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DDD",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/zero/CCC",
+        "pause/damaged/zero/CDC",
+        "pause/damaged/zero/DCC",
+        "pause/damaged/zero/DDC",
+        "pause/reset/donor/DDD",
+        "pause/reset/donor/CDD"
+      ],
+      "recorded_source_commit": "bb164a1d7dd27d9c94cdd7549f3343edce9a36a8",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261016-p14-actor-repair-s1208to1211-Asterix-MinAtar-7ff5854.json",
+      "manifest": "runs/20261016-p14-actor-repair-s1208to1211-Asterix-MinAtar-7ff5854.json",
+      "seeds": [
+        1208,
+        1209,
+        1210,
+        1211
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DDD",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/zero/CCC",
+        "pause/damaged/zero/CDC",
+        "pause/damaged/zero/DCC",
+        "pause/damaged/zero/DDC",
+        "pause/reset/donor/DDD",
+        "pause/reset/donor/CDD"
+      ],
+      "observed_arms": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DDD",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/zero/CCC",
+        "pause/damaged/zero/CDC",
+        "pause/damaged/zero/DCC",
+        "pause/damaged/zero/DDC",
+        "pause/reset/donor/DDD",
+        "pause/reset/donor/CDD"
+      ],
+      "recorded_source_commit": "7ff585403f27c776dfd656eca79682700e118097",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261016-p14-actor-repair-s1212to1215-Asterix-MinAtar-c0e8164.json",
+      "manifest": "runs/20261016-p14-actor-repair-s1212to1215-Asterix-MinAtar-c0e8164.json",
+      "seeds": [
+        1212,
+        1213,
+        1214,
+        1215
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DDD",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/zero/CCC",
+        "pause/damaged/zero/CDC",
+        "pause/damaged/zero/DCC",
+        "pause/damaged/zero/DDC",
+        "pause/reset/donor/DDD",
+        "pause/reset/donor/CDD"
+      ],
+      "observed_arms": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DDD",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/zero/CCC",
+        "pause/damaged/zero/CDC",
+        "pause/damaged/zero/DCC",
+        "pause/damaged/zero/DDC",
+        "pause/reset/donor/DDD",
+        "pause/reset/donor/CDD"
+      ],
+      "recorded_source_commit": "c0e816454892f24c34c70bee7d4c16ee7212fe8b",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261016-p14-actor-repair-s1216to1219-Asterix-MinAtar-9b5538b.json",
+      "manifest": "runs/20261016-p14-actor-repair-s1216to1219-Asterix-MinAtar-9b5538b.json",
+      "seeds": [
+        1216,
+        1217,
+        1218,
+        1219
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DDD",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/zero/CCC",
+        "pause/damaged/zero/CDC",
+        "pause/damaged/zero/DCC",
+        "pause/damaged/zero/DDC",
+        "pause/reset/donor/DDD",
+        "pause/reset/donor/CDD"
+      ],
+      "observed_arms": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DDD",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/zero/CCC",
+        "pause/damaged/zero/CDC",
+        "pause/damaged/zero/DCC",
+        "pause/damaged/zero/DDC",
+        "pause/reset/donor/DDD",
+        "pause/reset/donor/CDD"
+      ],
+      "recorded_source_commit": "9b5538bf9900658e9a9ee86ef3f082511f2b7c87",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261016-p14-actor-repair-s1220to1223-Asterix-MinAtar-1464c4a.json",
+      "manifest": "runs/20261016-p14-actor-repair-s1220to1223-Asterix-MinAtar-1464c4a.json",
+      "seeds": [
+        1220,
+        1221,
+        1222,
+        1223
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DDD",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/zero/CCC",
+        "pause/damaged/zero/CDC",
+        "pause/damaged/zero/DCC",
+        "pause/damaged/zero/DDC",
+        "pause/reset/donor/DDD",
+        "pause/reset/donor/CDD"
+      ],
+      "observed_arms": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DDD",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/zero/CCC",
+        "pause/damaged/zero/CDC",
+        "pause/damaged/zero/DCC",
+        "pause/damaged/zero/DDC",
+        "pause/reset/donor/DDD",
+        "pause/reset/donor/CDD"
+      ],
+      "recorded_source_commit": "1464c4ab6f3cc839cd731c3b60106d662994b7d2",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261016-p14-actor-repair-s1224to1227-Asterix-MinAtar-43d9ba4.json",
+      "manifest": "runs/20261016-p14-actor-repair-s1224to1227-Asterix-MinAtar-43d9ba4.json",
+      "seeds": [
+        1224,
+        1225,
+        1226,
+        1227
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DDD",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/zero/CCC",
+        "pause/damaged/zero/CDC",
+        "pause/damaged/zero/DCC",
+        "pause/damaged/zero/DDC",
+        "pause/reset/donor/DDD",
+        "pause/reset/donor/CDD"
+      ],
+      "observed_arms": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DDD",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/zero/CCC",
+        "pause/damaged/zero/CDC",
+        "pause/damaged/zero/DCC",
+        "pause/damaged/zero/DDC",
+        "pause/reset/donor/DDD",
+        "pause/reset/donor/CDD"
+      ],
+      "recorded_source_commit": "43d9ba4f7ee653d8aad37e4ce4c4f5a6e1e24ec8",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261016-p14-actor-repair-s1228to1231-Asterix-MinAtar-8e13b34.json",
+      "manifest": "runs/20261016-p14-actor-repair-s1228to1231-Asterix-MinAtar-8e13b34.json",
+      "seeds": [
+        1228,
+        1229,
+        1230,
+        1231
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DDD",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/zero/CCC",
+        "pause/damaged/zero/CDC",
+        "pause/damaged/zero/DCC",
+        "pause/damaged/zero/DDC",
+        "pause/reset/donor/DDD",
+        "pause/reset/donor/CDD"
+      ],
+      "observed_arms": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DDD",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/zero/CCC",
+        "pause/damaged/zero/CDC",
+        "pause/damaged/zero/DCC",
+        "pause/damaged/zero/DDC",
+        "pause/reset/donor/DDD",
+        "pause/reset/donor/CDD"
+      ],
+      "recorded_source_commit": "8e13b3499b54e8724c6ff1f890f310e8a40c3691",
+      "source_commit_available": true
+    },
+    {
+      "summary": "results/summary/20261016-p14-software-smoke-CartPole-v1-6262b2b.json",
+      "manifest": "runs/20261016-p14-software-smoke-CartPole-v1-6262b2b.json",
+      "seeds": [
+        99992
+      ],
+      "status": "complete requested arms",
+      "expected_arms": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DDD",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/zero/CCC",
+        "pause/damaged/zero/CDC",
+        "pause/damaged/zero/DCC",
+        "pause/damaged/zero/DDC",
+        "pause/reset/donor/DDD",
+        "pause/reset/donor/CDD"
+      ],
+      "observed_arms": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CCC",
+        "pause/damaged/donor/DDD",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DCC",
+        "pause/damaged/zero/CCC",
+        "pause/damaged/zero/CDC",
+        "pause/damaged/zero/DCC",
+        "pause/damaged/zero/DDC",
+        "pause/reset/donor/DDD",
+        "pause/reset/donor/CDD"
+      ],
+      "recorded_source_commit": "6262b2b1d9b53b0fb9c68330a468c3084039d32b",
       "source_commit_available": true
     }
   ]

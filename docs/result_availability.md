@@ -32,3 +32,10 @@ A deterministic rerun must preserve each manifest’s seed group, configuration,
 The next registered phase completes A/B/C/E at 8 independent seeds each and prospective D at 16. Phase-12 H1/H2 were not retroactively completed: the formerly unused IDs are used in expanded Phase-13 protocols and the cohorts are not double-counted as additional tasks.
 The new inference family is fixed at five claims, with registered compound tests and Holm correction. Only B (Asterix pause) and C (actuator-noise gap) meet it. A has clear finite-window native harm but its stronger compound dominance test does not pass; E and D retain their null/inconclusive primary outcomes.
 Natural D identity and controlled washout checks, all cell curves, frozen predictor coefficients, all prospective feature rows and surviving checkpoint arrays are archived. No fresh-seed result is inferred from an unrun or partial cohort.
+
+## Phase 14: one fixed independent actor-repair confirmation
+
+All32 unused training seeds1200–1231 complete all11 requested cells. The earlier eight-seed Asterix cohort is prior evidence only and is not pooled into the new primary. This is one selected-condition confirmation, not a new task or an unconditional prevalence estimate.
+The single registered practical-effect compound at alpha .01 is met (maximum component p=3.3191367e-08), including the prespecified seedwise consistency rule. This is a separate Phase14 error-control scope, not retrospective paper-wide control.
+All native, onset, reciprocal, common-fresh-Adam and reset-world curves, requested second-key evaluations, exact donor fingerprints and source hashes are archived in the group JSONs. Full transient runner-state trees are not archived. Reproduce using the preserved fixed seed/configuration/source and pinned packages.
+Source: `prereg/phase14.json`, `scripts/p14_actor_repair.py`, `scripts/analyze_p14.py`, `results/summary/p14_single_result-analysis.json`. No interim primary, seed expansion, endpoint/key selection or secondary-primary rescue.

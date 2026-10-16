@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "rled"
 version = "0.0.1"
-description = "Where Does Early Damage Live? Weight, Optimizer, and Data Scars in RL"
+description = "Where Do Recovery Costs Live? Reference-Aware State Surgery in Deep RL"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
@@ -17,6 +17,7 @@ dependencies = [
   "distrax>=0.1.5",
   "gymnax>=0.0.8",
   "numpy",
+  "scipy",
   "pandas",
   "pyyaml",
   "matplotlib",

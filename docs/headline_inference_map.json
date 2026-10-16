@@ -1,5 +1,5 @@
 {
-  "scope": "Legacy families are separate; no single retrospectively globally controlled error rate. New Phase 13 has one fixed five-claim Holm family.",
+  "scope": "Legacy families remain separate, with no retrospectively controlled paper-wide error rate. Phase13 has one fixed five-claim Holm family. Phase14 has one separately registered four-component practical-effect compound at alpha .01; its prior selected-condition data are not pooled.",
   "legacy_claims": [
     {
       "claim": "Early/late timing",
@@ -104,6 +104,104 @@
       "n": "8 / 12",
       "family": "interpretive temporal analysis",
       "status": "Mechanistic interpretation, not unique mediation proof"
+    }
+  ],
+  "phase13_primary_claims": [
+    {
+      "claim": "CartPole pause-reference compound",
+      "n": 8,
+      "family": "fixed Phase13 five-claim Holm",
+      "Holm_p": 0.09305118741548439,
+      "status": "registered criterion not met",
+      "interpretation": "Tier II design; compound not met",
+      "source": "results/summary/p13_confirmatory-analysis.json"
+    },
+    {
+      "claim": "Asterix pause-reference compound",
+      "n": 8,
+      "family": "fixed Phase13 five-claim Holm",
+      "Holm_p": 0.00017166733902424804,
+      "status": "registered criterion met",
+      "interpretation": "Tier II specific procedural support",
+      "source": "results/summary/p13_confirmatory-analysis.json"
+    },
+    {
+      "claim": "Actuator-noise same-update compound",
+      "n": 8,
+      "family": "fixed Phase13 five-claim Holm",
+      "Holm_p": 0.0033266394253097125,
+      "status": "registered criterion met",
+      "interpretation": "Tier I only",
+      "source": "results/summary/p13_confirmatory-analysis.json"
+    },
+    {
+      "claim": "Controlled labels, natural matched delayed effect",
+      "n": 8,
+      "family": "fixed Phase13 five-claim Holm",
+      "Holm_p": 0.3771844206049839,
+      "status": "registered criterion not met",
+      "interpretation": "specified assay, not original mediation proof",
+      "source": "results/summary/p13_confirmatory-analysis.json"
+    },
+    {
+      "claim": "Frozen prospective acute+KL utility",
+      "n": 16,
+      "family": "fixed Phase13 five-claim Holm",
+      "Holm_p": 0.8873967904718016,
+      "status": "registered criterion not met",
+      "interpretation": "cost prediction, not a failure probability",
+      "source": "results/summary/p13_confirmatory-analysis.json"
+    }
+  ],
+  "phase14_focused_claims": [
+    {
+      "claim": "Past actor checkpoint repairs most native pause-relative recovery cost",
+      "estimand": "native historical-pause AUC and late(+160..200) cost; matched onset actor rescue and reciprocal actor transfer",
+      "n": 32,
+      "seeds": [
+        1200,
+        1201,
+        1202,
+        1203,
+        1204,
+        1205,
+        1206,
+        1207,
+        1208,
+        1209,
+        1210,
+        1211,
+        1212,
+        1213,
+        1214,
+        1215,
+        1216,
+        1217,
+        1218,
+        1219,
+        1220,
+        1221,
+        1222,
+        1223,
+        1224,
+        1225,
+        1226,
+        1227,
+        1228,
+        1229,
+        1230,
+        1231
+      ],
+      "family": "one four-component intersection-union at alpha .01 plus >=24/32 consistency; selected condition, no prior-seed pooling",
+      "compound_p": 3.319136731810534e-08,
+      "status": "registered criterion met; 32/32 native-negative and rescue-positive",
+      "repaired_fraction": 0.9178352167193636,
+      "repaired_fraction_bootstrap95": [
+        0.862667053031215,
+        0.9750230100266715
+      ],
+      "limits": "one Asterix PPO reward-flip condition, finite200-update recovery, fixed evaluation pools; small residual remains; matched-state restoration TOST fails; no unique storage, universal actor dominance or irreversibility",
+      "source": "results/summary/p14_single_result-analysis.json"
     }
   ]
 }
