@@ -64,7 +64,11 @@ def main():
 We chose one previously supported setting rather than screen additional games or report the best endpoint. Asterix PPO received reward sign corruption during updates 390--440 (409{,}600 environment steps), followed by 200 unrestricted updates. Thirty-two entirely unused training seeds 1200--1231 were fixed before target data; none of the earlier eight Asterix seeds enters this primary. The donor actor comes from the shared onset at 390, not the clean fork at 440, so it cannot import the clean agent's additional progress. All primary swaps use the exact natural damaged future context. Within pause-cell codes, C denotes the onset donor P, not extra clean-fork progress; D denotes impaired removal state. CDD therefore changes only actor parameters, whereas DCC transfers the impaired actor into onset critic/moments. The all-D cell is asserted identical over the full runner-state tree to untouched D; the unbroken clean trace supplies the historical pause benchmark. Recovery AUC excludes removal and averages the 20 checkpoints at +10--200; the late endpoint averages +160--200. No low-competence seed is filtered.
 
 '''
-    text+='The single compound criterion is '+verdict+', with $p_{\\rm claim}='+f'{r["primary_compound_p"]:.6g}'+r'$ at $\alpha=.01$; every component is reported in Table~\ref{tab:p14solid}. '
+    pclaim=r['primary_compound_p']
+    import math
+    pe=int(math.floor(math.log10(pclaim))) if pclaim>0 else -12
+    ptext=(f'{pclaim/10**pe:.2f}\\times10^{{{pe}}}' if 0<pclaim<.0001 else f'{pclaim:.4f}')
+    text+='The single compound criterion is '+verdict+', with $p_{\\rm claim}='+ptext+r'$ at $\alpha=.01$; every component is reported in Table~\ref{tab:p14solid}. '
     text+=f'Native AUC cost is '+ci(r['primary']['native_AUC_harm']['CI95'])+', late-window cost '+ci(r['primary']['native_late_harm']['CI95'])+', and replacing only the onset actor changes AUC by '+ci(r['primary']['onset_actor_rescue']['CI95'])+'. '
     text+='The reciprocal actor transfer is '+ci(r['primary']['reciprocal_actor_transfer']['CI95'])+'. '
     text+=f'Seedwise consistency is {r["seed_consistency"]["native_AUC_negative"]}/32 native-negative and {r["seed_consistency"]["actor_rescue_positive"]}/32 rescue-positive. The repaired fraction is {100*r["repaired_fraction_point"]:.0f}\\% (paired-bootstrap 95\\% interval {100*r["repaired_fraction_bootstrap95"][0]:.0f}--{100*r["repaired_fraction_bootstrap95"][1]:.0f}\\%) by ratio of paired means, not an allocation of encoded information.\n\n'+table
@@ -81,6 +85,7 @@ We chose one previously supported setting rather than screen additional games or
     text+='Residual rescue-minus-matched-pause is '+ci(r['residual_vs_statepause']['CI95'])+f' (TOST $\\pm.30$, $p={r["residual_vs_statepause"]["TOST_pm_030"]:.4f}$); versus historical pause it is '+ci(r['residual_vs_historicalpause']['CI95'])+f' ($p={r["residual_vs_historicalpause"]["TOST_pm_030"]:.4f}$). '
     text+='Matched state-pause minus historical pause is '+ci(r['statepause_minus_historical']['CI95'])+f' (TOST $\\pm.30$, $p={r["statepause_minus_historical"]["TOST_pm_030"]:.4f}$). '
     text+='Passing a practical margin is not literal equality; failing it is reported without declaring full restoration. Bootstrap, exact sign and simultaneous-bound sensitivities are in the analysis artifact. The result remains an intervention-specific, finite-horizon actor-state repair in one game and impairment family, not a unique representation mechanism, universal actor dominance or irreversible loss.\n'
+    text=text.replace('A focused high-powered actor-repair result', 'An onset actor checkpoint repairs native recovery cost' if r['primary_success'] else 'A fixed 32-seed onset-actor repair test')
     S.joinpath('p14_single_result.tex').write_text(text)
     print('Rendered one-result figure/section; primary criterion',verdict)
 
