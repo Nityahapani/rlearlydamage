@@ -25,7 +25,7 @@ def main():
     anchor=r'\paragraph{Contributions.}'
     para=r'''\paragraph{One focused test of actual beyond-time harm.}
 '''
-    para+='The new32-seed test in Section~\\ref{sec:p14solid} restores only the pre-impairment actor checkpoint in the natural impaired learner, leaving its critic, Adam history and future world untouched. It tests native historical-pause AUC and late deficits, actor rescue and reciprocal transfer together, rather than selecting the strongest of these endpoints. '
+    para+='The new32-seed test in Section~\\ref{sec:p14solid} restores only the pre-impairment actor checkpoint in the natural impaired learner, leaving its removal-time critic, Adam history, world state and future random stream untouched. It tests native historical-pause AUC and late deficits, actor rescue and reciprocal transfer together, rather than selecting the strongest of these endpoints. '
     para+='Its fixed compound criterion is '+status+'. '
     para+='The prior independent eight-seed Asterix cohort motivates this selected condition but is not pooled into the new primary. Common fresh moments, a reset world and a second evaluation key are prespecified robustness checks, not substitute primary tests.\n\n'
     para=para.replace('new32','new 32')
