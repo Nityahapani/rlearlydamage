@@ -76,6 +76,20 @@ class AnalysisChecks(unittest.TestCase):
                 self.assertAlmostEqual(r['alternate_evaluation']['native_AUC_harm'][0],-1.475)
                 self.assertEqual(r['seed_consistency'],dict(native_AUC_negative=32,actor_rescue_positive=32))
                 self.assertEqual(len(r['source_hashes']),8)
+                # A clear rescue and native AUC must NOT rescue a failed late component.
+                for f in Path('results/summary').glob('SYNTHETIC-p14-actor-repair-*.json'):
+                    d=json.loads(f.read_text())
+                    v=np.asarray(d['cells']['pause/damaged/donor/DDD']['eval_return_mean'])
+                    v[:,-5:]+=2
+                    d['cells']['pause/damaged/donor/DDD']['eval_return_mean']=v.tolist()
+                    f.write_text(json.dumps(d))
+                with contextlib.redirect_stdout(io.StringIO()):a.main()
+                fail=json.loads(Path('results/summary/p14_single_result-analysis.json').read_text())
+                self.assertFalse(fail['primary_success'])
+                self.assertEqual(fail['primary_p_values']['native_late_harm'],1.)
+                self.assertGreater(fail['primary']['onset_actor_rescue']['CI95'][0],.5)
+                self.assertLess(fail['primary']['native_AUC_harm']['CI95'][0],-.5)
+
             finally:os.chdir(old)
 
 
