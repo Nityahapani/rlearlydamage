@@ -1,0 +1,126 @@
+{
+  "allow_dirty": false,
+  "config": {
+    "DEFICIT": "reward_flip",
+    "DEFICIT_PARAMS": {
+      "prob": 1.0
+    },
+    "ENV_NAME": "Asterix-MinAtar",
+    "HIDDEN": 128,
+    "TOTAL_TIMESTEPS": 5242880,
+    "protocol": {
+      "actor_donor": "shared onset; no extra clean progress",
+      "cells": [
+        {
+          "code": "CCC",
+          "context": "clean",
+          "opt": "donor",
+          "reference": "fork"
+        },
+        {
+          "code": "CCC",
+          "context": "damaged",
+          "opt": "donor",
+          "reference": "pause"
+        },
+        {
+          "code": "DDD",
+          "context": "damaged",
+          "opt": "donor",
+          "reference": "pause"
+        },
+        {
+          "code": "CDD",
+          "context": "damaged",
+          "opt": "donor",
+          "reference": "pause"
+        },
+        {
+          "code": "DCC",
+          "context": "damaged",
+          "opt": "donor",
+          "reference": "pause"
+        },
+        {
+          "code": "CCC",
+          "context": "damaged",
+          "opt": "zero",
+          "reference": "pause"
+        },
+        {
+          "code": "CDC",
+          "context": "damaged",
+          "opt": "zero",
+          "reference": "pause"
+        },
+        {
+          "code": "DCC",
+          "context": "damaged",
+          "opt": "zero",
+          "reference": "pause"
+        },
+        {
+          "code": "DDC",
+          "context": "damaged",
+          "opt": "zero",
+          "reference": "pause"
+        },
+        {
+          "code": "DDD",
+          "context": "reset",
+          "opt": "donor",
+          "reference": "pause"
+        },
+        {
+          "code": "CDD",
+          "context": "reset",
+          "opt": "donor",
+          "reference": "pause"
+        }
+      ],
+      "context": "natural D for main swaps; reset changes only env/obs, keeps D RNG/counter",
+      "env": "Asterix-MinAtar",
+      "eval_envs": 64,
+      "eval_every": 10,
+      "eval_seed": 10000,
+      "optimizer_control": "common fresh Adam for all4 actor x critic combinations",
+      "recovery": 200,
+      "schema": "p14-v1",
+      "second_eval_cells": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DDD"
+      ],
+      "second_eval_seed": 54321,
+      "smoke": false,
+      "steps_per_update": 8192,
+      "window": [
+        390,
+        440
+      ]
+    }
+  },
+  "created_utc": "2026-10-16T16:33:07.162898+00:00",
+  "git": {
+    "commit": "a39d1bcf8cd99c1ece42046d8c1f7a567fea029e",
+    "dirty": false
+  },
+  "name": "p14-actor-repair-s1200to1203-Asterix-MinAtar",
+  "packages": {
+    "flax": "0.12.10",
+    "gymnax": "0.0.9",
+    "jax": "0.11.2",
+    "jaxlib": "0.11.2",
+    "numpy": "2.5.4",
+    "optax": "0.2.8",
+    "rliable": null
+  },
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.41",
+  "python": "3.13.16",
+  "seeds": [
+    1200,
+    1201,
+    1202,
+    1203
+  ]
+}
