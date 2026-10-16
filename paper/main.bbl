@@ -1,0 +1,223 @@
+\begin{thebibliography}{34}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Achille et~al.(2019)Achille, Rovere, and Soatto]{achille2019critical}
+Alessandro Achille, Matteo Rovere, and Stefano Soatto.
+\newblock Critical learning periods in deep networks.
+\newblock In \emph{International Conference on Learning Representations}, 2019.
+
+\bibitem[Agarwal et~al.(2021)Agarwal, Schwarzer, Castro, Courville, and
+  Bellemare]{agarwal2021precipice}
+Rishabh Agarwal, Max Schwarzer, Pablo~Samuel Castro, Aaron Courville, and
+  Marc~G. Bellemare.
+\newblock Deep reinforcement learning at the edge of the statistical precipice.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2021.
+
+\bibitem[Ash \& Adams(2020)Ash and Adams]{ash2020warm}
+Jordan~T. Ash and Ryan~P. Adams.
+\newblock On warm-starting neural network training.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2020.
+
+\bibitem[Bjorck et~al.(2022)Bjorck, Gomes, and Weinberger]{bjorck2022variance}
+Johan Bjorck, Carla~P. Gomes, and Kilian~Q. Weinberger.
+\newblock Is high variance unavoidable in {RL}? {A} case study in continuous
+  control.
+\newblock In \emph{International Conference on Learning Representations}, 2022.
+
+\bibitem[de~Kleijn et~al.(2022)de~Kleijn, Sen, and
+  Kachergis]{dekleijn2022critical}
+Roy de~Kleijn, Deniz Sen, and George Kachergis.
+\newblock A critical period for robust curriculum-based deep reinforcement
+  learning of sequential action in a robot arm.
+\newblock \emph{Topics in Cognitive Science}, 2022.
+
+\bibitem[Dohare et~al.(2023)Dohare, Lan, and Mahmood]{dohare2023collapse}
+Shibhansh Dohare, Qingfeng Lan, and A.~Rupam Mahmood.
+\newblock Overcoming policy collapse in deep reinforcement learning.
+\newblock In \emph{Sixteenth European Workshop on Reinforcement Learning},
+  2023.
+
+\bibitem[Dohare et~al.(2024)Dohare, Hernandez-Garcia, Lan, Rahman, Mahmood, and
+  Sutton]{dohare2024loss}
+Shibhansh Dohare, J.~Fernando Hernandez-Garcia, Qingfeng Lan, Parash Rahman,
+  A.~Rupam Mahmood, and Richard~S. Sutton.
+\newblock Loss of plasticity in deep continual learning.
+\newblock \emph{Nature}, 632:\penalty0 768--774, 2024.
+
+\bibitem[Fedus et~al.(2020)Fedus, Ramachandran, Agarwal, Bengio, Larochelle,
+  Rowland, and Dabney]{fedus2020replay}
+William Fedus, Prajit Ramachandran, Rishabh Agarwal, Yoshua Bengio, Hugo
+  Larochelle, Mark Rowland, and Will Dabney.
+\newblock Revisiting fundamentals of experience replay.
+\newblock In \emph{International Conference on Machine Learning}, 2020.
+
+\bibitem[Gallici et~al.(2025)Gallici, Fellows, Ellis, Pou, Masmitja, Foerster,
+  and Martin]{gallici2025pqn}
+Matteo Gallici, Mattie Fellows, Benjamin Ellis, Bartomeu Pou, Ivan Masmitja,
+  Jakob~Nicolaus Foerster, and Mario Martin.
+\newblock Simplifying deep temporal difference learning.
+\newblock In \emph{International Conference on Learning Representations}, 2025.
+
+\bibitem[Henderson et~al.(2018)Henderson, Islam, Bachman, Pineau, Precup, and
+  Meger]{henderson2018matters}
+Peter Henderson, Riashat Islam, Philip Bachman, Joelle Pineau, Doina Precup,
+  and David Meger.
+\newblock Deep reinforcement learning that matters.
+\newblock In \emph{AAAI Conference on Artificial Intelligence}, 2018.
+
+\bibitem[Holm(1979)]{holm1979simple}
+Sture Holm.
+\newblock A simple sequentially rejective multiple test procedure.
+\newblock \emph{Scandinavian Journal of Statistics}, 6\penalty0 (2):\penalty0
+  65--70, 1979.
+
+\bibitem[Igl et~al.(2021)Igl, Farquhar, Luketina, Boehmer, and
+  Whiteson]{igl2021transient}
+Maximilian Igl, Gregory Farquhar, Jelena Luketina, Wendelin Boehmer, and Shimon
+  Whiteson.
+\newblock Transient non-stationarity and generalisation in deep reinforcement
+  learning.
+\newblock In \emph{International Conference on Learning Representations}, 2021.
+
+\bibitem[Juliani \& Ash(2024)Juliani and Ash]{juliani2024onpolicy}
+Arthur Juliani and Jordan~T. Ash.
+\newblock A study of plasticity loss in on-policy deep reinforcement learning.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2024.
+
+\bibitem[Klein et~al.(2024)Klein, Miklautz, Sidak, Plant, and
+  Tschiatschek]{klein2024survey}
+Timo Klein, Lukas Miklautz, Kevin Sidak, Claudia Plant, and Sebastian
+  Tschiatschek.
+\newblock Plasticity loss in deep reinforcement learning: A survey.
+\newblock \emph{arXiv preprint arXiv:2411.04832}, 2024.
+
+\bibitem[Kleinman et~al.(2024)Kleinman, Achille, and
+  Soatto]{kleinman2024critical}
+Michael Kleinman, Alessandro Achille, and Stefano Soatto.
+\newblock Critical learning periods emerge even in deep linear networks.
+\newblock In \emph{International Conference on Learning Representations}, 2024.
+
+\bibitem[Kornblith et~al.(2019)Kornblith, Norouzi, Lee, and
+  Hinton]{kornblith2019cka}
+Simon Kornblith, Mohammad Norouzi, Honglak Lee, and Geoffrey Hinton.
+\newblock Similarity of neural network representations revisited.
+\newblock In \emph{International Conference on Machine Learning}, 2019.
+
+\bibitem[Kumar et~al.(2021)Kumar, Agarwal, Ghosh, and
+  Levine]{kumar2021implicit}
+Aviral Kumar, Rishabh Agarwal, Dibya Ghosh, and Sergey Levine.
+\newblock Implicit under-parameterization inhibits data-efficient deep
+  reinforcement learning.
+\newblock In \emph{International Conference on Learning Representations}, 2021.
+
+\bibitem[Lakens(2017)]{lakens2017equivalence}
+Dani{\"e}l Lakens.
+\newblock Equivalence tests: A practical primer for $t$ tests, correlations,
+  and meta-analyses.
+\newblock \emph{Social Psychological and Personality Science}, 8\penalty0
+  (4):\penalty0 355--362, 2017.
+
+\bibitem[Lange(2022)]{lange2022gymnax}
+Robert~Tjarko Lange.
+\newblock gymnax: A {JAX}-based reinforcement learning environment library.
+\newblock \url{https://github.com/RobertTLange/gymnax}, 2022.
+
+\bibitem[Liu et~al.(2019)Liu, Jiang, He, Chen, Liu, Gao, and Han]{liu2019radam}
+Liyuan Liu, Haoming Jiang, Pengcheng He, Weizhu Chen, Xiaodong Liu, Jianfeng
+  Gao, and Jiawei Han.
+\newblock On the variance of the adaptive learning rate and beyond.
+\newblock \emph{arXiv preprint arXiv:1908.03265}, 2019.
+
+\bibitem[Lu et~al.(2022)Lu, Kuba, Letcher, Metz, Schroeder~de Witt, and
+  Foerster]{lu2022discovered}
+Chris Lu, Jakub~Grudzien Kuba, Alistair Letcher, Luke Metz, Christian
+  Schroeder~de Witt, and Jakob Foerster.
+\newblock Discovered policy optimisation.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2022.
+
+\bibitem[Lyle et~al.(2022)Lyle, Rowland, and Dabney]{lyle2022capacity}
+Clare Lyle, Mark Rowland, and Will Dabney.
+\newblock Understanding and preventing capacity loss in reinforcement learning.
+\newblock In \emph{International Conference on Learning Representations}, 2022.
+
+\bibitem[Lyle et~al.(2023)Lyle, Zheng, Nikishin, Avila~Pires, Pascanu, and
+  Dabney]{lyle2023plasticity}
+Clare Lyle, Zeyu Zheng, Evgenii Nikishin, Bernardo Avila~Pires, Razvan Pascanu,
+  and Will Dabney.
+\newblock Understanding plasticity in neural networks.
+\newblock In \emph{International Conference on Machine Learning}, 2023.
+
+\bibitem[Lyle et~al.(2025)]{lyle2025grokking}
+Clare Lyle et~al.
+\newblock What can grokking teach us about learning under nonstationarity?
+\newblock \emph{arXiv preprint arXiv:2507.20057}, 2025.
+
+\bibitem[Nikishin et~al.(2022)Nikishin, Schwarzer, D'Oro, Bacon, and
+  Courville]{nikishin2022primacy}
+Evgenii Nikishin, Max Schwarzer, Pierluca D'Oro, Pierre-Luc Bacon, and Aaron
+  Courville.
+\newblock The primacy bias in deep reinforcement learning.
+\newblock In \emph{International Conference on Machine Learning}, 2022.
+
+\bibitem[Ostrovski et~al.(2021)Ostrovski, Castro, and
+  Dabney]{ostrovski2021passive}
+Georg Ostrovski, Pablo~Samuel Castro, and Will Dabney.
+\newblock The difficulty of passive learning in deep reinforcement learning.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2021.
+
+\bibitem[Park et~al.(2021)]{park2021toddler}
+Junseok Park et~al.
+\newblock Toddler-guidance learning: Impacts of critical period on multimodal
+  {AI} agents.
+\newblock In \emph{Proceedings of the International Conference on Multimodal
+  Interaction}, 2021.
+\newblock arXiv:2201.04990.
+
+\bibitem[Park et~al.(2022)]{park2022multistage}
+Junseok Park et~al.
+\newblock On the importance of critical period in multi-stage reinforcement
+  learning.
+\newblock \emph{arXiv preprint arXiv:2208.04832}, 2022.
+
+\bibitem[Schulman et~al.(2017)Schulman, Wolski, Dhariwal, Radford, and
+  Klimov]{schulman2017ppo}
+John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov.
+\newblock Proximal policy optimization algorithms.
+\newblock \emph{arXiv preprint arXiv:1707.06347}, 2017.
+
+\bibitem[Schwarzer et~al.(2023)Schwarzer, Obando-Ceron, Courville, Bellemare,
+  Agarwal, and Castro]{schwarzer2023bbf}
+Max Schwarzer, Johan Obando-Ceron, Aaron Courville, Marc Bellemare, Rishabh
+  Agarwal, and Pablo~Samuel Castro.
+\newblock Bigger, better, faster: Human-level {Atari} with human-level
+  efficiency.
+\newblock \emph{International Conference on Machine Learning}, 2023.
+
+\bibitem[Sokar et~al.(2023)Sokar, Agarwal, Castro, and Evci]{sokar2023dormant}
+Ghada Sokar, Rishabh Agarwal, Pablo~Samuel Castro, and Utku Evci.
+\newblock The dormant neuron phenomenon in deep reinforcement learning.
+\newblock In \emph{International Conference on Machine Learning}, 2023.
+
+\bibitem[Xu et~al.(2024)]{xu2024drm}
+Guowei Xu et~al.
+\newblock {DrM}: Mastering visual reinforcement learning through dormant ratio
+  minimization.
+\newblock In \emph{International Conference on Learning Representations}, 2024.
+
+\bibitem[Xu(2026)]{xu2026optimizer}
+Qinyang Xu.
+\newblock Stored in optimizer state, valued by later training: A causal account
+  of subliminal trait transfer.
+\newblock \emph{arXiv preprint arXiv:2608.20442}, 2026.
+
+\bibitem[Young \& Tian(2019)Young and Tian]{young2019minatar}
+Kenny Young and Tian Tian.
+\newblock {MinAtar}: An {Atari}-inspired testbed for thorough and reproducible
+  reinforcement learning experiments.
+\newblock \emph{arXiv preprint arXiv:1903.03176}, 2019.
+
+\end{thebibliography}

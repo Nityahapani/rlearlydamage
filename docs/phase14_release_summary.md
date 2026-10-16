@@ -46,3 +46,11 @@ The ratio-of-paired-means fraction repaired is **91.8%**, paired-bootstrap 95 in
 This is one selected-condition, intervention-specific Tier-II actor-repair result. It does not establish unique naturally encoded damage, literal full restoration, universal actor dominance, an automatic deployment rollback policy, new-task learning capacity or irreversible loss. Phase14 alpha .01 is a separate fixed claim, not retrospective error control over all earlier research. The old eligible-setting count is not enlarged by this repeat condition.
 
 Primary artifact: [`p14_single_result-analysis.json`](../results/summary/p14_single_result-analysis.json). Final paper: [`paper/main.pdf`](../paper/main.pdf). All older failed/inconclusive primary results remain in the manuscript, log and inference map.
+
+## Final manuscript deliverable
+
+- **49 pages**, 4066200 bytes. New central result is Section6, Table8 and Figure4 (pages16–17); the abstract, introduction, inference map, discussion and conclusion are aligned.
+- PDF SHA256: `1fbde29d0f30cf41c271490622dc3eabc9b7e4d274ab0816576cd77a6391de24`.
+- All33 cited keys exist in the compiled bibliography; no unresolved references/outcome slots, overfull boxes or oversized floats. The new figure and key pages were visually checked at page scale.
+- Tectonic0.15 automatic bibliography-rerun detection emitted an internal consistency warning despite unchanged `.bbl`/`.aux` hashes. Three explicit reruns produce a stable, fully resolved final PDF; this command is documented in README. Underfull provenance-table line warnings are typographic, not missing content.
+- Full scientific protocol and inference remain unchanged; no post-primary new training or endpoint substitution. All597 catalogued file hashes and all352 requested seed/cell curves were audited.

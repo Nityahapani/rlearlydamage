@@ -64,7 +64,7 @@ pytest -q
 OPENBLAS_NUM_THREADS=1 python scripts/analyze_p14.py
 OPENBLAS_NUM_THREADS=1 python scripts/verify_p14.py
 OPENBLAS_NUM_THREADS=1 python scripts/make_p14_result.py
-(cd paper && tectonic main.tex)
+(cd paper && tectonic --reruns 3 main.tex)
 ```
 
 For a training rerun, reproduce the manifest's exact four-seed groups and source/environment rather than change the batch shape. Example:
@@ -73,6 +73,8 @@ For a training rerun, reproduce the manifest's exact four-seed groups and source
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python -u scripts/p14_actor_repair.py \
   --tag actor-repair-s1200to1203 --seeds 1200 1201 1202 1203
 ```
+
+The paper uses three explicit TeX reruns to obtain stable references with Tectonic 0.15; the default automatic rerun detection can emit a bibliography-consistency warning even with unchanged auxiliary/bibliography hashes. All cited keys and rendered references are checked.
 
 The original queue's wall-clock cutoff was part of its fixed eight-hour execution budget. A later full rerun must explicitly document a **new execution schedule**, without altering the seed list, scientific configuration or inferential rules. Do not use a software-smoke seed as experimental evidence. Resume only after identical donor fingerprints, configuration and overlapping fork evaluations; never silently combine incompatible cells.
 

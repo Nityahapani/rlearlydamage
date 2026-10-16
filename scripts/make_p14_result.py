@@ -25,8 +25,8 @@ def pv(p):
 def main():
     r=json.loads((S/'p14_single_result-analysis.json').read_text());assert r['n']==32
     M=r['cells'];hist=np.asarray(r['historical_pause_curve']);x=np.arange(hist.shape[1])*10
-    plt.rcParams.update({'font.family':'DejaVu Sans','font.size':15,'axes.spines.top':False,'axes.spines.right':False})
-    f,(a,b)=plt.subplots(1,2,figsize=(12,5.6),constrained_layout=True)
+    plt.rcParams.update({'font.family':'DejaVu Sans','font.size':11,'axes.spines.top':False,'axes.spines.right':False})
+    f,(a,b)=plt.subplots(2,1,figsize=(7.5,7.8),constrained_layout=True)
     for key,label,color,ls in [
         (None,'Historical pause','#24282B','--'),
         ('pause/damaged/donor/CCC','Onset-state reference','#737B80',':'),
@@ -36,9 +36,9 @@ def main():
         A=hist if key is None else np.asarray(M[key]);mu=A.mean(0);h=stats.t.ppf(.995,31)*A.std(0,ddof=1)/np.sqrt(32)
         a.plot(x,mu,label=label,color=color,ls=ls,lw=2)
         a.fill_between(x,mu-h,mu+h,color=color,alpha=.09)
-    a.set_title('A  Repair without extra clean progress',weight='bold',fontsize=14)
+    a.set_title('A  Actor rollback without extra clean progress',weight='bold',fontsize=12)
     a.set_xlabel('Unrestricted recovery updates');a.set_ylabel('True-reward evaluation return')
-    a.grid(alpha=.12);a.legend(fontsize=12,frameon=False,loc='upper left',bbox_to_anchor=(0,-.16),ncol=2)
+    a.grid(alpha=.12);a.legend(fontsize=9.5,frameon=False,loc='upper left',ncol=2)
     pairs=[('Native AUC cost',r['primary']['native_AUC_harm']['CI95'],r['primary']['native_AUC_harm']['CI99']),
            ('Late cost',r['primary']['native_late_harm']['CI95'],r['primary']['native_late_harm']['CI99']),
            ('Actor rescue',r['primary']['onset_actor_rescue']['CI95'],r['primary']['onset_actor_rescue']['CI99']),
@@ -55,7 +55,7 @@ def main():
         if w:b.plot(w[1:], [i,i],color='#92B3BC',lw=1.2)
         b.errorbar(m,i,xerr=[[m-lo],[hi-m]],fmt='o',color='#1B7282',capsize=3,markersize=5)
     b.axvline(0,color='.5',ls='--',lw=1);b.set_yticks(range(len(pairs)),[p[0] for p in pairs]);b.invert_yaxis()
-    b.set_xlabel('Paired effect, return points');b.set_title('B  One claim and fixed robustness checks',weight='bold',fontsize=14);b.grid(axis='x',alpha=.12)
+    b.set_xlabel('Paired effect, return points');b.set_title('B  Paired primary effects and robustness checks',weight='bold',fontsize=12);b.grid(axis='x',alpha=.12)
     f.savefig('figures/p14_actor_repair.png',dpi=220,facecolor='white');f.savefig('figures/p14_actor_repair.pdf',facecolor='white')
     import shutil
     for ext in ['png','pdf']:shutil.copy2('figures/p14_actor_repair.'+ext,'paper/figures/p14_actor_repair.'+ext)
