@@ -60,7 +60,7 @@ def main():
         q=r['primary'][k]
         rows.append(labels[k]+' & '+ci(q['CI95'])+' & '+ci(q['CI99'])+' & '+thresholds[k]+' & '+pv(r['primary_p_values'][k])+r' \\')
     table='\n'.join([r'\begin{table}[t]',r'\centering',
-        r'\caption{The single focused Phase-14 result, 32 independent training seeds. All four prespecified practical-effect components must pass through their maximum one-sided $p$ at $\alpha=.01$, plus at least 24/32 native-negative and rescue-positive seeds. Intervals pair training seeds, not episodes/checkpoints. Secondary checks cannot rescue a failed primary.}',
+        r'\caption{Independent Asterix actor-repair confirmation, 32 training seeds. All four prespecified practical-effect components must pass through their maximum one-sided $p$ at $\alpha=.01$, plus at least 24/32 native-negative and rescue-positive seeds. Intervals pair independent training seeds conditional on the fixed primary evaluation batch, not episodes/checkpoints. Secondary checks cannot rescue a failed primary.}',
         r'\label{tab:p14solid}',r'\small',r'\resizebox{\linewidth}{!}{%',r'\begin{tabular}{lcccc}',r'\toprule',
         r'component & 95\% CI & 99\% CI & required mean & shifted $p$ \\',r'\midrule',*rows,r'\bottomrule',r'\end{tabular}}',r'\end{table}',''])
     verdict='met' if r['primary_success'] else 'not met'
@@ -85,7 +85,7 @@ We chose one previously supported setting rather than screen additional games or
 
 '''
     text+='The common-fresh-Adam actor effect is '+ci(r['fresh_Adam']['actor_main'])+', with rescue '+ci(r['fresh_Adam']['actor_rescue'])+'; reset-world rescue is '+ci(r['reset_context_actor_rescue'])+'. '
-    text+='With independent evaluation key 54321, native cost is '+ci(r['alternate_evaluation']['native_AUC_harm'])+', late cost '+ci(r['alternate_evaluation']['native_late_harm'])+' and actor rescue '+ci(r['alternate_evaluation']['onset_actor_rescue'])+'. '
+    text+='The primary conditions on the registered 64-episode evaluation batch; the second key is neither selected nor pooled into it. With independent evaluation key 54321, native cost is '+ci(r['alternate_evaluation']['native_AUC_harm'])+', late cost '+ci(r['alternate_evaluation']['native_late_harm'])+' and actor rescue '+ci(r['alternate_evaluation']['onset_actor_rescue'])+'. '
     text+='Residual rescue-minus-matched-pause is '+ci(r['residual_vs_statepause']['CI95'])+f' (TOST $\\pm.30$, $p={r["residual_vs_statepause"]["TOST_pm_030"]:.4f}$); versus historical pause it is '+ci(r['residual_vs_historicalpause']['CI95'])+f' ($p={r["residual_vs_historicalpause"]["TOST_pm_030"]:.4f}$). '
     text+='Matched state-pause minus historical pause is '+ci(r['statepause_minus_historical']['CI95'])+f' (TOST $\\pm.30$, $p={r["statepause_minus_historical"]["TOST_pm_030"]:.4f}$). '
     text+='Passing a practical margin is not literal equality; failing it is reported without declaring full restoration. Bootstrap, exact sign and simultaneous-bound sensitivities are in the analysis artifact. The result remains an intervention-specific, finite-horizon actor-state repair in one game and impairment family, not a unique representation mechanism, universal actor dominance or irreversible loss.\n'
