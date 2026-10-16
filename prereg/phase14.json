@@ -1,0 +1,181 @@
+{
+  "phase": 14,
+  "title": "Onset-actor repair of a native pause-relative recovery scar",
+  "registered_utc": "2026-10-16T16:29:08.032502+00:00",
+  "deadline_utc": "2026-10-17T00:18:00+00:00",
+  "no_new_chunk_after_utc": "2026-10-16T23:15:00+00:00",
+  "env": "Asterix-MinAtar",
+  "algorithm": "PPO",
+  "hidden": 128,
+  "window": [
+    390,
+    440
+  ],
+  "recovery": 200,
+  "steps_per_update": 8192,
+  "deficit": "reward_flip",
+  "flip_probability": 1,
+  "training_seeds": [
+    1200,
+    1201,
+    1202,
+    1203,
+    1204,
+    1205,
+    1206,
+    1207,
+    1208,
+    1209,
+    1210,
+    1211,
+    1212,
+    1213,
+    1214,
+    1215,
+    1216,
+    1217,
+    1218,
+    1219,
+    1220,
+    1221,
+    1222,
+    1223,
+    1224,
+    1225,
+    1226,
+    1227,
+    1228,
+    1229,
+    1230,
+    1231
+  ],
+  "n": 32,
+  "chunk_size": 4,
+  "primary_eval_seed": 10000,
+  "eval_envs": 64,
+  "eval_every": 10,
+  "second_eval_seed": 54321,
+  "second_eval_cells": [
+    "fork/clean/donor/CCC",
+    "pause/damaged/donor/DDD",
+    "pause/damaged/donor/CDD"
+  ],
+  "cells": [
+    {
+      "reference": "fork",
+      "context": "clean",
+      "opt": "donor",
+      "code": "CCC"
+    },
+    {
+      "reference": "pause",
+      "context": "damaged",
+      "opt": "donor",
+      "code": "CCC"
+    },
+    {
+      "reference": "pause",
+      "context": "damaged",
+      "opt": "donor",
+      "code": "DDD"
+    },
+    {
+      "reference": "pause",
+      "context": "damaged",
+      "opt": "donor",
+      "code": "CDD"
+    },
+    {
+      "reference": "pause",
+      "context": "damaged",
+      "opt": "donor",
+      "code": "DCC"
+    },
+    {
+      "reference": "pause",
+      "context": "damaged",
+      "opt": "zero",
+      "code": "CCC"
+    },
+    {
+      "reference": "pause",
+      "context": "damaged",
+      "opt": "zero",
+      "code": "CDC"
+    },
+    {
+      "reference": "pause",
+      "context": "damaged",
+      "opt": "zero",
+      "code": "DCC"
+    },
+    {
+      "reference": "pause",
+      "context": "damaged",
+      "opt": "zero",
+      "code": "DDC"
+    },
+    {
+      "reference": "pause",
+      "context": "reset",
+      "opt": "donor",
+      "code": "DDD"
+    },
+    {
+      "reference": "pause",
+      "context": "reset",
+      "opt": "donor",
+      "code": "CDD"
+    }
+  ],
+  "prior_basis": "Phase13 B selected as hypothesis-generating basis, not included in this new primary: native AUC -1.57, late -.875, actor rescue1.46; independent8 had a successful compound result. No screening of new settings or seed subsets.",
+  "single_primary_claim": "Temporary late reward corruption leaves a practically substantial native pause-relative cost through the tested horizon, and replacing only onset actor parameters repairs that cost while reciprocal actor transfer reproduces it.",
+  "primary": {
+    "alpha": 0.01,
+    "method": "single intersection-union claim, p=max of four prespecified one-sided paired-t p values; all four required",
+    "contrasts": [
+      {
+        "name": "native_AUC_harm",
+        "quantity": "AUC(native D)-AUC(historical C(w0+k)), k10..200",
+        "alternative": "mean < -.50",
+        "shift": 0.5,
+        "direction": "less"
+      },
+      {
+        "name": "native_late_harm",
+        "quantity": "mean last5(native D-historical pause), k160..200",
+        "alternative": "mean < -.30",
+        "shift": 0.3,
+        "direction": "less"
+      },
+      {
+        "name": "onset_actor_rescue",
+        "quantity": "AUC(CDD)-AUC(native D), D context and D critic/moments",
+        "alternative": "mean > +.50",
+        "shift": -0.5,
+        "direction": "greater"
+      },
+      {
+        "name": "reciprocal_actor_transfer",
+        "quantity": "AUC(DCC)-AUC(CCC), D context and onset critic/moments",
+        "alternative": "mean < -.50",
+        "shift": 0.5,
+        "direction": "less"
+      }
+    ],
+    "consistency": "at least24 of32 seeds have negative native AUC cost, and at least24 have positive actor rescue; report every seed",
+    "inference": "95% and99% paired-t CIs; also simultaneous one-sided95% Bonferroni bounds over the four components, exact paired-sign tests and fixed-seed bootstrap sensitivity (secondary). No episode/checkpoint pseudoreplication."
+  },
+  "margin_rationale": "AUC .50 is about8% of prior clean recovery score6.0 and one third of prior native cost1.57; late .30 is5% of that scale and well below prior late cost. These are practically substantial but not selected from new data.",
+  "secondary": {
+    "restoration": "Residual CDD minus matched onset CCC and versus historical pause: TOST +/- .30 (5% prior clean score), not literal zero; report failure if margin not cleared.",
+    "fresh_moments": "common freshly initialized Adam in all4 actor x critic cells; report two-factor actor main effect, both background swaps and total; not a natural optimizer decomposition",
+    "reset_context": "same actor-rescue contrast after a fresh environment reset, with unchanged future RNG/counter; report all differences and comparisons with natural context",
+    "independent_evaluation": "repeat native AUC/late cost and actor-rescue contrast with second key54321; do not select or pool eval keys for primary",
+    "specificity": "one game, one impairment family, small MLPs, one finite recovery horizon; no irreversible-loss, complete representation mechanism or universal dominance claim"
+  },
+  "withholding": "no formal primary analysis until all32 planned seeds have every requested cell; logs contain progress only. No seed expansion, endpoint changes, alternate-setting search or positive-result guarantee.",
+  "fallback": "if interrupted or budget-incomplete, retain all partial results, no confirmatory primary verdict. Recovery may resume completed cells only after identical state fingerprints/configuration and overlapping cell results are verified. No outcome-driven continuation.",
+  "resume": "Recompute pre-fork history and verify exact C/D/onset fingerprints before reuse of completed cells; original summary/source files remain archived. No silent replacement of mismatching data.",
+  "software_smoke": "seed99992, CartPole, short software-only window/recovery; never enters inference or tunes scientific choices"
+}
