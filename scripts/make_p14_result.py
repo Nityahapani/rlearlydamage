@@ -40,7 +40,11 @@ def main():
            ('Fresh-Adam rescue',r['fresh_Adam']['actor_rescue'],None),
            ('Reset-world rescue',r['reset_context_actor_rescue'],None),
            ('New eval-key rescue',r['alternate_evaluation']['onset_actor_rescue'],None)]
+    primary_order=['native_AUC_harm','native_late_harm','onset_actor_rescue','reciprocal_actor_transfer']
     for i,(lab,v,w) in enumerate(pairs):
+        if i<4:
+            points=np.asarray(r['primary'][primary_order[i]]['per_seed'])
+            b.scatter(points,i+np.linspace(-.14,.14,32),s=12,color='#91ADB5',alpha=.55,zorder=1,edgecolors='none')
         m,lo,hi=v
         if w:b.plot(w[1:], [i,i],color='#92B3BC',lw=1.2)
         b.errorbar(m,i,xerr=[[m-lo],[hi-m]],fmt='o',color='#1B7282',capsize=3,markersize=5)
@@ -75,7 +79,7 @@ We chose one previously supported setting rather than screen additional games or
     text+=r'''\begin{figure}[t]
 \centering
 \includegraphics[width=\linewidth]{figures/p14_actor_repair.png}
-\caption{One prespecified actor-repair result. The impaired and actor-repaired learners retain their natural future world/context and the same damaged critic/moments; only actor parameters change in the rescue. The reciprocal swap uses onset critic/moments. Historical pause is the earlier unbroken clean trajectory. Panel A bands are nominal 99\% seed intervals. Panel B shows 95\% intervals and, for primary components, thin 99\% whiskers. Secondary robustness is not a new primary success.}
+\caption{One prespecified actor-repair result. The impaired and actor-repaired learners retain their natural future world/context and the same damaged critic/moments; only actor parameters change in the rescue. The reciprocal swap uses onset critic/moments. Historical pause is the earlier unbroken clean trajectory. Panel A bands are nominal 99\% seed intervals. Panel B shows 95\% intervals and, for primary components, thin 99\% whiskers. Small points in the four primary rows are all 32 paired seed effects, not selected examples. Secondary robustness is not a new primary success.}
 \label{fig:p14solid}
 \end{figure}
 
