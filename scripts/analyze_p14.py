@@ -62,6 +62,7 @@ def select_complete():
 
 def main():
     P,files=select_complete();ds=[d for _,d in files];seeds=sum((d['seeds'] for d in ds),[])
+    assert all(d['protocol']==ds[0]['protocol'] for d in ds), 'All chunks must use identical scientific protocol'
     assert all(d['checks']['DDD_equals_untouched_natural_D'] and d['checks']['CCC_equals_untouched_natural_C'] for d in ds)
     names=list(ds[0]['cells'])
     M={k:np.concatenate([np.asarray(d['cells'][k]['eval_return_mean'],float) for d in ds]) for k in names}
@@ -94,12 +95,15 @@ def main():
     zero_rescue=A(z['CDC'])-A(z['DDC'])
     reset_rescue=A(M['pause/reset/donor/CDD'])-A(M['pause/reset/donor/DDD'])
     residual=A(resc)-A(ref);residual_hist=A(resc)-A(pause)
+    state_hist=A(ref)-A(pause)
     a_nat=alt['pause/damaged/donor/DDD'];a_resc=alt['pause/damaged/donor/CDD']
     alt_metrics=dict(native_AUC_harm=tci(A(a_nat)-A(pause2)),native_late_harm=tci((a_nat[:,-5:]-pause2[:,-5:]).mean(1)),onset_actor_rescue=tci(A(a_resc)-A(a_nat)))
     bootR=np.random.default_rng(140033);ix=bootR.integers(0,32,(20000,32))
     ratios=primary['onset_actor_rescue'][ix].mean(1)/(-primary['native_AUC_harm'][ix].mean(1))
     ratio=float(primary['onset_actor_rescue'].mean()/(-primary['native_AUC_harm'].mean()))
     result=dict(status='fixed n=32 complete; one registered claim, all robustness retained',n=32,seeds=seeds,
+                prereg_sha256=hashlib.sha256(Path('prereg/phase14.json').read_bytes()).hexdigest(),
+                multiplicity_scope='one fixed Phase14 compound at alpha .01; not retrospective paper-wide control',
                 summaries=[str(f) for f,_ in files],source_hashes={str(f):hashlib.sha256(f.read_bytes()).hexdigest() for f,_ in files},
                 primary_p_values=ps,primary_compound_p=max(ps.values()),alpha=.01,primary_success=bool(success),seed_consistency=consistency,
                 primary={k:dict(CI95=tci(v),CI99=tci(v,.99),bootstrap95=bootstrap_ci(v),per_seed=v.tolist()) for k,v in primary.items()},
@@ -107,7 +111,15 @@ def main():
                 repaired_fraction_point=ratio,repaired_fraction_bootstrap95=[float(v) for v in np.quantile(ratios,[.025,.975])],
                 residual_vs_statepause=dict(CI95=tci(residual),TOST_pm_030=tost(residual,.30)),
                 residual_vs_historicalpause=dict(CI95=tci(residual_hist),TOST_pm_030=tost(residual_hist,.30)),
-                fresh_Adam=dict(actor_main=tci(za),critic_main=tci(zc),actor_rescue=tci(zero_rescue)),
+                fresh_Adam=dict(actor_main=tci(za),critic_main=tci(zc),actor_rescue=tci(zero_rescue),
+                                actor_in_onset_critic=tci(A(z['DCC'])-A(z['CCC'])),
+                                actor_in_damaged_critic=tci(A(z['DDC'])-A(z['CDC'])),
+                                critic_in_onset_actor=tci(A(z['CDC'])-A(z['CCC'])),
+                                critic_in_damaged_actor=tci(A(z['DDC'])-A(z['DCC'])),
+                                total=tci(A(z['DDC'])-A(z['CCC']))),
+                statepause_minus_historical=dict(CI95=tci(state_hist),TOST_pm_030=tost(state_hist,.30)),
+                reset_minus_natural=dict(native_AUC=tci(A(M['pause/reset/donor/DDD'])-A(nat)),
+                                         actor_rescue=tci(reset_rescue-primary['onset_actor_rescue'])),
                 reset_context_actor_rescue=tci(reset_rescue),independent_eval_key=54321,alternate_evaluation=alt_metrics,
                 sign_tests={k:dict(negative=int((x<0).sum()),positive=int((x>0).sum()),p_two_sided=float(stats.binomtest(int((x>0).sum()),int((x!=0).sum()),.5).pvalue) if (x!=0).sum() else 1.) for k,x in primary.items()},
                 cell_AUC={k:tci(A(v)) for k,v in M.items()},historical_pause_curve=pause.tolist(),cells={k:v.tolist() for k,v in M.items()})

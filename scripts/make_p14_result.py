@@ -1,0 +1,88 @@
+"""Render the single Phase-14 result from complete n=32 analysis; no selective endpoint display."""
+from pathlib import Path
+import json
+import numpy as np
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
+from scipy import stats
+
+S=Path('results/summary')
+
+
+def ci(v,d=2):
+    return f'${v[0]:+.{d}f}\\ci{{{v[1]:+.{d}f}}}{{{v[2]:+.{d}f}}}$'
+
+
+def pv(p):return '$<10^{-6}$' if p<1e-6 else f'${p:.4f}$'
+
+
+def main():
+    r=json.loads((S/'p14_single_result-analysis.json').read_text());assert r['n']==32
+    M=r['cells'];hist=np.asarray(r['historical_pause_curve']);x=np.arange(hist.shape[1])*10
+    plt.rcParams.update({'font.family':'DejaVu Sans','font.size':13,'axes.spines.top':False,'axes.spines.right':False})
+    f,(a,b)=plt.subplots(1,2,figsize=(12,5.6),constrained_layout=True)
+    for key,label,color,ls in [
+        (None,'Historical pause','#24282B','--'),
+        ('pause/damaged/donor/DDD','Natural impaired','#B14A43','-'),
+        ('pause/damaged/donor/CDD','Onset actor only','#1B7282','-'),
+        ('pause/damaged/donor/DCC','Reciprocal bad actor','#CA963A',':')]:
+        A=hist if key is None else np.asarray(M[key]);mu=A.mean(0);h=stats.t.ppf(.995,31)*A.std(0,ddof=1)/np.sqrt(32)
+        a.plot(x,mu,label=label,color=color,ls=ls,lw=2)
+        a.fill_between(x,mu-h,mu+h,color=color,alpha=.09)
+    a.set_title('A  Repair without extra clean progress',weight='bold',fontsize=13)
+    a.set_xlabel('Unrestricted recovery updates');a.set_ylabel('True-reward evaluation return')
+    a.grid(alpha=.12);a.legend(fontsize=10.5,frameon=False,loc='upper left',bbox_to_anchor=(0,-.16),ncol=2)
+    pairs=[('Native AUC cost',r['primary']['native_AUC_harm']['CI95'],r['primary']['native_AUC_harm']['CI99']),
+           ('Late cost',r['primary']['native_late_harm']['CI95'],r['primary']['native_late_harm']['CI99']),
+           ('Actor rescue',r['primary']['onset_actor_rescue']['CI95'],r['primary']['onset_actor_rescue']['CI99']),
+           ('Reciprocal transfer',r['primary']['reciprocal_actor_transfer']['CI95'],r['primary']['reciprocal_actor_transfer']['CI99']),
+           ('Fresh-Adam rescue',r['fresh_Adam']['actor_rescue'],None),
+           ('Reset-world rescue',r['reset_context_actor_rescue'],None),
+           ('New eval-key rescue',r['alternate_evaluation']['onset_actor_rescue'],None)]
+    for i,(lab,v,w) in enumerate(pairs):
+        m,lo,hi=v
+        if w:b.plot(w[1:], [i,i],color='#92B3BC',lw=1.2)
+        b.errorbar(m,i,xerr=[[m-lo],[hi-m]],fmt='o',color='#1B7282',capsize=3,markersize=5)
+    b.axvline(0,color='.5',ls='--',lw=1);b.set_yticks(range(len(pairs)),[p[0] for p in pairs]);b.invert_yaxis()
+    b.set_xlabel('Paired effect, return points');b.set_title('B  One claim and fixed robustness checks',weight='bold',fontsize=13);b.grid(axis='x',alpha=.12)
+    f.savefig('figures/p14_actor_repair.png',dpi=220,facecolor='white');f.savefig('figures/p14_actor_repair.pdf',facecolor='white')
+    import shutil
+    for ext in ['png','pdf']:shutil.copy2('figures/p14_actor_repair.'+ext,'paper/figures/p14_actor_repair.'+ext)
+    rows=[]
+    labels={'native_AUC_harm':'native AUC cost','native_late_harm':'late-window cost','onset_actor_rescue':'onset-actor rescue','reciprocal_actor_transfer':'reciprocal actor transfer'}
+    thresholds={'native_AUC_harm':r'$<-0.50$','native_late_harm':r'$<-0.30$','onset_actor_rescue':r'$>+0.50$','reciprocal_actor_transfer':r'$<-0.50$'}
+    for k in labels:
+        q=r['primary'][k]
+        rows.append(labels[k]+' & '+ci(q['CI95'])+' & '+ci(q['CI99'])+' & '+thresholds[k]+' & '+pv(r['primary_p_values'][k])+r' \\')
+    table='\n'.join([r'\begin{table}[t]',r'\centering',
+        r'\caption{The single focused Phase-14 result, 32 independent training seeds. All four prespecified practical-effect components must pass through their maximum one-sided $p$ at $\alpha=.01$, plus at least 24/32 native-negative and rescue-positive seeds. Intervals pair training seeds, not episodes/checkpoints. Secondary checks cannot rescue a failed primary.}',
+        r'\label{tab:p14solid}',r'\small',r'\resizebox{\linewidth}{!}{%',r'\begin{tabular}{lcccc}',r'\toprule',
+        r'component & 95\% CI & 99\% CI & required mean & shifted $p$ \\',r'\midrule',*rows,r'\bottomrule',r'\end{tabular}}',r'\end{table}',''])
+    verdict='met' if r['primary_success'] else 'not met'
+    text=r'''\section{A focused high-powered actor-repair result}\label{sec:p14solid}
+We chose one previously supported setting rather than screen additional games or report the best endpoint. Asterix PPO received reward sign corruption during updates 390--440 (409{,}600 environment steps), followed by 200 unrestricted updates. Thirty-two entirely unused training seeds 1200--1231 were fixed before target data; none of the earlier eight Asterix seeds enters this primary. The donor actor comes from the shared onset at 390, not the clean fork at 440, so it cannot import the clean agent's additional progress. All primary swaps use the exact natural damaged future context. The all-D cell is asserted identical over the full runner state to untouched D; the unbroken clean trace supplies the historical pause benchmark.
+
+'''
+    text+='The single compound criterion is '+verdict+', with $p_{\\rm claim}='+f'{r["primary_compound_p"]:.6g}'+r'$ at $\alpha=.01$; every component is reported in Table~\ref{tab:p14solid}. '
+    text+=f'Native AUC cost is '+ci(r['primary']['native_AUC_harm']['CI95'])+', late-window cost '+ci(r['primary']['native_late_harm']['CI95'])+', and replacing only the onset actor changes AUC by '+ci(r['primary']['onset_actor_rescue']['CI95'])+'. '
+    text+='The reciprocal actor transfer is '+ci(r['primary']['reciprocal_actor_transfer']['CI95'])+'. '
+    text+=f'Seedwise consistency is {r["seed_consistency"]["native_AUC_negative"]}/32 native-negative and {r["seed_consistency"]["actor_rescue_positive"]}/32 rescue-positive. The repaired fraction is {100*r["repaired_fraction_point"]:.0f}\\% by ratio of paired means, not an allocation of encoded information.\n\n'+table
+    text+=r'''\begin{figure}[t]
+\centering
+\includegraphics[width=\linewidth]{figures/p14_actor_repair.png}
+\caption{One prespecified actor-repair result. The impaired and actor-repaired learners retain their natural future world/context and the same damaged critic/moments; only actor parameters change in the rescue. The reciprocal swap uses onset critic/moments. Historical pause is the earlier unbroken clean trajectory. Panel A bands are nominal 99\% seed intervals. Panel B shows 95\% intervals and, for primary components, thin 99\% whiskers. Secondary robustness is not a new primary success.}
+\label{fig:p14solid}
+\end{figure}
+
+'''
+    text+='The common-fresh-Adam actor effect is '+ci(r['fresh_Adam']['actor_main'])+', with rescue '+ci(r['fresh_Adam']['actor_rescue'])+'; reset-world rescue is '+ci(r['reset_context_actor_rescue'])+'. '
+    text+='With independent evaluation key 54321, native cost is '+ci(r['alternate_evaluation']['native_AUC_harm'])+', late cost '+ci(r['alternate_evaluation']['native_late_harm'])+' and actor rescue '+ci(r['alternate_evaluation']['onset_actor_rescue'])+'. '
+    text+='Residual rescue-minus-matched-pause is '+ci(r['residual_vs_statepause']['CI95'])+f' (TOST $\\pm.30$, $p={r["residual_vs_statepause"]["TOST_pm_030"]:.4f}$); versus historical pause it is '+ci(r['residual_vs_historicalpause']['CI95'])+f' ($p={r["residual_vs_historicalpause"]["TOST_pm_030"]:.4f}$). '
+    text+='Matched state-pause minus historical pause is '+ci(r['statepause_minus_historical']['CI95'])+f' (TOST $\\pm.30$, $p={r["statepause_minus_historical"]["TOST_pm_030"]:.4f}$). '
+    text+='Passing a practical margin is not literal equality; failing it is reported without declaring full restoration. Bootstrap, exact sign and simultaneous-bound sensitivities are in the analysis artifact. The result remains an intervention-specific, finite-horizon actor-state repair in one game and impairment family, not a unique representation mechanism, universal actor dominance or irreversible loss.\n'
+    S.joinpath('p14_single_result.tex').write_text(text)
+    print('Rendered one-result figure/section; primary criterion',verdict)
+
+
+if __name__=='__main__':main()
