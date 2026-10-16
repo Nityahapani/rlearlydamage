@@ -36,10 +36,10 @@ class AnalysisChecks(unittest.TestCase):
                 Path('prereg/phase14.json').write_text(json.dumps(P))
                 for start in range(0,32,4):
                     base=6+np.arange(start,start+4)[:,None]/100
-                    hist=np.tile(base,(1,21));noise=(np.arange(start,start+4)-15.5)[:,None]/200
+                    hist=np.tile(base,(1,21))+np.arange(21)[None,:]/100;noise=(np.arange(start,start+4)-15.5)[:,None]/200
                     native=hist-1.7+noise;native[:,-5:]=hist[:,-5:]-.8+noise;native[:,0]=-99
                     vals={
-                        'fork/clean/donor/CCC':hist,
+                        'fork/clean/donor/CCC':hist+.05,
                         'pause/damaged/donor/CCC':hist,
                         'pause/damaged/donor/DDD':native,
                         'pause/damaged/donor/CDD':hist+.05,
@@ -56,8 +56,8 @@ class AnalysisChecks(unittest.TestCase):
                            state_fingerprints=dict(C='synthetic-'+str(start),D='synthetic-D',P='synthetic-P'),
                            status='complete',cells=cells,eval_updates=list(range(440,641,10)),
                            checks=dict(DDD_equals_untouched_natural_D=True,CCC_equals_untouched_natural_C=True),
-                           fork_eval=dict(updates=list(range(390,441,10)),C=[base[:,0].tolist()]*6),
-                           fork_eval_alt=dict(updates=list(range(390,441,10)),C=[(base[:,0]+.03).tolist()]*6))
+                           fork_eval=dict(updates=list(range(390,441,10)),C=[(base[:,0]+j/100).tolist() for j in range(6)]),
+                           fork_eval_alt=dict(updates=list(range(390,441,10)),C=[(base[:,0]+.03+j/100).tolist() for j in range(6)]))
                     path=Path(f'results/summary/SYNTHETIC-p14-actor-repair-s{1200+start}to{1203+start}-Asterix-MinAtar-software.json')
                     if start<28:
                         path.write_text(json.dumps(d))
