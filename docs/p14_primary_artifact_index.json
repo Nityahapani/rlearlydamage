@@ -1,0 +1,253 @@
+{
+  "schema": "p14-primary-artifacts-v1",
+  "role": "deterministic evidence export; no new inference",
+  "scientific_release_commit": "74c6ceb9eb75f3727137a98b42ec7caa685dc325",
+  "registration_commit": "6262b2b",
+  "n": 32,
+  "seeds": [
+    1200,
+    1201,
+    1202,
+    1203,
+    1204,
+    1205,
+    1206,
+    1207,
+    1208,
+    1209,
+    1210,
+    1211,
+    1212,
+    1213,
+    1214,
+    1215,
+    1216,
+    1217,
+    1218,
+    1219,
+    1220,
+    1221,
+    1222,
+    1223,
+    1224,
+    1225,
+    1226,
+    1227,
+    1228,
+    1229,
+    1230,
+    1231
+  ],
+  "frozen_analysis": "results/summary/p14_single_result-analysis.json",
+  "frozen_analysis_sha256": "66547f527c789b689cbb13a1a9b3af40f839435c816235b4801fd51a78c229cc",
+  "protocol": "prereg/phase14.json",
+  "frozen_scientific_source_sha256": {
+    "prereg/phase14.json": "6b111b0103708db16919b69597d0968fa332ba918eaa812b62c80ca76a15f1a6",
+    "scripts/p14_actor_repair.py": "3a2322fabdf23ea230dd27ed57165d892bfeba37c0b7436366627cbd6565d089",
+    "src/rled/agents/ppo.py": "1c32654ccdb5df2310595b4cc0d8a98f41f08e0eb1d96fa79b09002ae5cfd253",
+    "src/rled/surgery.py": "cebea5303d573ff306e646c3ccba91aacc60af5dbb3a12aeaa112453cdb80d59"
+  },
+  "checkpoint_availability": {
+    "full_serialized_donor_or_runner_trees_archived": false,
+    "fingerprint_scope": "each P/C/D fingerprint covers one complete FOUR-SEED batched runner tree",
+    "P": "shared onset, update390; donor of actor parameters for the main restoration",
+    "C": "unimpaired fork at update440; used for the historical clean trajectory, not the repair actor",
+    "D": "impaired fork at update440 after removal; source of natural context and other learner fields",
+    "regeneration": "scripts/p14_actor_repair.py recreates donors in memory; a fresh tag avoids cell resumption",
+    "limitation": "fingerprints are not checkpoint objects and cannot restore states without recomputation"
+  },
+  "state_integrity": {
+    "runtime_assertions": "raw checks verify full-tree natural DDD=D and clean CCC=C",
+    "construction": "actor-only CDD is built from D context plus onset actor via compose_ppo",
+    "downstream": "environment/critic/moments/experience can diverge after the intervention",
+    "verifier_limit": "archived means/fingerprints do not permit rechecking omitted full runner trees"
+  },
+  "csv": "results/summary/p14_primary_per_seed.csv",
+  "csv_sha256": "0f2c531451623781e039bc18fff1cef63f49a226cfcdf0f1a17f42088c269036",
+  "auc_definition": "mean of eval_return_mean[:,1:] at +10..200, not an unnormalised integral",
+  "late_definition": "mean paired difference at +160,+170,+180,+190,+200",
+  "primary_evaluation": {
+    "key": 10000,
+    "episodes_per_checkpoint": 64,
+    "independent_second_key": 54321,
+    "second_key_not_selected_or_pooled": true
+  },
+  "groups": [
+    {
+      "seeds": [
+        1200,
+        1201,
+        1202,
+        1203
+      ],
+      "raw_summary": "results/summary/20261016-p14-actor-repair-s1200to1203-Asterix-MinAtar-a39d1bc.json",
+      "raw_summary_sha256": "fcdf0a6e51a89cfa46e0b2b5d1f251d11779d231d588ac6260bd5558562e9247",
+      "run_manifest": "runs/20261016-p14-actor-repair-s1200to1203-Asterix-MinAtar-a39d1bc.json",
+      "run_manifest_sha256": "708ab10f0f91947cb296f6b447a1c159b5d1abe91386444f470fe90ccfc4aa4f",
+      "donor_fingerprints_four_seed_batch": {
+        "C": "4ef39ca2b1441fe24478cf4bc0b9352686e3dc9df1f4d3f1de79e336303b4e7b",
+        "D": "525f235527a46d90f9b3f26724d164147e59db4ef7a35c761fb74b97416776af",
+        "P": "2221d538510cc86e76b6a3fa6476df38bdd3a3693af8a105eabd4a59a8edb010"
+      },
+      "recorded_runtime_checks": {
+        "CCC_equals_untouched_natural_C": true,
+        "DDD_equals_untouched_natural_D": true
+      },
+      "requested_cell_count": 11
+    },
+    {
+      "seeds": [
+        1204,
+        1205,
+        1206,
+        1207
+      ],
+      "raw_summary": "results/summary/20261016-p14-actor-repair-s1204to1207-Asterix-MinAtar-bb164a1.json",
+      "raw_summary_sha256": "12335f769467493ac5ba402fce2b57eceb0543aa0a4fd2b4cb18ebf57f169ef6",
+      "run_manifest": "runs/20261016-p14-actor-repair-s1204to1207-Asterix-MinAtar-bb164a1.json",
+      "run_manifest_sha256": "b4293de948bbc34094ab4a463022fb260527271e4c133bd15c63079560e41b1f",
+      "donor_fingerprints_four_seed_batch": {
+        "C": "d8b751ce12dd2d815116836bf74e04fff6fb70bba5fd5ef5598c3fb5bc8668eb",
+        "D": "79f6c9520053af21deabd2f2994829a6af666728c7dc6f2e55f0a8d4aaa41333",
+        "P": "dbbf56fb9dd7fa6ba63a21303b30a65a879b8ce51e7d8bec99a345e9703430cc"
+      },
+      "recorded_runtime_checks": {
+        "CCC_equals_untouched_natural_C": true,
+        "DDD_equals_untouched_natural_D": true
+      },
+      "requested_cell_count": 11
+    },
+    {
+      "seeds": [
+        1208,
+        1209,
+        1210,
+        1211
+      ],
+      "raw_summary": "results/summary/20261016-p14-actor-repair-s1208to1211-Asterix-MinAtar-7ff5854.json",
+      "raw_summary_sha256": "47d8855c556ce25fc2457ce3f30c32dfea89ac68e02afd947a8ed4521a233399",
+      "run_manifest": "runs/20261016-p14-actor-repair-s1208to1211-Asterix-MinAtar-7ff5854.json",
+      "run_manifest_sha256": "8bcae23ed34c1ad2ecab7689764adec8777c822e3a6e6a05df891574754f3fe5",
+      "donor_fingerprints_four_seed_batch": {
+        "C": "a3fdbdff144335bf535a18f2cdb1893cffb6be795bd2ef5b469faf20f8343640",
+        "D": "89a68ed4081748155da7490d9052ba44f911eae1719d812d3e34a163b931b7f9",
+        "P": "bdfebea2ecf719123a39fbf7fb65b44ded0570af999631870313425086bfda70"
+      },
+      "recorded_runtime_checks": {
+        "CCC_equals_untouched_natural_C": true,
+        "DDD_equals_untouched_natural_D": true
+      },
+      "requested_cell_count": 11
+    },
+    {
+      "seeds": [
+        1212,
+        1213,
+        1214,
+        1215
+      ],
+      "raw_summary": "results/summary/20261016-p14-actor-repair-s1212to1215-Asterix-MinAtar-c0e8164.json",
+      "raw_summary_sha256": "301e2a15dd84b38f20180cdf054efb59a8b6fcdaa4d45ab94c5f14eced684408",
+      "run_manifest": "runs/20261016-p14-actor-repair-s1212to1215-Asterix-MinAtar-c0e8164.json",
+      "run_manifest_sha256": "56acf91284a0d9c9657a08fd1e80b12e67967f6c28f286eb5f22c7aee05562a6",
+      "donor_fingerprints_four_seed_batch": {
+        "C": "a4f0ab27cb04319bc2160ee230abcf4759eab037dcca2ca61744399d6f7b7980",
+        "D": "4ebc5e9890de64fbae90afcf4bda1b9a3a18083cc9d7d86b77e66c9a160eba1e",
+        "P": "58528f9d34a5d7a94686e4122050fefde9ebc76dbbfd30848a2c43472dbc1aa2"
+      },
+      "recorded_runtime_checks": {
+        "CCC_equals_untouched_natural_C": true,
+        "DDD_equals_untouched_natural_D": true
+      },
+      "requested_cell_count": 11
+    },
+    {
+      "seeds": [
+        1216,
+        1217,
+        1218,
+        1219
+      ],
+      "raw_summary": "results/summary/20261016-p14-actor-repair-s1216to1219-Asterix-MinAtar-9b5538b.json",
+      "raw_summary_sha256": "a7f4a4cf85aaf8129fa33e31cfaf8ca286403c344957e43f6be04cc822e56ee6",
+      "run_manifest": "runs/20261016-p14-actor-repair-s1216to1219-Asterix-MinAtar-9b5538b.json",
+      "run_manifest_sha256": "25917521a0dc827d2f1a73cfb200a15ec2cfa00130882254b91dde1081407ac1",
+      "donor_fingerprints_four_seed_batch": {
+        "C": "8d5e7a65a3d83a558f945d42bb757c44bd59ce59b44b4d0ef03bcb4f38268049",
+        "D": "38ac3db7ea029e1deeba8af9a2ac640e2d73b9c34ddb771e229883a769ff6dac",
+        "P": "767a9da3c22361cbf4351bfcc1a97979550b670224fc525986409d973a68ba28"
+      },
+      "recorded_runtime_checks": {
+        "CCC_equals_untouched_natural_C": true,
+        "DDD_equals_untouched_natural_D": true
+      },
+      "requested_cell_count": 11
+    },
+    {
+      "seeds": [
+        1220,
+        1221,
+        1222,
+        1223
+      ],
+      "raw_summary": "results/summary/20261016-p14-actor-repair-s1220to1223-Asterix-MinAtar-1464c4a.json",
+      "raw_summary_sha256": "e15b2e3f17c6dd97ec64da485e56eb16cdf08f29cc2c6f30ff93eb8515fd6f3c",
+      "run_manifest": "runs/20261016-p14-actor-repair-s1220to1223-Asterix-MinAtar-1464c4a.json",
+      "run_manifest_sha256": "5e4d693a3bc0a5f0740c48b32be54e87498655d85fd4fdf3c2f55e0c48afd0d1",
+      "donor_fingerprints_four_seed_batch": {
+        "C": "87691ab07e5de6e48d21796c5bcb95b0ec235b23093ae80df0625e3312db4398",
+        "D": "4fe6f585adeb3cef1553f5b13241e10e65ace4a561bd477b528ecab8c9f746ba",
+        "P": "d624bbd5ec1aa4c97013f532ea7d906016b4641624ff58dc9f644d2fb0f70e40"
+      },
+      "recorded_runtime_checks": {
+        "CCC_equals_untouched_natural_C": true,
+        "DDD_equals_untouched_natural_D": true
+      },
+      "requested_cell_count": 11
+    },
+    {
+      "seeds": [
+        1224,
+        1225,
+        1226,
+        1227
+      ],
+      "raw_summary": "results/summary/20261016-p14-actor-repair-s1224to1227-Asterix-MinAtar-43d9ba4.json",
+      "raw_summary_sha256": "096057e25313c9df55365c7b73061283e47683de591e53ef6ef7269ebe01e374",
+      "run_manifest": "runs/20261016-p14-actor-repair-s1224to1227-Asterix-MinAtar-43d9ba4.json",
+      "run_manifest_sha256": "fbf3ab472c1f1f53e23198e5b7c8dc19d4cb591162bfc018968c60456959da38",
+      "donor_fingerprints_four_seed_batch": {
+        "C": "c73afc0e691f49177bad1f052acb807a328af15522be171bf2f000a442c3e0ad",
+        "D": "0b771ad2a50dc3aa1b1bc596c7564b0a02752546ed951a8473793cad1ffac508",
+        "P": "10b888fef4e020c6151c043eb585445f0d6b78beaff9187a2717e9404d80ff96"
+      },
+      "recorded_runtime_checks": {
+        "CCC_equals_untouched_natural_C": true,
+        "DDD_equals_untouched_natural_D": true
+      },
+      "requested_cell_count": 11
+    },
+    {
+      "seeds": [
+        1228,
+        1229,
+        1230,
+        1231
+      ],
+      "raw_summary": "results/summary/20261016-p14-actor-repair-s1228to1231-Asterix-MinAtar-8e13b34.json",
+      "raw_summary_sha256": "9995455589dfa5bead73cf46472ebb4a8105487e1f04357cf157ec8a48fe3ff0",
+      "run_manifest": "runs/20261016-p14-actor-repair-s1228to1231-Asterix-MinAtar-8e13b34.json",
+      "run_manifest_sha256": "d588ddc27fa18f566cccba8b2da86c1456bd173d95322c1bc42dbfe169f3fc80",
+      "donor_fingerprints_four_seed_batch": {
+        "C": "2b7d4e9190f3cac5ba479927deb08947ce59902d7efbfd74657e302796cd7b37",
+        "D": "0bf5ca0f7d302d04769800a8e4b46cc465b6ff059177891a24768aa48bf613b1",
+        "P": "dc7e8b36add82be1e02e56239de43b5cfea11f193995f4176b3ad42e6038238d"
+      },
+      "recorded_runtime_checks": {
+        "CCC_equals_untouched_natural_C": true,
+        "DDD_equals_untouched_natural_D": true
+      },
+      "requested_cell_count": 11
+    }
+  ]
+}

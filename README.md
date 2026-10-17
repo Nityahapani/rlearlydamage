@@ -1,9 +1,11 @@
-# Where Do Recovery Costs Live?
-## Reference-Aware State Surgery in Deep Reinforcement Learning
+# Actor Checkpoint Restoration in Asterix PPO
+## A Reference-Aware Study of Recovery Cost
 
 CPU-scale RL experiments, reproducible results and a TMLR-format manuscript. **Effects are conditional on the reference intervention, future context and finite recovery horizon—not a unique decomposition of naturally encoded damage.**
 
-**[Paper (PDF)](paper/main.pdf)** · [LaTeX source](paper/main.tex) · [Research log](LOG.md) · [Inference map](docs/headline_inference_map.json) · [Data availability](docs/result_availability.md)
+**[Concise main paper](paper/main.pdf)** · **[Full supplement](paper/supplement.pdf)** · [Primary reproduction guide](docs/primary_asterix_reproduction.md) · [32-row results CSV](results/summary/p14_primary_per_seed.csv) · [Evidence map](docs/headline_inference_map.json)
+
+**Presentation revision:** the main paper now focuses on the reference framework and one Asterix intervention. All historical scientific tables and figures are retained in a separate supplement, with failed/inconclusive primaries still visible in the main evidence hierarchy. [Review response](docs/response_presentation_review.md) · [Research log](LOG.md) · [Availability](docs/result_availability.md).
 
 ## One focused result: a past actor checkpoint repairs most beyond-time recovery cost
 
@@ -28,6 +30,7 @@ Actor rollback removes **91.8% of the mean native recovery cost** (paired-bootst
 - [Full primary and robustness analysis](results/summary/p14_single_result-analysis.md)
 - [Machine-readable results, every paired seed, source hashes](results/summary/p14_single_result-analysis.json)
 - [Release summary and interpretation](docs/phase14_release_summary.md)
+- [Direct raw-group/manifest/batch-fingerprint index](docs/p14_primary_artifact_index.json)
 - [Runner](scripts/p14_actor_repair.py), [fixed queue](scripts/queue_p14.py), [analysis](scripts/analyze_p14.py), [independent arithmetic audit](scripts/verify_p14.py)
 
 The prior eight-seed Asterix cohort motivated this **selected condition** and is never pooled into the new primary. No primary interim analysis, N expansion, setting/endpoint search or evaluation-key selection occurred. All 32 completed all 11 requested cells. The study ran sequentially on **two CPU cores, no GPU**. It is not a new task added to a generalization success count or proof of irreversible/plasticity loss.
@@ -63,18 +66,21 @@ pytest -q
 # Reanalyse the archived complete n=32 cohort; refuses partial cohorts.
 OPENBLAS_NUM_THREADS=1 python scripts/analyze_p14.py
 OPENBLAS_NUM_THREADS=1 python scripts/verify_p14.py
+python scripts/build_primary_artifact_index.py  # deterministic CSV/index export only
 OPENBLAS_NUM_THREADS=1 python scripts/make_p14_result.py
-(cd paper && tectonic --reruns 3 main.tex)
+(cd paper && tectonic --reruns 3 main.tex && tectonic --reruns 3 supplement.tex)
 ```
 
 For a training rerun, reproduce the manifest's exact four-seed groups and source/environment rather than change the batch shape. Example:
 
 ```bash
 OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 python -u scripts/p14_actor_repair.py \
-  --tag actor-repair-s1200to1203 --seeds 1200 1201 1202 1203
+  --tag actor-repair-s1200to1203-fresh-reproduction --seeds 1200 1201 1202 1203
 ```
 
 The paper uses three explicit TeX reruns to obtain stable references with Tectonic 0.15; the default automatic rerun detection can emit a bibliography-consistency warning even with unchanged auxiliary/bibliography hashes. All cited keys and rendered references are checked.
+
+A fresh tag recomputes cells; the original tag may resume archived cells after matching donor fingerprints. Follow the reproduction guide to avoid confusing resumption with a fresh rollout-level recomputation. Full P/C/D donor trees were not archived: available fingerprints cover four-seed batches, not downloadable per-seed checkpoints.
 
 The original queue's wall-clock cutoff was part of its fixed eight-hour execution budget. A later full rerun must explicitly document a **new execution schedule**, without altering the seed list, scientific configuration or inferential rules. Do not use a software-smoke seed as experimental evidence. Resume only after identical donor fingerprints, configuration and overlapping fork evaluations; never silently combine incompatible cells.
 
@@ -82,7 +88,7 @@ The original queue's wall-clock cutoff was part of its fixed eight-hour executio
 
 | Path | Contents |
 |---|---|
-| `paper/` | Current PDF, LaTeX and embedded figures |
+| `paper/` | Concise main PDF, complete separate supplement, LaTeX and embedded figures |
 | `src/rled/` | PPO, PQN (no replay), PQN-R and state-intervention utilities |
 | `prereg/` | Public fixed protocols and frozen diagnostic coefficients |
 | `scripts/` | Training, fixed queues, analysis, verification and figure generation |

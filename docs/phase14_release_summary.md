@@ -1,3 +1,5 @@
+> **Historical scientific release (74c6ceb).** This page records the original 49-page presentation and its PDF hash. The current presentation has a concise main paper plus a full supplement; numerical results and registered rules are unchanged. See [presentation response](response_presentation_review.md). The original PDF is [permanently available at 74c6ceb](https://github.com/Nityahapani/rlearlydamage/blob/74c6ceb9eb75f3727137a98b42ec7caa685dc325/paper/main.pdf).
+
 # One focused result: a past actor checkpoint repairs most native recovery cost
 
 **All 32 planned new seeds complete; one registered practical-effect compound passes.** No new setting/endpoint search, interim primary analysis, N expansion or prior-seed pooling. Asterix PPO, one reward-sign-corruption window, one finite recovery horizon.

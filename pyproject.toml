@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "rled"
 version = "0.0.1"
-description = "Where Do Recovery Costs Live? Reference-Aware State Surgery in Deep RL"
+description = "Actor Checkpoint Restoration in Asterix PPO: A Reference-Aware Study of Recovery Cost"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"

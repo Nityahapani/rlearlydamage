@@ -203,5 +203,15 @@
       "limits": "one Asterix PPO reward-flip condition, finite200-update recovery, fixed evaluation pools; small residual remains; matched-state restoration TOST fails; no unique storage, universal actor dominance or irreversibility",
       "source": "results/summary/p14_single_result-analysis.json"
     }
-  ]
+  ],
+  "presentation": {
+    "main": "paper/main.pdf",
+    "supplement": "paper/supplement.pdf",
+    "glossary": "main Table1 / Section2.1",
+    "AUC": "main Section2.2; discrete average in evaluation-return points, not cross-task currency",
+    "hierarchy": "main Table4 / Section5; outcome support is separate from registered design",
+    "primary_artifacts": "docs/primary_asterix_reproduction.md",
+    "checkpoint_availability": "no archived full donor trees; existing fingerprints cover four-seed batches",
+    "scientific_inference_unchanged": true
+  }
 }

@@ -1,0 +1,31 @@
+{
+  "role": "presentation and reproducibility QA, not new experimental evidence",
+  "baseline": "74c6ceb9eb75f3727137a98b42ec7caa685dc325",
+  "all_old_label_count": 51,
+  "old_literal_table_count_retained": 30,
+  "old_graphic_uses_retained": 15,
+  "primary_numerical_artifact_unchanged": true,
+  "documents": {
+    "main": {
+      "pages": 8,
+      "bytes": 130454,
+      "sha256": "b25169ded18a679c2b1509d2b7e88f94cc610f679ec5f437c1d8b44c9c8e67eb",
+      "citation_keys_checked": 16,
+      "direct_artifact_links_checked": 16
+    },
+    "supplement": {
+      "pages": 45,
+      "bytes": 4043487,
+      "sha256": "65f2624d75b9bc89d4bb3d8285a894455b8b8c7701898a777f6ff8ab5c20aff5",
+      "citation_keys_checked": 34,
+      "direct_artifact_links_checked": 2
+    }
+  },
+  "primary_export": {
+    "paired_rows": 32,
+    "raw_groups": 8,
+    "requested_seed_cells": 352,
+    "full_donor_trees_archived": false,
+    "fingerprints_are_four_seed_batches": true
+  }
+}

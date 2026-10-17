@@ -35,7 +35,12 @@ Natural D identity and controlled washout checks, all cell curves, frozen predic
 
 ## Phase 14: one fixed independent actor-repair confirmation
 
-All32 unused training seeds1200–1231 complete all11 requested cells. The earlier eight-seed Asterix cohort is prior evidence only and is not pooled into the new primary. This is one selected-condition confirmation, not a new task or an unconditional prevalence estimate.
+All 32 unused training seeds 1200–1231 complete all 11 requested cells. The earlier eight-seed Asterix cohort is prior evidence only and is not pooled into the new primary. This is one selected-condition confirmation, not a new task or an unconditional prevalence estimate.
 The single registered practical-effect compound at alpha .01 is met (maximum component p=3.3191367e-08), including the prespecified seedwise consistency rule. This is a separate Phase14 error-control scope, not retrospective paper-wide control.
-All native, onset, reciprocal, common-fresh-Adam and reset-world curves, requested second-key evaluations, exact donor fingerprints and source hashes are archived in the group JSONs. Full transient runner-state trees are not archived. Reproduce using the preserved fixed seed/configuration/source and pinned packages.
+All native, onset, reciprocal, common-fresh-Adam and reset-world curves, requested second-key evaluations, donor fingerprints and source hashes are archived in the group JSONs. Each P/C/D fingerprint covers a four-seed batched numerical tree, not an individual checkpoint file. Full donor/runner-state trees are not archived. Reproduce using the preserved fixed seed/configuration/source and pinned packages.
 Source: `prereg/phase14.json`, `scripts/p14_actor_repair.py`, `scripts/analyze_p14.py`, `results/summary/p14_single_result-analysis.json`. No interim primary, seed expansion, endpoint/key selection or secondary-primary rescue.
+
+## Focused main paper and complete technical supplement
+
+The presentation-only revision has 8 main-paper pages including references and 45 supplementary pages. All historical labelled results/tables/figures remain; the primary numerical artifact is unchanged.
+The deterministic 32-row CSV is included in this hash inventory. The [primary reproduction guide](primary_asterix_reproduction.md) and `p14_primary_artifact_index.json` link all eight raw groups, original manifests, batch fingerprints, code, checks and the registered analysis. Neither the CSV nor the packaging index is additional experimental evidence.
