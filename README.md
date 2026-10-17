@@ -5,7 +5,9 @@ CPU-scale RL experiments, reproducible results and a TMLR-format manuscript. **E
 
 **[Concise main paper](paper/main.pdf)** · **[Full supplement](paper/supplement.pdf)** · [Primary reproduction guide](docs/primary_asterix_reproduction.md) · [32-row results CSV](results/summary/p14_primary_per_seed.csv) · [Evidence map](docs/headline_inference_map.json)
 
-**Presentation revision:** the main paper now focuses on the reference framework and one Asterix intervention. All historical scientific tables and figures are retained in a separate supplement, with failed/inconclusive primaries still visible in the main evidence hierarchy. [Review response](docs/response_presentation_review.md) · [Research log](LOG.md) · [Availability](docs/result_availability.md).
+**Expanded revision in progress (2026-10-17):** the main PDF now includes a substantive integrated reproducibility appendix, donor/reference diagram and conditional/joint-bootstrap uncertainty discussion. A frozen-source same-seed checkpoint reconstruction is running; do not count it as additional independent empirical evidence. See [the budgeted plan](docs/expanded_reproduction_revision_plan.md). The numerical scientific result below is unchanged.
+
+**Earlier presentation revision:** the main paper focused on the reference framework and one Asterix intervention. All historical scientific tables and figures are retained in a separate supplement, with failed/inconclusive primaries still visible in the main evidence hierarchy. [Review response](docs/response_presentation_review.md) · [Research log](LOG.md) · [Availability](docs/result_availability.md).
 
 ## One focused result: a past actor checkpoint repairs most beyond-time recovery cost
 
