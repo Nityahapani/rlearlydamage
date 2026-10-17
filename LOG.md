@@ -1653,3 +1653,9 @@ Clock at first action16:22UTC, fixed final deadline00:18UTC; no new chunk after2
 - Final PDF 49 pages, 4066200 bytes, SHA256 `1fbde29d0f30cf41c271490622dc3eabc9b7e4d274ab0816576cd77a6391de24`. All33 cited keys and references resolve. No overfull boxes, undefined labels/outcome slots or oversized floats; key pages visually checked. Tectonic explicit3 reruns yield stable auxiliary/bibliography hashes and avoid its benign automatic `.bbl` loop warning; underfull old provenance-table lines remain.
 - Independent raw-row/t-CDF/source-hash verification reproduces every primary, consistency count and verdict. All597 catalogued files hash-match; all8 groups and352 requested seed/cells complete;191 surviving NPZs tracked. Full software suite26passed,61 declared future/deprecation warnings.
 - README/metadata/inference map now reflect the current reference-aware story; obsolete README retained only as a labelled historical snapshot. Frozen numerical environment included. No new scientific training after23:07:37; finalization remains within the fixed00:18 UTC deadline.
+
+## 2026-10-17: presentation revision, no new experiments
+- The review requests a concise core narrative, terminology/evidence hierarchy, interpretable AUC, direct primary artifacts and stronger limitations. Plan: docs/presentation_revision_plan.md.
+- Recovered the public74c6ceb release after a sandbox Git reset; restored only missing versioned result files and executable bits. Existing scientific contents were retained. No training restarted.
+- Fix all scientific quantities/registered rules and four registered source-file bytes. Reorganise into a focused main manuscript plus a separate full technical supplement; retain all failed/inconclusive primary outcomes and scoped error control.
+- Artifact packaging will state that donor checkpoint trees are not archived and that existing P/C/D fingerprints cover four-seed batches. A CSV/index will be a deterministic export, not new evidence.
