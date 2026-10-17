@@ -1,0 +1,58 @@
+\section{What the statistical uncertainty does and does not cover}\label{m:uncertainty}
+\subsection{The inferential unit is a training seed, conditional on evaluation randomness}
+Separate three random objects: the initialization/training stream indexed by seed $S$, the evaluation random tape $U$, and the explicitly selected scientific condition (game, algorithm, architecture, corruption and horizon). For a fixed evaluation tape $U_0$, each trained policy produces one 64-episode mean at each checkpoint. The paired primary row is
+\begin{equation}
+Z_i(U_0)=\bigl(E_i^{\rm native},\ E_i^{\rm late},\ A_i(R)-A_i(N),\ A_i(B_D)-A_i(Q_D)\bigr).
+\end{equation}
+The reported primary intervals estimate across-training-seed means of these measured quantities \emph{conditional on $U_0$ and the selected condition}. They do not integrate over a redrawn evaluation population. Independent training streams change initialization, sampled training experience and learned parameters together; this design does not separately estimate their individual variance components.
+
+The evaluation function resets 64 environments and follows the first episode in each, capped by the environment's episode limit. Its fixed key determines reset, stochastic-policy and transition random draws. The same key 10000 is reused across arms, checkpoints and training seeds as common random numbers. Pairing can reduce variance of contrasts, but it does not make a finite evaluation batch equal to the population performance of a policy. We do not treat 32 seeds $\times$ 64 episodes $\times$ 20 checkpoints as independent observations.
+
+For a seed contrast $Z$, the nominal two-sided interval is
+\begin{equation}
+\bar Z\ \pm\ t_{31,1-\alpha_c/2}\,s_Z/\sqrt{32},
+\end{equation}
+with $\alpha_c=.05$ or $.01$ for the displayed 95\% or 99\% interval. These levels differ from the primary compound's $\alpha=.01$ decision rule. The usual seed-level sampling assumptions remain; the intervals are not distribution-free guarantees. Exact signs, mean-bootstrap sensitivity and simultaneous one-sided bounds qualify the result but do not turn it into a paper-wide test. Trajectory bands in Figure~\ref{m:figure} are \emph{pointwise}99\% intervals, not a simultaneous confidence band over time.
+
+\begin{table}[ht]
+\centering
+\caption{Scope of the reported intervals. Reusing fixed evaluation randomness is a design choice, not a claim that evaluation uncertainty is zero.}
+\label{m:uncertaintyscope}
+\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{5.2cm}X@{}}
+\toprule
+source or dependency & represented in the reported seed intervals? \\
+\midrule
+Initialization and training-stream differences & Yes, jointly through 32 independent training-seed rows, at fixed evaluation tape. \\
+Shared history and paired arms & Yes; differences are formed within seed before inference. \\
+Dependence among recovery checkpoints & Kept inside a seed's AUC/late summary; checkpoints are not resampled as independent units. \\
+A newly drawn 64-episode evaluation tape & No; primary conditioning fixes $U_0$. \\
+Selection of task, architecture, hyperparameters or horizon & No; one selected condition is held fixed. \\
+A literal pause in a different future context & No; that changes the estimand, not merely its sampling error. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{What the second evaluation key establishes}
+Key 54321 was frozen before the new study and evaluated on the specified clean, native and actor-restored cells. It gives native AUC $-1.599\ci{-1.762}{-1.436}$, late cost $-1.070\ci{-1.315}{-.825}$ and actor rescue $+1.398\ci{+1.227}{+1.569}$. These are separate conditional-on-$U_1$ estimates for the \emph{same} 32 trained seeds. The second key is not selected after comparing outcomes, pooled with $U_0$, counted as another training cohort, or used to replace a failed primary.
+
+Agreement across these two specified tapes is useful robustness evidence. It does not provide an interval over all possible evaluation worlds/policy draws, and it does not establish generalization across tasks. A future evaluation-marginal analysis would require an explicit design with enough independently generated evaluation tapes and an uncertainty calculation respecting the crossed/common-random-number structure. We do not retrospectively claim to have performed that analysis.
+
+\subsection{The repair ratio requires a joint, paired bootstrap}\label{m:ratiouncertainty}
+Let $B_i=-E_i^{\rm native}$ be the measured positive historical-pause cost and $Y_i=A_i(R)-A_i(N)$ the rescue. The reported ratio is $\hat\rho=\bar Y/\bar B$, not $\overline{Y_i/B_i}$. Numerator and denominator share the native trajectory, the initial seed and the evaluation tape. Their uncertainty must not be combined as if they were independent estimates.
+
+For each of 20{,}000 bootstrap draws, we sample 32 seed indices with replacement \emph{once} and use that same index vector for both $Y$ and $B$:
+\begin{equation}
+\rho^{*(b)}=\frac{32^{-1}\sum_{j=1}^{32}Y_{I^{(b)}_j}}
+{32^{-1}\sum_{j=1}^{32}B_{I^{(b)}_j}}.
+\end{equation}
+Resampling complete paired rows preserves their empirical covariance and the already-aggregated within-seed checkpoint/arm dependence. The frozen implementation uses NumPy's default generator seed 140033 and the linear 2.5th/97.5th percentiles. It neither clips ratios to $[0,1]$ nor substitutes a fixed denominator. The resulting interval is 86.3--97.5\%, conditional on the same evaluation tape and condition as the inputs. Appendix~\ref{app:statistics} gives executable pseudocode and an exact reproduction check.
+
+The covariance matters. A delta-method expansion, provided only to explain the joint calculation, is
+\begin{equation}
+\operatorname{Var}(\hat\rho)\ \approx\ \frac{\operatorname{Var}(Y)+\rho^2\operatorname{Var}(B)
+-2\rho\operatorname{Cov}(Y,B)}{n\,\mu_B^2}.
+\end{equation}
+Independently resampling numerator and denominator would discard the last term. We do not report that as the paper's interval. Every observed $B_i$ is positive here, so empirical bootstrap denominators are positive; this is not a general guarantee for ratio estimands in other settings. Ratios may in principle exceed 100\% under over-repair or become unstable near a zero mean cost. The interpretation remains reference-dependent: changing H changes $B$ and therefore $\rho$, even when the direct actor-rescue contrast is held fixed.
+
+Finally, the 91.8\% ratio and its bootstrap interval are a descriptive repair summary, not another required component of the four-part primary test and not a proportion of impairment information stored in a component. The negative residual and failed matched-state restoration margin remain part of the conclusion.

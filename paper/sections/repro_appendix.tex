@@ -1,0 +1,216 @@
+\clearpage
+\appendix
+\section{Reproducibility map and frozen scientific specification}\label{app:repro}
+This appendix is part of the main PDF. It contains the primary protocol, complete cell map, numerical estimators, uncertainty algorithm, all paired primary seed results, state-integrity rules, artifact tiers and commands. The separate historical supplement is useful for the earlier research record but is \emph{not required to reconstruct the primary statistical result}.
+
+\subsection{Which release is frozen?}
+The public scientific release 74c6ceb contains the completed original 32-seed results. The later presentation release a21654c changes their exposition, not the primary numerical artifact. Registration 6262b2b fixes the primary scientific protocol and core runner/PPO/composition files. The analysis implementation was added before formal target inference; it is linked at the completed scientific release, not falsely claimed to be a file already present in the initial registration commit.
+
+The reconstruction wrapper is a separate instrumented program. It imports the unchanged scientific runner and checks its four registered source files byte for byte. Serialization and evaluation recording do not change the registered reward corruption, training budget, cells or inferential rules. Reconstructed arrays are labelled with their later creation date and original numerical fingerprints. They are not retroactively described as files retained when the original experiment ran.
+
+\begin{table}[ht]
+\centering
+\caption{Complete primary configuration. These choices are held fixed; their appearance in a table does not establish invariance to other choices.}
+\label{app:configuration}
+\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{5.0cm}X@{}}
+\toprule
+item & value \\
+\midrule
+Environment / implementation & Asterix-MinAtar, gymnax 0.0.9; flattened observations \\
+Agent / architecture & PPO; separate actor and critic MLPs, two 128-unit ReLU hidden layers each; no shared encoder or recurrence \\
+Initialization & Orthogonal hidden kernels (gain $\sqrt2$); actor output gain .01; critic output gain 1; zero biases \\
+Optimizer & Adam, learning rate $5\times10^{-4}$ constant, $\epsilon=10^{-5}$; global gradient clip .5 \\
+Rollout and optimization & 64 environments $\times$ 128 steps; 8{,}192 steps/update; 4 epochs $\times$ 8 minibatches (1{,}024 samples/minibatch) \\
+Discount / advantage trace & $\gamma=.99$, GAE $\lambda=.95$ \\
+PPO losses & Clip .2; entropy coefficient .01; value coefficient .5 \\
+Training corruption & Reward sign reversal with probability 1 during $[390,440)$; observations/actions otherwise unchanged \\
+Training before/after removal & Shared 390-update prehistory; 50-update impaired/clean fork; 200 unrestricted recovery updates \\
+Evaluation & Every 10 rollout updates; 64 first-episode returns, full actions, true reward, stochastic policy, environment episode cap \\
+Primary / secondary tapes & Fixed key 10000; fixed secondary 54321 in the three specified cells \\
+Independent training IDs & 1200--1231, in the eight fixed four-seed groups; none filtered \\
+Primary family & One four-component intersection--union, $\alpha=.01$, plus the two $24/32$ consistency requirements \\
+Secondary restoration margin & $\pm.30$ against both historical H and matched $Q_D$; not literal zero \\
+Hardware / original full runtime & Two CPU cores, about 2GB RAM, no GPU; 6h34m33s for the original eight groups \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Each training seed controls initialization and its training randomness. The original runner records package versions, configuration, seed group, source revision, status and whether the tree was clean. The fixed corruption is evaluated without corruption: negative training rewards must not leak into evaluation. ``Late'' refers to the previously selected competent onset, not to an onset sweep or a universal critical period in this 32-seed study.
+
+\subsection{Packages and numerical environment}
+The full version list is in \artifact{requirements-repro.txt}{\texttt{requirements-repro.txt}}. Core versions are Python 3.13, JAX/jaxlib 0.11.2, Flax 0.12.10, Optax 0.2.8, gymnax 0.0.9, NumPy 2.5.4 and SciPy 1.18.1. Architecture and initialization are read from the frozen source, not inferred from plotted returns. Each reconstructed checkpoint manifest additionally lists all numerical leaf shapes/dtypes, so observation/action-dependent layer dimensions can be checked rather than guessed.
+
+Matching package versions is necessary but not a promise of identical numerical results on every backend or compiler/CPU configuration. The reproduced state fingerprints and trajectory checks are the actual validation criterion. If they fail elsewhere, preserve and report the discrepancy rather than adjust scientific source or select favourable seeds. Run JAX jobs sequentially on a small-memory CPU machine; concurrent JAX compilation/tests can exceed the memory budget.
+
+\section{Every intervention cell and preserved state field}\label{app:compositions}
+\subsection{The complete 11-cell map}
+For the primary, $N,R,Q_D,B_D$ always start from the natural D context. ``Donor'' below means selecting the corresponding donor Adam block, not copying all clocks from that donor. A fresh-Adam cell overwrites that block with the common fresh optimizer state after actor/critic composition.
+
+\begin{table}[ht]
+\centering
+\caption{All registered cells. P means onset; D means impaired removal; $C^{+}$ means clean removal;0 means common fresh Adam. The external context includes all non-train-state fields and the retained TrainState step.}
+\label{app:allcells}
+\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{5.2cm}ccccX@{}}
+\toprule
+archive cell & actor & critic & Adam & context & role / evaluation tapes \\
+\midrule
+\path{fork/clean/donor/CCC} & $C^+$ & $C^+$ & $C^+$ & $x_{C^+}$ & clean trace;10000/54321 \\
+\path{pause/damaged/donor/CCC} & P & P & P & $x_D$ & $Q_D$;10000 \\
+\path{pause/damaged/donor/DDD} & D & D & D & $x_D$ & native N;10000/54321 \\
+\path{pause/damaged/donor/CDD} & P & D & D & $x_D$ & repair R;10000/54321 \\
+\path{pause/damaged/donor/DCC} & D & P & P & $x_D$ & reciprocal $B_D$;10000 \\
+\path{pause/damaged/zero/CCC} & P & P &0 & $x_D$ & fresh-Adam factorial \\
+\path{pause/damaged/zero/CDC} & P & D &0 & $x_D$ & fresh-Adam factorial \\
+\path{pause/damaged/zero/DCC} & D & P &0 & $x_D$ & fresh-Adam factorial \\
+\path{pause/damaged/zero/DDC} & D & D &0 & $x_D$ & fresh-Adam factorial \\
+\path{pause/reset/donor/DDD} & D & D & D & $x_{D,r}$ & reset-world native;10000 \\
+\path{pause/reset/donor/CDD} & P & D & D & $x_{D,r}$ & reset-world repair;10000 \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+The literal letter C has different implementation meanings in the fork and pause reference modes, which is why the main text uses P/$C^+$/$N$/$R$/$Q_D$/$B_D$ instead of inferring donor age from the letter alone. The reset context $x_{D,r}$ replaces only environment state and observations, using initialization seed 900000+$s$. Its future training key, counters, reward bank, masks and all other fields remain D. Common fresh Adam is initialized from the same optimizer transform in all four actor--critic combinations; it does not define a natural decomposition of original optimizer damage.
+
+\subsection{Field-level integrity, including clocks}
+The actor keys are \path{a0}, \path{a1}, \path{Dense_0}; critic keys are \path{c0}, \path{c1}, \path{Dense_1}. They form separate towers. The generic composer selects these parameter groups and the Adam state, but its returned runner context is \emph{not} by itself the final intervention. The primary runner takes the composed TrainState and wraps it in the explicitly chosen D context. Both code locations are linked in the main artifact table.
+
+\begin{table}[ht]
+\centering
+\caption{What is preserved for the actor-only repair R at removal. Field identities hold at the splice, not throughout subsequent training.}
+\label{app:fields}
+\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{5.1cm}X@{}}
+\toprule
+field group & repair R / matched reference $Q_D$ \\
+\midrule
+Actor parameters & P / P \\
+Critic parameters & D / P \\
+Adam moments and internal optimizer count & D / P \\
+TrainState step & D / D; distinct from the Adam internal counter \\
+Environment state and observations & D / D \\
+Future training PRNG key & D / D initially; policy-dependent experience can diverge \\
+Rollout-update counter & D / D, at update 440 \\
+Deficit bounds & Disabled after removal in every recovery cell \\
+Reward bank, action mask & D / D \\
+Behaviour-policy auxiliary actor, cutoff, temperature and ratio flag & D / D; the optional behaviour swap is inactive in this assay \\
+Anchor actor and other numerical auxiliaries & D / D; no drift/freezing intervention is active \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+There are 32 gradient updates per rollout update (four epochs times eight minibatches). Rollout counters and gradient-step/Adam counters must therefore not be conflated. The source retains the D TrainState step even when onset Adam is selected for $Q_D$ or $B_D$. A literal whole-runner P freeze retains all P clocks instead. This is another reason those states are not identical.
+
+The original summaries record full-tree equality assertions for native DDD versus untouched D and clean fork CCC versus untouched $C^+$. They do not contain all intermediate CDD runner objects for retrospective inspection. The reconstruction additionally checks every composed actor/critic/Adam donor, all non-train-state D fields and the retained TrainState step. Those later checks are labelled as recomputed checks, not falsely attributed to an originally saved field audit.
+
+\section{Exact estimators, tests and the joint ratio bootstrap}\label{app:statistics}
+\subsection{Array orientation and historical alignment}
+Each \path{cells[key].eval_return_mean} matrix is seed-by-checkpoint: four rows and 21 columns per original group. Column 0 is removal, then +10 through+200. Fork arrays in \path{fork_eval.C/D} and \path{fork_eval_alt.C} instead have checkpoint-by-seed orientation. The CSV export gives one row per training seed, not per episode or checkpoint.
+
+For an absolute recovery evaluation update $u=440+k$, read the historical clean mean at $u-50=390+k$. The clean bank is formed by the fork evaluations 390--440 and the continuing \path{fork/clean/donor/CCC} cell 440--640. Where the two meet at 440, their clean evaluations agree. A shift by 40 or using the same update would define a different comparison. The independent verifier reconstructs this alignment from raw rows rather than trusting a precomputed native-cost array.
+
+For a curve $X$ with 21 checkpoint values, $A(X)=\operatorname{mean}(X[1:])$. The late comparison is the mean of the five \emph{paired differences} at 160--200. All four primary vectors are formed within seed before averaging:
+\begin{align}
+\gamma_i&=A_i(N)-A_i(H),& \ell_i&=\tfrac15\sum_{k=160,170,\ldots,200}\{N_i(k)-H_i(k)\},\\
+\tau_i&=A_i(R)-A_i(N),& \delta_i&=A_i(B_D)-A_i(Q_D).
+\end{align}
+Episode-return units are preserved. An unnormalised sum or an area including removal would change the scale and is not what the registered .50/.30 thresholds test.
+
+\subsection{Shifted practical-effect tests and consistency}
+The one-sided alternatives are $\mathbb E\gamma<-.50$, $\mathbb E\ell<-.30$, $\mathbb E\tau>+.50$ and $\mathbb E\delta<-.50$. Implement them by paired-seed one-sample $t$ tests of $\gamma+.50$, $\ell+.30$, $\tau-.50$ and $\delta+.50$ against zero, with the corresponding less/greater direction. Use 31 degrees of freedom. The single primary passes only if the largest of these four $p$ values is below .01 \emph{and} at least 24/32 native AUC values are negative and 24/32 rescues positive. The consistency requirement is about sign, not 24 seeds individually exceeding the practical-effect magnitude.
+
+The four effects are not four alternative routes to success. The conjunction cannot be rescued by choosing the best endpoint, a different reference, another evaluation key, the ratio interval or a secondary control. Nominal 95/99\% intervals are paired training-seed intervals. The secondary simultaneous one-sided 95\% bounds use a Bonferroni factor of four over these components; this sensitivity is not paper-wide error control. Signs and fixed-seed mean bootstrap results are also preserved in the numerical artifact.
+
+\subsection{Reproduce the repair-ratio interval without an RL run}
+The following is the frozen ratio calculation, made explicit. It reads the already-paired primary rows; the CSV or raw-curve verifier can first confirm them independently.
+\begin{verbatim}
+import json
+import numpy as np
+r = json.load(open(
+    "results/summary/p14_single_result-analysis.json"))
+Y = np.asarray(r["primary"]["onset_actor_rescue"]["per_seed"])
+B = -np.asarray(r["primary"]["native_AUC_harm"]["per_seed"])
+rho = Y.mean() / B.mean()
+rng = np.random.default_rng(140033)
+I = rng.integers(0, 32, size=(20000, 32))
+# SAME paired seed indices for both numerator and denominator:
+Y_star = Y[I].mean(axis=1)
+B_star = B[I].mean(axis=1)
+rho_star = Y_star / B_star
+ci = np.quantile(rho_star, [0.025, 0.975], method="linear")
+assert np.isfinite(rho_star).all()
+# No clipping and no replacement by the original mean denominator.
+\end{verbatim}
+The interval is not obtained by dividing separate marginal interval endpoints, independently resampling Y and B, averaging seedwise ratios, or resampling 64 episodes as 32$\times$64 independent trained agents. B and Y share N as well as the original seed history and evaluation tape. Keeping row indices joint preserves that empirical covariance. A toy case Y$=c$B makes the distinction transparent: a paired resample keeps the ratio exactly c, whereas independent numerator/denominator resamples introduce artificial variation.
+
+The interval is a percentile-bootstrap approximation conditional on the observed design, not an exact coverage theorem for all ratio distributions. Since every observed B is positive, every empirical resampled mean denominator is positive here. A small/uncertain denominator in another setting would require a different discussion; it is not made safe by forcing ratios into 0--100\%. The primary statistical decision remains the four-component rule, independent of whether a rounded repair percentage appears large.
+
+\section{Every original paired primary seed result}\label{app:seedrows}
+Table~\ref{app:seedtable} makes the training-seed unit visible in the PDF. Values are rounded for reading; the linked CSV and raw JSON retain precision. Recomputed trajectories, when matched, duplicate these original seeds and are \emph{not} appended as another 32 rows for inference. One late contrast is positive, even though the mean late effect and all native/rescue consistency requirements pass.
+\input{sections/p14_seed_rows.tex}
+
+\section{What can be reanalysed, loaded or recomputed?}\label{app:availability}
+\input{sections/reconstruction_status.tex}
+
+\begin{table}[ht]
+\centering
+\caption{Reproducibility tiers. ``Reconstructed'' describes later provenance, not a newly observed independent condition. Static functions are supplied by code, not by executable checkpoint pickles.}
+\label{app:availabilitymatrix}
+\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.6cm}XX@{}}
+\toprule
+material / operation & available information & computation still needed \\
+\midrule
+Original frozen seed-level means & All 11 cells, 21 checkpoints/seed, fork history, both requested evaluation keys, primary/secondary analysis and source hashes. & No RL run to regenerate statistics, consistency, reference alignment or the joint ratio interval. \\
+Original state-integrity record & Recorded all-D/native and all-C/clean full-tree checks; three batched donor numerical fingerprints per group. & A fingerprint cannot reconstruct missing arrays or independently rerun the original memory object. \\
+Later reconstructed donor bundle & P/$C^+$/D dynamic runner fields with matching original numerical fingerprints; schema, source/environment metadata, serialization audit. & Loading needs the frozen static function/template. Simulating recovery still costs training/evaluation time, but not the prehistory. \\
+Later fixed-batch episode returns & Reconstructed individual returns and call index; means checked against original recorded means. & These are not a new evaluation population or original-retained episode files. A new key requires evaluation computation. \\
+Intermediate/final recovery policy weights & Curves are archived; a policy object at every recovery checkpoint is not separately retained. & Re-run the required continuation from a matching donor to recover those policies or evaluate new tapes. \\
+Whole-process/backend state & Numerical state plus pinned code, not Python function pickles, compiled executables, hardware or an unlimited environment clone. & Rebuild the template/compiler environment; report any mismatch. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{Original and reconstructed data are different provenance classes}
+The original data-generating run did \emph{not} retain full serialized donor trees. That historical limitation is not rewritten. The later recovery procedure checks P/$C^+$/D against the original four-seed batch fingerprints, serializes all dynamic numerical leaves, restores them before the unchanged runner proceeds, and compares all five primary/reference trajectories against the original recorded means. The first group additionally repeats all six secondary cells; the other groups retain those original secondary means but do not claim to have rerun them within this reproduction budget. Fresh processes load each checked group into a new template and replay native/restored primary cells with both evaluation keys. Completion counts and public bundle links above are based on checked reports, not assumed from intended execution.
+
+All reconstructed observations use the same 32 seed IDs and protocol. They improve artifact access and auditability, not generalizability or independent statistical sample size. Exact numerical agreement is a reproduction criterion, not a second favourable study to be pooled into the primary. A full four-seed fingerprint is not an individual checkpoint fingerprint, and static apply/optimizer functions are reconstructed from the source rather than recovered from a hash.
+
+\subsection{What the integrity audit can and cannot prove}
+Serialization round-trip equality checks dynamic values against their source donor. The independent load path checks the recorded numerical fingerprint and the source/template rule. Agreement in the declared reconstruction cells checks actual future computation from the deserialized donors; it is not a claim that unrerun secondary cells have also been independently replayed. Fixed-batch episode data additionally permit exact verification of the 64-episode averaging operation; they do not by themselves establish that uncertainty across alternative evaluation tapes was estimated.
+
+These checks can detect changed donors, stale/corrupt files, a wrong context, skipped fields, misaligned curves and duplicate seed accounting. They cannot prove that a reference is the only scientifically appropriate counterfactual, that information is uniquely encoded in an actor, or that the same intervention works on unseen tasks. A matching deterministic trajectory is also not an external independent implementation of PPO.
+
+\section{Commands, restoration and failure handling}\label{app:commands}
+\subsection{Fast statistical reanalysis from the frozen release}
+Use a working copy and the pinned numerical environment. No JAX training is needed for the following raw-data/statistical checks:
+\begin{verbatim}
+python scripts/verify_p14.py
+python scripts/build_primary_artifact_index.py
+python scripts/verify_p14_uncertainty.py
+\end{verbatim}
+The first script reconstructs all four paired rows, historical lag, shifted t tests, 95/99\% intervals, consistency and source/data hashes. The second deterministically exports the 32-row CSV and artifact index. The third reproduces the joint repair-ratio bootstrap without changing the numerical result artifact. The original \path{scripts/analyze_p14.py} can regenerate the full analysis in a separate working copy and refuses an incomplete cohort.
+
+\subsection{Load reconstructed states and replay primary continuations}
+Each public bundle includes a manifest, P/C/D \path{.msgpack.gz} files, original and recomputed mean summaries, reconstructed fixed-batch episode returns/call index, pinned requirements and integrity reports. The release index supplies SHA256 values and public download URLs. Verify the bundle and member hashes before deserialization. The format contains numerical state dictionaries, not arbitrary executable pickle objects.
+
+A fresh template is created by the frozen PPO initialization with the recorded environment/configuration and the exact four-seed batch. Flax restoration fills all dynamic fields; static model/optimizer functions come from that template. Verify the restored numerical fingerprint before any continuation. The published replay entry point carries out these operations rather than asking readers to guess how to join parameter/optimizer/RNG files:
+\begin{verbatim}
+# Download the seed-group bundle using the indexed URL; verify SHA256.
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
+  python scripts/p14_checkpoint_reproduction.py --mode replay \
+  --bundle /path/to/s1200to1203.zip \
+  --seeds 1200 1201 1202 1203 --cells DDD CDD
+\end{verbatim}
+This regenerates the 21 evaluations of native/restored recovery with both specified keys. It is not a zero-compute replay of logged scores: policies continue learning from the saved initial states. Exact first-group episode-array and frozen-mean comparisons are reported separately from the original primary result.
+
+\subsection{Full from-scratch reproduction and clean provenance}
+The full frozen runner rebuilds prehistory and all 11 cells from seeds. Use a new reconstruction tag or the published reproduction wrapper: an old tag can resume already-complete cells after matching fingerprints, which is not the same as rerunning their trajectories. The wrapper's new tags are excluded from the original primary loader. Do not pool duplicate seed IDs or silently overwrite the original summaries.
+
+Keep the four-seed shapes, source, numerical versions, E=10 grid and fixed evaluation keys. Run sequentially. Each manifest identifies its actual source revision; missing/unrun/partial work is not imputed. The historical experiment's execution deadline is not changed to conduct a later reproduction: the reconstruction has its own explicit operational schedule and no altered scientific hypothesis.
+
+If donor fingerprints, a recorded mean, a checkpoint member hash or a replay array differs, stop and preserve the discrepancy. Do not tune source flags or choose another seed to obtain a match. A software-only CartPole seed 99994 exercises serialization and all 11 cell paths but never enters Asterix inference or generalization counts. The archive records whether each group is complete, matching and independently load-tested; intended future work is not described as accomplished.
+
+\subsection{Build the integrated paper and locate the full historical record}
+The main source includes this appendix and the single donor/reference diagram; it does not require the historical supplement to expose primary estimators or commands. Build from the \path{paper} directory with Tectonic and three explicit reruns, which avoid its automatic bibliography-rerun inconsistency warning. The companion supplement preserves all old tables/figures, local multiplicity families, interim looks, selected-condition counts, negative/inconclusive primaries and unavailable legacy artifacts. Its earlier PPO/PQN/replay findings must not be relabelled as additional independent support for the one selected Asterix result.

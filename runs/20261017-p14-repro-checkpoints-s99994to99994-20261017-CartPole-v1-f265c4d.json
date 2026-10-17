@@ -1,0 +1,123 @@
+{
+  "allow_dirty": false,
+  "config": {
+    "DEFICIT": "reward_flip",
+    "DEFICIT_PARAMS": {
+      "prob": 1.0
+    },
+    "ENV_NAME": "CartPole-v1",
+    "HIDDEN": 128,
+    "TOTAL_TIMESTEPS": 327680,
+    "protocol": {
+      "actor_donor": "shared onset; no extra clean progress",
+      "cells": [
+        {
+          "code": "CCC",
+          "context": "clean",
+          "opt": "donor",
+          "reference": "fork"
+        },
+        {
+          "code": "CCC",
+          "context": "damaged",
+          "opt": "donor",
+          "reference": "pause"
+        },
+        {
+          "code": "DDD",
+          "context": "damaged",
+          "opt": "donor",
+          "reference": "pause"
+        },
+        {
+          "code": "CDD",
+          "context": "damaged",
+          "opt": "donor",
+          "reference": "pause"
+        },
+        {
+          "code": "DCC",
+          "context": "damaged",
+          "opt": "donor",
+          "reference": "pause"
+        },
+        {
+          "code": "CCC",
+          "context": "damaged",
+          "opt": "zero",
+          "reference": "pause"
+        },
+        {
+          "code": "CDC",
+          "context": "damaged",
+          "opt": "zero",
+          "reference": "pause"
+        },
+        {
+          "code": "DCC",
+          "context": "damaged",
+          "opt": "zero",
+          "reference": "pause"
+        },
+        {
+          "code": "DDC",
+          "context": "damaged",
+          "opt": "zero",
+          "reference": "pause"
+        },
+        {
+          "code": "DDD",
+          "context": "reset",
+          "opt": "donor",
+          "reference": "pause"
+        },
+        {
+          "code": "CDD",
+          "context": "reset",
+          "opt": "donor",
+          "reference": "pause"
+        }
+      ],
+      "context": "natural D for main swaps; reset changes only env/obs, keeps D RNG/counter",
+      "env": "CartPole-v1",
+      "eval_envs": 64,
+      "eval_every": 10,
+      "eval_seed": 10000,
+      "optimizer_control": "common fresh Adam for all4 actor x critic combinations",
+      "recovery": 20,
+      "schema": "p14-v1",
+      "second_eval_cells": [
+        "fork/clean/donor/CCC",
+        "pause/damaged/donor/CDD",
+        "pause/damaged/donor/DDD"
+      ],
+      "second_eval_seed": 54321,
+      "smoke": true,
+      "steps_per_update": 8192,
+      "window": [
+        10,
+        20
+      ]
+    }
+  },
+  "created_utc": "2026-10-17T06:00:48.070852+00:00",
+  "git": {
+    "commit": "f265c4d74b94c6ccc0f1184f35492cff060c53fb",
+    "dirty": false
+  },
+  "name": "p14-repro-checkpoints-s99994to99994-20261017-CartPole-v1",
+  "packages": {
+    "flax": "0.12.10",
+    "gymnax": "0.0.9",
+    "jax": "0.11.2",
+    "jaxlib": "0.11.2",
+    "numpy": "2.5.4",
+    "optax": "0.2.8",
+    "rliable": null
+  },
+  "platform": "Linux-6.1.158+-x86_64-with-glibc2.41",
+  "python": "3.13.16",
+  "seeds": [
+    99994
+  ]
+}

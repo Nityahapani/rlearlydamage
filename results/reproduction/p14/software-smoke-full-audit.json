@@ -1,0 +1,1795 @@
+{
+  "schema": "p14-reconstructed-runner-v1",
+  "role": "same-seed exact reconstruction, not independent replication",
+  "created_utc": "2026-10-17T06:00:47.945023+00:00",
+  "smoke": true,
+  "seeds": [
+    99994
+  ],
+  "source_commit": "f265c4d74b94c6ccc0f1184f35492cff060c53fb",
+  "registered_scientific_source_sha256": {
+    "prereg/phase14.json": "6b111b0103708db16919b69597d0968fa332ba918eaa812b62c80ca76a15f1a6",
+    "scripts/p14_actor_repair.py": "3a2322fabdf23ea230dd27ed57165d892bfeba37c0b7436366627cbd6565d089",
+    "src/rled/agents/ppo.py": "1c32654ccdb5df2310595b4cc0d8a98f41f08e0eb1d96fa79b09002ae5cfd253",
+    "src/rled/surgery.py": "cebea5303d573ff306e646c3ccba91aacc60af5dbb3a12aeaa112453cdb80d59"
+  },
+  "config": {
+    "ENV_NAME": "CartPole-v1",
+    "HIDDEN": 128,
+    "DEFICIT": "reward_flip",
+    "DEFICIT_PARAMS": {
+      "prob": 1.0
+    },
+    "TOTAL_TIMESTEPS": 327680
+  },
+  "frozen_reference_summary": null,
+  "frozen_reference_summary_sha256": null,
+  "serialization": "Flax state_dict/msgpack, gzip mtime0; all dynamic runner fields; static functions rebuilt from pinned code",
+  "reconstructed_not_originally_retained": true,
+  "status": "complete",
+  "checkpoints": {
+    "C": {
+      "file": "C.msgpack.gz",
+      "sha256": "f436f06a47ed932211b2b868641e4f1f07fd8b3d78840600bdbb0dbed59ac115",
+      "bytes": 519126,
+      "numerical_tree_fingerprint": "616255275f9a2bca9e9d29e08918f9f0d24ff3bb79e84eb1f58b1bd68b1bc168",
+      "leaf_schema": [
+        {
+          "path": "(DictKey(key='action_mask'),)",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "bool"
+        },
+        {
+          "path": "(DictKey(key='anchor_actor'), DictKey(key='Dense_0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='anchor_actor'), DictKey(key='Dense_0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='anchor_actor'), DictKey(key='a0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='anchor_actor'), DictKey(key='a0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='anchor_actor'), DictKey(key='a1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='anchor_actor'), DictKey(key='a1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_actor'), DictKey(key='Dense_0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_actor'), DictKey(key='Dense_0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_actor'), DictKey(key='a0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_actor'), DictKey(key='a0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_actor'), DictKey(key='a1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_actor'), DictKey(key='a1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_ratio_learner'),)",
+          "shape": [
+            1
+          ],
+          "dtype": "bool"
+        },
+        {
+          "path": "(DictKey(key='behaviour_temp'),)",
+          "shape": [
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_until'),)",
+          "shape": [
+            1
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='deficit_bounds'),)",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='env_state'), GetAttrKey(name='time'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='env_state'), GetAttrKey(name='x'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='env_state'), GetAttrKey(name='x_dot'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='env_state'), GetAttrKey(name='theta'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='env_state'), GetAttrKey(name='theta_dot'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='episode_returns'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='episode_lengths'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='returned_episode_returns'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='returned_episode_lengths'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='obs'),)",
+          "shape": [
+            1,
+            64,
+            4
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='reward_bank'),)",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='rng'),)",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "uint32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='step'))",
+          "shape": [
+            1
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='Dense_0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='Dense_0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='Dense_1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='Dense_1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='a0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='a0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='a1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='a1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='c0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='c0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='c1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='c1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='count'))",
+          "shape": [
+            1
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='Dense_0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='Dense_0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='Dense_1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='Dense_1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='a0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='a0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='a1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='a1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='c0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='c0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='c1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='c1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='Dense_0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='Dense_0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='Dense_1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='Dense_1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='a0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='a0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='a1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='a1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='c0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='c0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='c1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='c1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='update'),)",
+          "shape": [
+            1
+          ],
+          "dtype": "int32"
+        }
+      ],
+      "exact_frozen_fingerprint": false,
+      "serialization_roundtrip_equal": true
+    },
+    "D": {
+      "file": "D.msgpack.gz",
+      "sha256": "c1481fc57956299dbdb966f61cb5e53c39d1256b808fabf003e3bb4be1db1d97",
+      "bytes": 520750,
+      "numerical_tree_fingerprint": "5eb4635fb37320640de6ea453caf940218aa22989e9097b9015e11293dd9c3b0",
+      "leaf_schema": [
+        {
+          "path": "(DictKey(key='action_mask'),)",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "bool"
+        },
+        {
+          "path": "(DictKey(key='anchor_actor'), DictKey(key='Dense_0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='anchor_actor'), DictKey(key='Dense_0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='anchor_actor'), DictKey(key='a0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='anchor_actor'), DictKey(key='a0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='anchor_actor'), DictKey(key='a1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='anchor_actor'), DictKey(key='a1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_actor'), DictKey(key='Dense_0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_actor'), DictKey(key='Dense_0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_actor'), DictKey(key='a0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_actor'), DictKey(key='a0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_actor'), DictKey(key='a1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_actor'), DictKey(key='a1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_ratio_learner'),)",
+          "shape": [
+            1
+          ],
+          "dtype": "bool"
+        },
+        {
+          "path": "(DictKey(key='behaviour_temp'),)",
+          "shape": [
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_until'),)",
+          "shape": [
+            1
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='deficit_bounds'),)",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='env_state'), GetAttrKey(name='time'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='env_state'), GetAttrKey(name='x'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='env_state'), GetAttrKey(name='x_dot'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='env_state'), GetAttrKey(name='theta'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='env_state'), GetAttrKey(name='theta_dot'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='episode_returns'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='episode_lengths'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='returned_episode_returns'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='returned_episode_lengths'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='obs'),)",
+          "shape": [
+            1,
+            64,
+            4
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='reward_bank'),)",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='rng'),)",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "uint32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='step'))",
+          "shape": [
+            1
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='Dense_0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='Dense_0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='Dense_1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='Dense_1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='a0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='a0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='a1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='a1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='c0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='c0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='c1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='c1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='count'))",
+          "shape": [
+            1
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='Dense_0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='Dense_0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='Dense_1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='Dense_1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='a0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='a0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='a1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='a1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='c0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='c0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='c1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='c1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='Dense_0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='Dense_0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='Dense_1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='Dense_1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='a0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='a0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='a1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='a1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='c0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='c0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='c1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='c1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='update'),)",
+          "shape": [
+            1
+          ],
+          "dtype": "int32"
+        }
+      ],
+      "exact_frozen_fingerprint": false,
+      "serialization_roundtrip_equal": true
+    },
+    "P": {
+      "file": "P.msgpack.gz",
+      "sha256": "aac9900e07bbf8a49d3cd99b051a43ab6f570ba25eaeec10310ca810a5970d81",
+      "bytes": 520462,
+      "numerical_tree_fingerprint": "09d29c0b09a1002b61c3e54e77d2dab3026897614b7bcb383b591c36ad129587",
+      "leaf_schema": [
+        {
+          "path": "(DictKey(key='action_mask'),)",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "bool"
+        },
+        {
+          "path": "(DictKey(key='anchor_actor'), DictKey(key='Dense_0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='anchor_actor'), DictKey(key='Dense_0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='anchor_actor'), DictKey(key='a0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='anchor_actor'), DictKey(key='a0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='anchor_actor'), DictKey(key='a1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='anchor_actor'), DictKey(key='a1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_actor'), DictKey(key='Dense_0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_actor'), DictKey(key='Dense_0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_actor'), DictKey(key='a0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_actor'), DictKey(key='a0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_actor'), DictKey(key='a1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_actor'), DictKey(key='a1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_ratio_learner'),)",
+          "shape": [
+            1
+          ],
+          "dtype": "bool"
+        },
+        {
+          "path": "(DictKey(key='behaviour_temp'),)",
+          "shape": [
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='behaviour_until'),)",
+          "shape": [
+            1
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='deficit_bounds'),)",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='env_state'), GetAttrKey(name='time'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='env_state'), GetAttrKey(name='x'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='env_state'), GetAttrKey(name='x_dot'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='env_state'), GetAttrKey(name='theta'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='env_state'), GetAttrKey(name='theta_dot'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='episode_returns'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='episode_lengths'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='returned_episode_returns'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='env_state'), GetAttrKey(name='returned_episode_lengths'))",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='obs'),)",
+          "shape": [
+            1,
+            64,
+            4
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='reward_bank'),)",
+          "shape": [
+            1,
+            64
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='rng'),)",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "uint32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='step'))",
+          "shape": [
+            1
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='Dense_0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='Dense_0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='Dense_1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='Dense_1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='a0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='a0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='a1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='a1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='c0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='c0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='c1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='params'), DictKey(key='params'), DictKey(key='c1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='count'))",
+          "shape": [
+            1
+          ],
+          "dtype": "int32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='Dense_0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='Dense_0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='Dense_1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='Dense_1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='a0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='a0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='a1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='a1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='c0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='c0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='c1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='mu'), DictKey(key='params'), DictKey(key='c1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='Dense_0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='Dense_0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            2
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='Dense_1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='Dense_1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            1
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='a0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='a0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='a1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='a1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='c0'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='c0'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            4,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='c1'), DictKey(key='bias'))",
+          "shape": [
+            1,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='train_state'), GetAttrKey(name='opt_state'), SequenceKey(idx=1), SequenceKey(idx=0), GetAttrKey(name='nu'), DictKey(key='params'), DictKey(key='c1'), DictKey(key='kernel'))",
+          "shape": [
+            1,
+            128,
+            128
+          ],
+          "dtype": "float32"
+        },
+        {
+          "path": "(DictKey(key='update'),)",
+          "shape": [
+            1
+          ],
+          "dtype": "int32"
+        }
+      ],
+      "exact_frozen_fingerprint": false,
+      "serialization_roundtrip_equal": true
+    }
+  },
+  "episode_data_scope": "reconstructed fixed-batch episode returns; original frozen release retained only means",
+  "packages": {
+    "jax": "0.11.2",
+    "jaxlib": "0.11.2",
+    "flax": "0.12.10",
+    "optax": "0.2.8",
+    "gymnax": "0.0.9",
+    "numpy": "2.5.4",
+    "scipy": "1.18.1",
+    "msgpack": "1.2.3"
+  },
+  "field_integrity_checks": {
+    "DDD_equals_full_untouched_D": true,
+    "DDD_actor_parameters_match_donor": true,
+    "DDD_critic_parameters_match_donor": true,
+    "DDD_Adam_state_matches_donor": true,
+    "DDD_train_state_step_matches_D": true,
+    "DDD_all_non_train_state_fields_match_D": true,
+    "CDD_actor_parameters_match_donor": true,
+    "CDD_critic_parameters_match_donor": true,
+    "CDD_Adam_state_matches_donor": true,
+    "CDD_train_state_step_matches_D": true,
+    "CDD_all_non_train_state_fields_match_D": true,
+    "CCC_actor_parameters_match_donor": true,
+    "CCC_critic_parameters_match_donor": true,
+    "CCC_Adam_state_matches_donor": true,
+    "CCC_train_state_step_matches_D": true,
+    "CCC_all_non_train_state_fields_match_D": true,
+    "DCC_actor_parameters_match_donor": true,
+    "DCC_critic_parameters_match_donor": true,
+    "DCC_Adam_state_matches_donor": true,
+    "DCC_train_state_step_matches_D": true,
+    "DCC_all_non_train_state_fields_match_D": true
+  },
+  "all_cells_exactly_match_frozen_reference": false,
+  "all_continuations_used_deserialized_donors": true,
+  "eval_call_count": 48,
+  "wallclock_s": 51.6,
+  "recomputed_manifest": "20261017-p14-repro-checkpoints-s99994to99994-20261017-CartPole-v1-f265c4d.json",
+  "episode_archive_sha256": "ecf3f62d6949b835ddd6971e39f3bea493d3a436fbcfee41c3c71e87f27fd4aa",
+  "bundle_file": "s99994to99994.zip",
+  "bundle_bytes": 1633446,
+  "bundle_sha256": "b0506788db1202d3ac9f7deff3b3a9de469624d2b2f82a8d53458b76d5733524",
+  "original_reference": null
+}

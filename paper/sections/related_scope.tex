@@ -1,0 +1,34 @@
+\section{Why this result is different from a generic reset or plasticity claim}\label{m:contribution}
+The empirical advance is deliberately narrower than a new universal recovery principle. In one selected setting, the complete registered conjunction demonstrates native historical-pause cost, a late-window cost, repair by an \emph{older} actor, and reciprocal impaired-actor transfer. The older donor is important: the repair cannot be explained by copying the extra clean progress accumulated during impairment. Retaining the actual impaired critic, Adam and removal-time world also makes this a different intervention from resetting or rewinding the whole learner.
+
+That distinction is scientifically useful even without task-wide generality. It separates two explanations that an ordinary clean-fork transplant cannot distinguish: importing foregone progress versus changing a state variable that alters recovery relative to a specified lost-time benchmark. It does \emph{not} distinguish a direct actor-information effect from effects mediated by future actions/data, and it does not turn the selected benchmark into the unique correct counterfactual. The reference-aware assay is the methodological contribution; the 32-seed result is an independent confirmation \emph{within a prior-selected condition}, not a prevalence estimate.
+
+\subsection{Fresh resets, retained competence and plasticity are different targets}
+The primacy-bias intervention periodically reinitializes network components while retaining replay experience \citep{nikishin2022primacy}. That tests the usefulness of discarding a fitted state while relearning from retained data. Our primary PPO assay has no replay buffer and restores a known past actor rather than a fresh random actor. These are different treatments: past competence is available in one and may be discarded in the other. The old four-seed SpaceInvaders reset result does not establish that past-actor restoration outperforms fresh resets in this Asterix study.
+
+Plasticity injection changes trainable state while preserving predictions at intervention time \citep{nikishin2023injection}; probe-task work directly examines ability to fit new targets \citep{lyle2023plasticity}. On-policy plasticity studies examine domain shifts and find that remedies can behave differently from the off-policy setting \citep{juliani2024onpolicy}. Our actor restoration \emph{does} change predictions and future behaviour, and the learning objective returns to the same task. Good same-task recovery therefore cannot substitute for a measurement of capacity on a new task.
+
+Likewise, module-specific conclusions need not transfer. In their visual-RL settings, \citet{ma2024revisiting} identify critic plasticity as a central bottleneck. Our result identifies a useful actor intervention in a different algorithm/impairment/context. Neither finding licenses a universal ranking of actors and critics. Transient non-stationarity and representation-repair work \citep{igl2021transient}, and broader studies of plasticity loss \citep{dohare2024loss,klein2024survey}, motivate these questions without making the present recovery contrast a representation diagnostic.
+
+\begin{table}[ht]
+\centering
+\caption{Interventions should be compared by what they change and what their outcomes establish. This is a conceptual distinction, not a head-to-head performance benchmark.}
+\label{m:resetcomparison}
+\small
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.6cm}XX@{}}
+\toprule
+operation & what is supplied or discarded? & what is not established merely by improvement? \\
+\midrule
+Later clean-actor transplant & An actor with additional clean progress during impairment. & Harm beyond that foregone progress, or an intrinsic damage carrier. \\
+Past-actor restoration (here) & The learner's pre-impairment actor; current non-actor fields retained. & Unique storage, new-task plasticity, complete restoration, or superiority to other recovery methods. \\
+Fresh partial/full reset & New initialized parameters; replay or other knowledge carriers may remain. & That the discarded state lacked useful competence, or that the same reset helps another algorithm/context. \\
+Plasticity injection / new-target probe & Altered trainability or an explicit test of fitting new targets. & That the present same-task pause-relative cost has the same mechanism. \\
+Whole-runner rollback & Earlier parameters, optimizer, world, random stream and clocks together. & The actor-specific intervention effect under the \emph{current} natural impaired context. \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+\subsection{The significance and the boundary of the contribution}
+The result closes a specific interpretive gap: an onset checkpoint with no extra-progress advantage can repair most measured native recovery cost under the declared intervention. Reciprocal transfer and the fixed fresh-Adam, reset-world and independent-key checks constrain simple alternative explanations. The 32-seed design, full paired data and state-integrity audit make this a stronger claim than an exploratory four-seed allocation.
+
+There is no matched Asterix comparison against plasticity injection, distillation, a fresh-reset strategy or an automatically selected checkpoint. We therefore make no efficiency, safety or state-of-the-art claim over those methods. Selecting the right checkpoint, detecting an impairment online, trading preserved competence against future learnability, and assessing larger/shared-encoder agents remain open problems. The reward mechanism, separate-tower MLP architecture and recovery horizon are each held fixed, not demonstrated irrelevant.

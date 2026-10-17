@@ -1,8 +1,8 @@
 """Exact-state/trajectory reconstruction of the EXISTING P14 cohort, not new evidence.
 
 The scientific runner is imported without editing its source. Instrumentation records evaluation
-returns and serializes/restores each donor before the frozen runner continues. A full run must
-match every original curve and all P/C/D fingerprints; failure is a reproduction discrepancy,
+returns and serializes/restores each donor before the frozen runner continues. A run must match every declared reconstructed curve and all P/C/D fingerprints;
+full mode covers11 cells, primary mode the five primary/reference cells; failure is a reproduction discrepancy,
 never a new scientific result or a reason to change the registered design.
 """
 from __future__ import annotations
@@ -119,7 +119,8 @@ def full(args):
     import p14_actor_repair as scientific
 
     scientific_hashes = checked_sources()
-    smoke = args.mode == 'smoke'
+    smoke = args.mode in ['smoke','smoke-primary']
+    primary_only = args.mode in ['primary','smoke-primary']
     seeds = args.seeds
     if smoke:
         assert seeds == [99994], 'Software-only smoke is fixed and excluded from inference'
@@ -132,11 +133,13 @@ def full(args):
     specs = evaluation_specs(proto)
     archive = Path(args.archive_root).resolve()/f's{seeds[0]}to{seeds[-1]}'
     archive.mkdir(parents=True,exist_ok=True)
-    tag=f'repro-checkpoints-s{seeds[0]}to{seeds[-1]}-20261017'
+    prefix='repro-checkpoints-primary' if primary_only else 'repro-checkpoints'
+    tag=f'{prefix}-s{seeds[0]}to{seeds[-1]}-20261017'
     assert not list((ROOT/'results/summary').glob('*p14-'+tag+'-*.json')), 'Fresh reconstruction must not resume cells'
     start = time.time()
     meta = dict(schema='p14-reconstructed-runner-v1', role='same-seed exact reconstruction, not independent replication',
                 created_utc=datetime.now(timezone.utc).isoformat(), smoke=smoke, seeds=seeds,
+                reconstruction_scope='five primary/reference cells' if primary_only else 'all eleven original cells',
                 source_commit=subprocess.check_output(['git','rev-parse','HEAD'],cwd=ROOT).decode().strip(),
                 registered_scientific_source_sha256=scientific_hashes, config=pack_cfg(smoke),
                 frozen_reference_summary=original_name,
@@ -189,28 +192,55 @@ def full(args):
             episodes.append(array.copy());record_specs.append(spec)
             return array
     scientific.jax=JaxProxy()
+    class PrimaryScopeComplete(Exception):
+        pass
+    original_compose=scientific.compose_ppo
+    composition_count=0
+    def scoped_compose(*values,**kwargs):
+        nonlocal composition_count
+        if primary_only and composition_count==5:
+            raise PrimaryScopeComplete('Declared primary/reference reconstruction complete before secondary cell6')
+        composition_count+=1
+        return original_compose(*values,**kwargs)
+    scientific.compose_ppo=scoped_compose
     oldargv=sys.argv
     sys.argv=['p14_actor_repair.py','--seeds',*map(str,seeds),'--tag',tag]+(['--smoke'] if smoke else [])
-    try:scientific.main()
-    finally:sys.argv=oldargv
+    scoped_stop=False
+    try:
+        scientific.main()
+    except PrimaryScopeComplete:
+        scoped_stop=True
+    finally:
+        sys.argv=oldargv
+    assert scoped_stop==primary_only
     raw_paths=list((ROOT/'results/summary').glob('*p14-'+tag+'-*.json'));assert len(raw_paths)==1
     raw=json.loads(raw_paths[0].read_text())
-    assert raw['status']=='complete' and raw['resumed_from'] is None
-    assert len(episodes)==len(specs)
+    assert raw['resumed_from'] is None
+    assert raw['status']==('running' if primary_only else 'complete')
+    expected_names=['/'.join(c[k] for k in ['reference','context','opt','code'])
+                    for c in proto['cells'][:5 if primary_only else 11]]
+    assert list(raw['cells'])==expected_names
+    requested_specs=[v for v in specs if v['phase']=='fork' or v.get('cell') in expected_names]
+    assert len(episodes)==len(requested_specs)
     if original is not None:
-        for field in ['seeds','protocol','eval_updates','fork_eval','fork_eval_alt','state_fingerprints','cells','checks']:
+        for field in ['seeds','protocol','eval_updates','fork_eval','fork_eval_alt','state_fingerprints','checks']:
             assert raw[field]==original[field],f'Final mismatch: {field}'
+        for name in expected_names:
+            assert raw['cells'][name]==original['cells'][name],f'Cell mismatch: {name}'
     np.savez_compressed(archive/'fixed_batch_episode_returns.npz',returns=np.stack(episodes))
     (archive/'episode_index.json').write_text(json.dumps(record_specs,indent=2)+'\n')
     (archive/'recomputed_raw_summary.json').write_text(json.dumps(raw,indent=1)+'\n')
     if original is not None:(archive/'frozen_reference_summary.json').write_text(json.dumps(original,indent=1)+'\n')
     (archive/'requirements-repro.txt').write_bytes((ROOT/'requirements-repro.txt').read_bytes())
-    meta.update(status='complete',all_cells_exactly_match_frozen_reference=not smoke,
+    meta.update(status='complete',all_recomputed_cells_exactly_match_frozen_reference=not smoke,
+                all_primary_reference_cells_exact=not smoke,recomputed_cell_count=len(expected_names),
+                total_original_registered_cells=11,
+                secondary_cells_not_rerun=[name for name in (original['cells'] if original else {}) if name not in expected_names],
                 all_continuations_used_deserialized_donors=True,eval_call_count=len(episodes),
                 wallclock_s=round(time.time()-start,1),recomputed_manifest=raw['manifest'],
                 episode_archive_sha256=sha((archive/'fixed_batch_episode_returns.npz').read_bytes()))
     save_meta()
-    (archive/'README.txt').write_text('These numerical runner states were RECONSTRUCTED in 2026-10-17, not retained from the original run.\nP=onset390; C=clean440; D=impaired440 after removal (smoke uses10/20).\nEach fingerprint covers the complete four-seed batched numerical tree.\nStatic apply/optimizer functions require the pinned source/template.\nAll donor round trips and full-cell continuations match the frozen release exactly when smoke=false.\nUse scripts/p14_checkpoint_reproduction.py --mode replay --bundle PATH --seeds A B C D.\nThis is not a new independent training-seed cohort.\n')
+    (archive/'README.txt').write_text('These numerical runner states were RECONSTRUCTED in 2026-10-17, not retained from the original run.\nP=onset390; C=clean440; D=impaired440 after removal (smoke uses10/20).\nEach fingerprint covers the complete four-seed batched numerical tree.\nStatic apply/optimizer functions require the pinned source/template.\nDeclared donor/cell reconstruction scope is in the manifest. All RECOMPUTED curves match the frozen release when smoke=false; unrerun secondary cells are not claimed matched.\nUse scripts/p14_checkpoint_reproduction.py --mode replay --bundle PATH --seeds A B C D.\nThis is not a new independent training-seed cohort.\n')
     bundle=archive.parent/(archive.name+'.zip')
     with zipfile.ZipFile(bundle,'w',compression=zipfile.ZIP_STORED) as z:
         for path in sorted(archive.iterdir()):z.write(path,path.name)
@@ -271,10 +301,10 @@ def replay(args):
 
 
 def main():
-    ap=argparse.ArgumentParser();ap.add_argument('--mode',choices=['full','smoke','replay'],default='full')
+    ap=argparse.ArgumentParser();ap.add_argument('--mode',choices=['full','primary','smoke','smoke-primary','replay'],default='full')
     ap.add_argument('--seeds',nargs='+',type=int,required=True)
     ap.add_argument('--archive-root',default='/home/user/build/p14-reconstruction/archives')
-    ap.add_argument('--bundle');ap.add_argument('--cells',nargs='+',default=['DDD','CDD'])
+    ap.add_argument('--bundle');ap.add_argument('--cells',nargs='+',choices=['DDD','CDD'],default=['DDD','CDD'])
     args=ap.parse_args()
     if args.mode=='replay':replay(args)
     else:full(args)

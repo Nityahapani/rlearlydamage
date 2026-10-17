@@ -30,3 +30,13 @@ Replace the eight-page presentation with a fuller argument and an **integrated, 
 Any published states will be labelled **reconstructed2026-10-17**, not falsely described as retained at the original experiment. P/C/D hashes cover four-seed batches. The archive stores complete dynamic numerical state, optimizer/environment/observation/RNG/counters/auxiliaries; static apply/optimizer functions require the pinned source/template. Original/independent reconstructed episode arrays are distinguished from original mean curves.
 
 Large bundles may be published as public repository release assets with SHA256 indexes, keeping the source repository small. A bundle is marked complete only after the predefined checks pass. If reconstruction is incomplete or not exact, the paper retains that limitation rather than asserting that missing states have been recovered.
+
+## Operational amendment06:24UTC — preserve complete primary coverage within the same budget
+
+Measured new-host first-cell time939s and next-cell increment278s imply full eleven-cell reconstruction for all groups exceeds the user's deadline. Before groups2–8 start, prioritise:
+
+- First group1200–1203 continues ALL11 cells exactly as originally launched.
+- Every later group reconstructs the SAME P/C/D donors and ALL FIVE primary/reference cells (clean fork, matched onset learner, native, actor-restored, reciprocal). Stop the instrumented run before secondary cell6 by a documented control-flow hook; do not change the scientific runner/protocol or any numerical operation in the executed cells.
+- Independently load the published numerical states in a fresh process and replay native/restored cells with both keys for EVERY group, not just the first.
+- The original scientific results still contain all11 cells for all32 seeds. Distinguish original availability from this reproduction's coverage. Mark six secondary cells not rerun for the later groups; never assert full eleven-cell rerun completeness for them.
+- Keep the same operational cutoff12:20/hardstop13:20 and final handoff target. Match failures still halt; no seed or metric substitution. This is computational prioritisation for artifact recovery, not an outcome-dependent statistical design change.

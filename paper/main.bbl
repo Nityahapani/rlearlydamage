@@ -5,23 +5,12 @@
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
 
-\bibitem[Achille et~al.(2019)Achille, Rovere, and Soatto]{achille2019critical}
-Alessandro Achille, Matteo Rovere, and Stefano Soatto.
-\newblock Critical learning periods in deep networks.
-\newblock In \emph{International Conference on Learning Representations}, 2019.
-
 \bibitem[Agarwal et~al.(2021)Agarwal, Schwarzer, Castro, Courville, and
   Bellemare]{agarwal2021precipice}
 Rishabh Agarwal, Max Schwarzer, Pablo~Samuel Castro, Aaron Courville, and
   Marc~G. Bellemare.
 \newblock Deep reinforcement learning at the edge of the statistical precipice.
 \newblock In \emph{Advances in Neural Information Processing Systems}, 2021.
-
-\bibitem[Dohare et~al.(2023)Dohare, Lan, and Mahmood]{dohare2023collapse}
-Shibhansh Dohare, Qingfeng Lan, and A.~Rupam Mahmood.
-\newblock Overcoming policy collapse in deep reinforcement learning.
-\newblock In \emph{Sixteenth European Workshop on Reinforcement Learning},
-  2023.
 
 \bibitem[Dohare et~al.(2024)Dohare, Hernandez-Garcia, Lan, Rahman, Mahmood, and
   Sutton]{dohare2024loss}
@@ -51,11 +40,17 @@ Maximilian Igl, Gregory Farquhar, Jelena Luketina, Wendelin Boehmer, and Shimon
   learning.
 \newblock In \emph{International Conference on Learning Representations}, 2021.
 
-\bibitem[Kleinman et~al.(2024)Kleinman, Achille, and
-  Soatto]{kleinman2024critical}
-Michael Kleinman, Alessandro Achille, and Stefano Soatto.
-\newblock Critical learning periods emerge even in deep linear networks.
-\newblock In \emph{International Conference on Learning Representations}, 2024.
+\bibitem[Juliani \& Ash(2024)Juliani and Ash]{juliani2024onpolicy}
+Arthur Juliani and Jordan~T. Ash.
+\newblock A study of plasticity loss in on-policy deep reinforcement learning.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2024.
+
+\bibitem[Klein et~al.(2024)Klein, Miklautz, Sidak, Plant, and
+  Tschiatschek]{klein2024survey}
+Timo Klein, Lukas Miklautz, Kevin Sidak, Claudia Plant, and Sebastian
+  Tschiatschek.
+\newblock Plasticity loss in deep reinforcement learning: A survey.
+\newblock \emph{arXiv preprint arXiv:2411.04832}, 2024.
 
 \bibitem[Lakens(2017)]{lakens2017equivalence}
 Dani{\"e}l Lakens.
@@ -83,6 +78,15 @@ Clare Lyle, Zeyu Zheng, Evgenii Nikishin, Bernardo Avila~Pires, Razvan Pascanu,
 \newblock Understanding plasticity in neural networks.
 \newblock In \emph{International Conference on Machine Learning}, 2023.
 
+\bibitem[Ma et~al.(2024)Ma, Li, Zhang, Liu, Wang, Chen, Shen, Wang, and
+  Tao]{ma2024revisiting}
+Guozheng Ma, Lu~Li, Sen Zhang, Zixuan Liu, Zhen Wang, Yixin Chen, Li~Shen,
+  Xueqian Wang, and Dacheng Tao.
+\newblock Revisiting plasticity in visual reinforcement learning: Data, modules
+  and training stages.
+\newblock In \emph{International Conference on Learning Representations}, 2024.
+\newblock URL \url{https://arxiv.org/abs/2310.07418}.
+
 \bibitem[Nikishin et~al.(2022)Nikishin, Schwarzer, D'Oro, Bacon, and
   Courville]{nikishin2022primacy}
 Evgenii Nikishin, Max Schwarzer, Pierluca D'Oro, Pierre-Luc Bacon, and Aaron
@@ -90,17 +94,18 @@ Evgenii Nikishin, Max Schwarzer, Pierluca D'Oro, Pierre-Luc Bacon, and Aaron
 \newblock The primacy bias in deep reinforcement learning.
 \newblock In \emph{International Conference on Machine Learning}, 2022.
 
+\bibitem[Nikishin et~al.(2023)Nikishin, Oh, Ostrovski, Lyle, Pascanu, Dabney,
+  and Barreto]{nikishin2023injection}
+Evgenii Nikishin, Junhyuk Oh, Georg Ostrovski, Clare Lyle, Razvan Pascanu, Will
+  Dabney, and Andr{\'e} Barreto.
+\newblock Deep reinforcement learning with plasticity injection.
+\newblock In \emph{Advances in Neural Information Processing Systems}, 2023.
+
 \bibitem[Schulman et~al.(2017)Schulman, Wolski, Dhariwal, Radford, and
   Klimov]{schulman2017ppo}
 John Schulman, Filip Wolski, Prafulla Dhariwal, Alec Radford, and Oleg Klimov.
 \newblock Proximal policy optimization algorithms.
 \newblock \emph{arXiv preprint arXiv:1707.06347}, 2017.
-
-\bibitem[Xu(2026)]{xu2026optimizer}
-Qinyang Xu.
-\newblock Stored in optimizer state, valued by later training: A causal account
-  of subliminal trait transfer.
-\newblock \emph{arXiv preprint arXiv:2608.20442}, 2026.
 
 \bibitem[Young \& Tian(2019)Young and Tian]{young2019minatar}
 Kenny Young and Tian Tian.

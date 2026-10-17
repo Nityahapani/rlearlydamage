@@ -1,0 +1,48 @@
+% One diagram, generated directly from the declared state-composition rules.
+% Included inside a figure; source coordinates are centimetres.
+\begin{tikzpicture}[x=1cm,y=1cm,>=Stealth,
+  box/.style={draw=black!55,rounded corners=2pt,align=center,font=\small,inner sep=5pt},
+  pbox/.style={box,fill=teal!10,draw=teal!75!black},
+  dbox/.style={box,fill=red!7,draw=red!65!black},
+  hbox/.style={box,dashed,draw=blue!65!black,fill=blue!3},
+  cellP/.style={pbox,minimum width=2.1cm,minimum height=.62cm,font=\normalsize},
+  cellD/.style={dbox,minimum width=2.1cm,minimum height=.62cm,font=\normalsize}]
+\node[anchor=west,font=\bfseries] at (0,1.0) {A\quad Observed forks and a constructed reference};
+\node[pbox,text width=2.7cm] (P) at (1.5,0) {$P$: shared onset\\rollout update 390};
+\node[box,fill=gray!8,text width=3.0cm] (C) at (7.0,0) {$C^{+}$: clean removal\\update 440\\extra clean progress};
+\node[box,fill=gray!8,text width=3.0cm] (trace) at (13.6,0) {Recorded clean trace\\$C(u)$, $u=390\ldots640$};
+\node[dbox,text width=3.0cm] (D) at (7.0,-1.9) {$D$: impaired removal\\update 440\\natural context $x_D$};
+\node[hbox,text width=3.2cm] (H) at (13.6,-1.9) {$H(k)=C(390+k)$\\historical benchmark\\not the matched $Q_D$};
+\draw[->,thick] (P) -- node[above,font=\scriptsize]{50 clean updates} (C);
+\draw[->,thick] (C) -- (trace);
+\draw[->,thick,red!65!black] (P.south) to[out=-45,in=180] (D.west);
+\node[font=\footnotesize,text=red!65!black,align=center,text width=3.0cm] at (3.7,-1.25) {50 reward-sign-\\corrupted updates};
+\draw[->,dashed,blue!65!black,thick] (trace) -- node[right,font=\scriptsize]{shift the time index} (H);
+\node[font=\footnotesize,align=left,anchor=west,text width=15.8cm] at (0,-3.15) {\textcolor{teal!70!black}{Repair uses $P$, not the extra-progress $C^{+}$.} $H$ reindexes the observed clean trace; it is not assumed to match a learner paused in the D context.};
+
+\node[anchor=west,font=\bfseries] at (0,-4.1) {B\quad Initial fields of the executed interventions};
+\node[font=\small] at (1.35,-4.85) {arm (archive code)};
+\node[font=\small] at (4.3,-4.85) {actor parameters};
+\node[font=\small] at (7.0,-4.85) {critic parameters};
+\node[font=\small] at (9.7,-4.85) {Adam state};
+\node[font=\small] at (13.6,-4.85) {other numerical runner fields};
+
+\node[anchor=west,font=\small] at (0,-5.5) {$N$\quad(DDD)};
+\node[cellD] at (4.3,-5.5) {$a_D$}; \node[cellD] at (7.0,-5.5) {$v_D$}; \node[cellD] at (9.7,-5.5) {$o_D$};
+\node[anchor=west,font=\small] at (0,-6.3) {$R$\quad(CDD)};
+\node[cellP] at (4.3,-6.3) {$a_P$}; \node[cellD] at (7.0,-6.3) {$v_D$}; \node[cellD] at (9.7,-6.3) {$o_D$};
+\node[anchor=west,font=\small] at (0,-7.1) {$Q_D$\quad(CCC)};
+\node[cellP] at (4.3,-7.1) {$a_P$}; \node[cellP] at (7.0,-7.1) {$v_P$}; \node[cellP] at (9.7,-7.1) {$o_P$};
+\node[anchor=west,font=\small] at (0,-7.9) {$B_D$\quad(DCC)};
+\node[cellD] at (4.3,-7.9) {$a_D$}; \node[cellP] at (7.0,-7.9) {$v_P$}; \node[cellP] at (9.7,-7.9) {$o_P$};
+\node[box,fill=gray!6,text width=4.0cm,minimum height=3.2cm,font=\small] at (13.6,-6.7) {Same $x_D$ at removal:\\environment + observations,\\future PRNG key,\\rollout-update counter,\\\mbox{TrainState} step,\\other auxiliaries.\\\emph{Adam clock follows $o$.}};
+\node[font=\footnotesize,anchor=west,text width=15.8cm] at (0,-9.0) {In the pause-cell archive code, C means an onset donor from $P$, \emph{not} the extra-progress clean fork $C^{+}$. $Q_D$ rolls back learner parameters/moments but retains the natural impaired context; it is not the full runner $P$.};
+
+\node[anchor=west,font=\bfseries] at (0,-9.95) {C\quad Normal recovery after the splice: a total downstream effect};
+\node[box,text width=3.8cm] (policy) at (2.2,-10.85) {Changed policy / actions};
+\node[box,text width=4.1cm] (data) at (7.8,-10.85) {Changed experience,\\critic and optimizer updates};
+\node[box,text width=3.6cm] (future) at (13.5,-10.85) {Future policy and\\evaluation returns};
+\draw[->,thick] (policy) -- (data); \draw[->,thick] (data) -- (future);
+\node[font=\small,align=center] at (8.0,-11.95) {Native cost: $A(N)-A(H)$\qquad Repair: $A(R)-A(N)$\\Reciprocal transfer: $A(B_D)-A(Q_D)$};
+\node[font=\footnotesize,align=center,text width=15.8cm] at (8.0,-12.9) {Solid arrows: observed/executed training. Dashed arrow: a reference readout. Matching holds \emph{at removal}; future states and data are allowed to diverge. No arrow identifies uniquely stored impairment information.};
+\end{tikzpicture}

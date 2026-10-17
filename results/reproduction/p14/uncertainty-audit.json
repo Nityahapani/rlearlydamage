@@ -1,0 +1,25 @@
+{
+  "role": "audit of frozen ratio bootstrap, not a new statistical result",
+  "primary_analysis_sha256": "66547f527c789b689cbb13a1a9b3af40f839435c816235b4801fd51a78c229cc",
+  "n": 32,
+  "bootstrap_draws": 20000,
+  "bootstrap_rng_seed": 140033,
+  "quantile_method": "linear",
+  "paired_numerator_denominator_rows": true,
+  "clipped_to_zero_one": false,
+  "point": 0.9178352167193636,
+  "CI95": [
+    0.862667053031215,
+    0.9750230100266715
+  ],
+  "joint_index_sha256": "3f96cd4743526f3d82caf1d214fff47bef02edfcccf77576fadd967761431763",
+  "positive_bootstrap_denominator_min": 1.3120605468750002,
+  "positive_bootstrap_denominator_max": 2.110546875,
+  "uncertainty_covered": "across training seeds conditional on fixed shared evaluation tape10000, setting, reference and horizon",
+  "uncertainty_not_covered": [
+    "redrawn evaluation tape",
+    "task/architecture/hyperparameter selection",
+    "different horizon/reference"
+  ],
+  "second_key54321": "prespecified separate robustness check; same training seeds, not pooled or counted twice"
+}

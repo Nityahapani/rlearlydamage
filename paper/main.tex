@@ -2,6 +2,8 @@
 \usepackage{tmlr}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{graphicx,booktabs,tabularx,array}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,calc}
 \usepackage[hidelinks]{hyperref}
 \usepackage{url,enumitem}
 \newcommand{\ci}[2]{\,[#1,\,#2]}
@@ -17,7 +19,7 @@
 \begin{document}
 \maketitle
 \begin{abstract}
-A temporarily impaired reinforcement-learning agent can lag a clean control because of foregone progress, additional recovery cost, or both. We distinguish same-update gap attribution from interventions on detected harm relative to a historical pause benchmark. Our primary evidence is one preregistered Asterix PPO study with 32 new training seeds, reward-sign corruption and a fixed 200-update recovery horizon. Native pause-relative recovery cost is $-1.72\ci{-1.94}{-1.50}$ return points. Restoring only the pre-impairment actor, without the clean fork's additional progress, improves recovery by $+1.58\ci{+1.37}{+1.79}$. A single four-component practical-effect criterion, requiring native and late harm, rescue and reciprocal transfer, passes at $p=3.32\times10^{-8}$, $\alpha=.01$. The intervention removes 91.8\% of the measured mean cost (paired-bootstrap 95\% interval 86.3--97.5\%), not 91.8\% of naturally stored damage. A small residual remains; matched-state practical equivalence fails. Specified optimizer, world-reset and second-evaluation checks retain positive rescue. We provide an explicit evidence hierarchy for the heterogeneous earlier studies, without paper-wide multiplicity control. The conclusion is a setting- and intervention-specific repair result, not a general RL recovery law, proof of irreversible damage, a new-task plasticity result or a unique internal localization of impairment.
+A temporarily impaired reinforcement-learning agent can lag a clean control because of foregone progress, additional recovery cost, or both. We distinguish same-update gap attribution from interventions on detected harm relative to a historical pause benchmark. Our primary evidence is one preregistered Asterix PPO study with 32 new training seeds, reward-sign corruption and a fixed 200-update recovery horizon. Native pause-relative recovery cost is $-1.72\ci{-1.94}{-1.50}$ return points. Restoring only the pre-impairment actor, without the clean fork's additional progress, improves recovery by $+1.58\ci{+1.37}{+1.79}$. A single four-component practical-effect criterion, requiring native and late harm, rescue and reciprocal transfer, passes at $p=3.32\times10^{-8}$, $\alpha=.01$. The intervention removes 91.8\% of the measured mean cost (paired-bootstrap 95\% interval 86.3--97.5\%), not 91.8\% of naturally stored damage. The interval jointly resamples paired training seeds conditional on a fixed evaluation batch. A small residual remains; matched-state practical equivalence fails. Specified optimizer, world-reset and second-evaluation checks retain positive rescue. A single donor/reference diagram and an integrated reproducibility appendix expose the counterfactual, uncertainty and artifact assumptions. Earlier studies retain their heterogeneous evidence status; there is no paper-wide multiplicity control. The conclusion is a setting- and intervention-specific repair result, not a general RL recovery law, proof of irreversible damage, a new-task plasticity result or a unique internal localization of impairment.
 \end{abstract}
 
 \section{Introduction}
@@ -27,8 +29,8 @@ We ask a narrower question: \emph{in one selected setting with detected pause-re
 
 The main text presents the reference framework, this one study, its scope and the evidence hierarchy. The accompanying \artifact{paper/supplement.pdf}{Supplementary Material} preserves the full historical protocols, all result tables, negative/inconclusive primaries, context checks, registration timelines and deviations. Earlier experiments motivate the selected case; they are not pooled into its primary or treated as equally strong independent confirmations.
 
-\paragraph{Relation to prior work.}
-Critical-period work motivates studying effects of temporary deficits, but does not establish irreversibility in this assay \citep{achille2019critical,kleinman2024critical}. Parameter resets, distillation and plasticity studies address related recovery and learning-capacity questions \citep{igl2021transient,nikishin2022primacy,lyle2023plasticity,dohare2024loss}. Optimizer state can also matter in other settings \citep{dohare2023collapse,xu2026optimizer}. Our contribution is not that transplantation or actor checkpoints are new in general. It is the explicit separation of reference-dependent targets and a preregistered, naturally continued, past-actor intervention in a case with detected beyond-time recovery cost. Preserved capacity on new tasks is a different question, not measured here.
+\paragraph{Contributions and scope.}
+We provide an explicit reference-aware intervention framework; a fixed 32-seed confirmation that an older actor can repair measured recovery cost without extra clean-run progress; and an auditable path from paired curves to statistical decisions and state-integrity checks. The contribution is neither the invention of parameter resetting nor a general algorithm guaranteed to preserve plasticity. Section~\ref{m:contribution} distinguishes our causal target from fresh resets, whole-checkpoint rollback and new-task plasticity studies. The present evidence remains one prior-selected Asterix PPO condition.
 
 \section{A reference-aware framework}\label{m:framework}
 \subsection{Compact glossary}
@@ -47,7 +49,7 @@ term & operational meaning \\
 \addlinespace
 \textbf{Pause reference} & Here, the historical clean trace shifted back by the impairment duration: $H_i(k)=C_i(w_0+k)$. A matched onset-state learner is a separate intervention reference, not assumed identical to $H$. \\
 \addlinespace
-\textbf{Native recovery cost} & The recovery AUC difference between the natural impaired continuation $D_i$ and $H_i$. Negative means worse evaluation return. ``Native'' excludes an artificial clean-world continuation substituted for $D$. \\
+\textbf{Native recovery cost} & The recovery AUC difference between the natural impaired continuation $N_i$ and $H_i$. Negative means worse evaluation return. ``Native'' excludes an artificial clean-world continuation substituted for $D$. \\
 \addlinespace
 \textbf{State surgery} & A specified field-level replacement of learner state, followed by ordinary learning. The causal effect includes downstream changes in actions, experience, critic and optimizer. \\
 \addlinespace
@@ -55,6 +57,9 @@ term & operational meaning \\
 \bottomrule
 \end{tabularx}
 \end{table}
+
+\input{sections/counterfactuals.tex}
+\clearpage
 
 \subsection{What the reported AUC measures}\label{m:auc}
 Let $w_0$ be impairment onset, $w_1=w_0+L$ removal, and $V_i^X(k)$ the mean unrestricted evaluation return of seed $i$, arm $X$, at recovery checkpoint $k$. In the primary study,
@@ -66,8 +71,8 @@ Our ``recovery AUC'' is this \textbf{discrete time-average}, not an unnormalised
 
 The native cost and same-update gap use different benchmarks:
 \begin{align}
-E_i^{\rm native}&=A_i(D)-A_i(H), & H_i(k)&=C_i(w_0+k),\\
-E_i^{\rm same}&=A_i(D)-A_i(C_{\rm same}), & C_{{\rm same},i}(k)&=C_i(w_1+k).
+E_i^{\rm native}&=A_i(N)-A_i(H), & H_i(k)&=C_i(w_0+k),\\
+E_i^{\rm same}&=A_i(N)-A_i(C_{\rm same}), & C_{{\rm same},i}(k)&=C_i(w_1+k).
 \end{align}
 A negative $E^{\rm native}$ is extra cost relative to this historical lost-time benchmark. It is not a guarantee that a literal paused runner in every future world would follow $H$. The matched onset-state reference is measured separately for precisely this reason.
 
@@ -77,7 +82,7 @@ An Asterix effect of $-1.72$ means that average evaluation return is 1.72 points
 \subsection{Intervention effects are not storage fractions}
 A clean-fork swap, a past-actor swap, a factorial main effect and a Shapley allocation answer different questions. The primary study uses a \emph{background-specific} actor swap in the natural impaired context; it is not a full three-component allocation. Its repaired fraction is
 \begin{equation}
-\rho=\frac{\overline{A(R)-A(D)}}{-\overline{E^{\rm native}}},
+\rho=\frac{\overline{A(R)-A(N)}}{-\overline{E^{\rm native}}},
 \end{equation}
 where $R$ denotes actor restoration. It is a ratio of mean intervention effects, not the average of seedwise percentages, a Shapley value, or the proportion of impairment encoded in actor weights. Changed future experience is part of the treatment effect, not held fixed by definition.
 
@@ -88,9 +93,9 @@ PPO \citep{schulman2017ppo} uses separate $2\times128$ ReLU actor and critic MLP
 All 32 unused IDs 1200--1231 and all 11 requested cells were registered before target data. A previous independent eight-seed Asterix cohort motivated this selected condition; it is not pooled into the primary and does not make this a new-task generalization test. No low-competence seed was removed, no primary analysis occurred before all 32 completed, and no setting, endpoint, sample-size or evaluation-key switch was used.
 
 \paragraph{Donors and natural continuation.}
-$P$ is the shared onset state at update 390, $D$ the impaired state at 440, and $C$ the unimpaired fork at 440. The main repair replaces \emph{only actor parameters in $D$ with those from $P$}; it does not use the extra-progress actor from $C$. The removal-time critic, Adam state, environment, observations, future RNG and counters remain those of $D$. The all-impaired cell is asserted equal over the complete runner-state tree to untouched natural $D$. Actor/critic/optimizer composition is explicit in code; after intervention these fields and collected experience can diverge normally.
+$P$ is the shared onset state at update 390, $D$ the impaired state at 440, and $C^+$ the unimpaired fork at 440. The main repair replaces \emph{only actor parameters in $D$ with those from $P$}; it does not use the extra-progress actor from $C$. The removal-time critic, Adam state, environment, observations, future RNG and counters remain those of $D$. The all-impaired cell is asserted equal over the complete runner-state tree to untouched natural $D$. Actor/critic/optimizer composition is explicit in code; after intervention these fields and collected experience can diverge normally.
 
-For reciprocal transfer, the impaired actor is inserted into a learner with onset critic parameters and Adam state, under the same natural $D$ world/RNG/counter context. We denote that matched learner reference by $P_{\!D}$: it is \emph{not} the full onset runner $P$ or the historical trajectory $H$. In archived pause-cell codes, C means an onset donor and D an impaired donor: DDD is native, CDD actor-restored, CCC the matched reference, and DCC reciprocal impaired-actor transfer.
+For reciprocal transfer, the impaired actor is inserted into a learner with onset critic parameters and Adam state, under the same natural $D$ world/RNG/counter context. We denote that matched learner reference by $Q_D$: it is \emph{not} the full onset runner $P$ or the historical trajectory $H$. In archived pause-cell codes, C means an onset donor and D an impaired donor: DDD is native, CDD actor-restored, CCC the matched reference, and DCC reciprocal impaired-actor transfer.
 
 \paragraph{One primary claim, four required parts.}
 The registration fixes four one-sided paired-$t$ tests against practical-effect thresholds (Table~\ref{m:primary}). The single intersection--union claim uses $p_{\rm claim}=\max_jp_j$ at $\alpha=.01$, with an additional requirement of at least 24/32 native-negative and 24/32 rescue-positive seeds. All parts must pass. Intervals are nominal training-seed intervals, with 99\% intervals, exact signs, paired bootstrap and simultaneous-bound sensitivities retained in the supplement and analysis artifact \citep{henderson2018matters,agarwal2021precipice}. The fixed second evaluation key 54321, common-fresh-Adam factorial and reset-world rescue are prespecified \emph{secondary} checks; they cannot replace a failed primary.
@@ -105,10 +110,10 @@ The registration fixes four one-sided paired-$t$ tests against practical-effect 
 \toprule
 contrast & mean [95\% interval] & required mean & shifted one-sided $p$ \\
 \midrule
-Native AUC, $D-H$ & $-1.722\ci{-1.940}{-1.504}$ & $<-.50$ & $6.02\times10^{-13}$ \\
-Late native cost, $D-H$ & $-1.187\ci{-1.444}{-.930}$ & $<-.30$ & $3.32\times10^{-8}$ \\
-Actor-only rescue, $R-D$ & $+1.580\ci{+1.371}{+1.790}$ & $>+.50$ & $4.79\times10^{-12}$ \\
-Reciprocal transfer vs.\ $P_{\!D}$ & $-1.636\ci{-1.828}{-1.445}$ & $<-.50$ & $1.39\times10^{-13}$ \\
+Native AUC, $N-H$ & $-1.722\ci{-1.940}{-1.504}$ & $<-.50$ & $6.02\times10^{-13}$ \\
+Late native cost, $N-H$ & $-1.187\ci{-1.444}{-.930}$ & $<-.30$ & $3.32\times10^{-8}$ \\
+Actor-only rescue, $R-N$ & $+1.580\ci{+1.371}{+1.790}$ & $>+.50$ & $4.79\times10^{-12}$ \\
+Reciprocal transfer vs.\ $Q_D$ & $-1.636\ci{-1.828}{-1.445}$ & $<-.50$ & $1.39\times10^{-13}$ \\
 \bottomrule
 \end{tabularx}
 \end{table}
@@ -127,7 +132,7 @@ The past-actor intervention removes \textbf{91.8\% of the mean native historical
 \paragraph{Robustness does not imply neutrality or full restoration.}
 All secondary results remain visible in Table~\ref{m:secondary}. Fresh Adam, a reset world and the second evaluation key retain positive rescue intervals. The smaller negative fresh-Adam critic effect is not declared absent. Neither a nonsignificant context difference nor positive rescue in another context establishes context neutrality. The second key is not selected or pooled into the primary.
 
-The repaired-minus-historical residual is small but negative. Its secondary $\pm.30$ TOST margin passes, while the same margin against $P_{\!D}$ \emph{fails} \citep{lakens2017equivalence}. Practical-margin agreement is not literal equality. In particular, positive rescue and a 91.8\% reduction do not establish complete recovery, even though the primary compound passes.
+The repaired-minus-historical residual is small but negative. Its secondary $\pm.30$ TOST margin passes, while the same margin against $Q_D$ \emph{fails} \citep{lakens2017equivalence}. Practical-margin agreement is not literal equality. In particular, positive rescue and a 91.8\% reduction do not establish complete recovery, even though the primary compound passes.
 
 \begin{table}[t]
 \centering
@@ -143,11 +148,16 @@ Fresh-Adam critic main effect & $-.129\ci{-.229}{-.029}$ & smaller, not absent \
 Reset-world actor rescue & $+1.515\ci{+1.308}{+1.722}$ & specified alternative context \\
 Second-key actor rescue & $+1.398\ci{+1.227}{+1.569}$ & key 54321; not pooled \\
 Restored minus historical $H$ & $-.141\ci{-.246}{-.037}$ & TOST $p=.00211$: margin met \\
-Restored minus matched $P_{\!D}$ & $-.231\ci{-.370}{-.091}$ & TOST $p=.160$: not met \\
-Matched $P_{\!D}$ minus $H$ & $+.089\ci{-.035}{+.213}$ & practical agreement, not identity \\
+Restored minus matched $Q_D$ & $-.231\ci{-.370}{-.091}$ & TOST $p=.160$: not met \\
+Matched $Q_D$ minus $H$ & $+.089\ci{-.035}{+.213}$ & practical agreement, not identity \\
 \bottomrule
 \end{tabularx}
 \end{table}
+
+\clearpage
+\input{sections/uncertainty.tex}
+
+\input{sections/related_scope.tex}
 
 \clearpage
 \section{Evidence hierarchy across the research record}\label{m:evidence}
@@ -201,7 +211,8 @@ Eight raw groups and manifests & \artifact{docs/p14_primary_artifact_index.json}
 \end{tabularx}
 \end{table}
 
-\textbf{Checkpoint limitation.} Full serialized donor/runner trees were not archived. P/C/D fingerprints cover four-seed \emph{batches}, not downloadable per-seed states, and cannot reconstruct omitted arrays. The frozen runner regenerates donors in memory; the guide distinguishes fresh recomputation from cell resumption. Archived curves permit statistical reanalysis, whereas a new rollout-level reproduction requires recomputation.
+\paragraph{Reanalysis is not rollout replay.}
+All original primary seed-level means, reference alignment data, statistical source and recorded integrity checks are available. The original experiment did not retain full serialized donor trees. Appendix~\ref{app:availability} distinguishes that fact from later, checked numerical-state reconstructions and gives their actual completion/publication status. A fingerprint is not a checkpoint download. Loading a validated numerical donor can avoid retraining its prehistory, but regenerating its recovery trajectory or evaluating another random tape still requires computation. The self-contained appendix supplies the cell map, state fields, joint bootstrap, complete paired seed table and restoration commands; the separate historical supplement is not needed for primary statistical reanalysis.
 
 \section{Limitations and conclusion}\label{m:conclusion}
 \paragraph{What the result establishes.}
@@ -216,11 +227,12 @@ Under one declared natural future context, a learner's own pre-impairment actor 
 \item \textbf{Collective certainty or deployment:} heterogeneous local test families provide no paper-wide error guarantee or task-prevalence estimate. The fixed evaluation pools and unavailable full donor trees limit reproduction; no automatic checkpoint-selection or deployment rollback policy is validated.
 \end{itemize}
 
-The defensible conclusion is specific: \emph{a past-actor intervention repairs 91.8\% of the measured mean native recovery cost in this registered Asterix PPO experiment}, with a small residual and failed matched-state practical equivalence explicitly retained. The findings do \textbf{not} establish irreversible damage, preserved plasticity on new tasks, or a unique internal representation of impairment. The framework is useful because it makes these boundaries explicit, not because it turns one successful restoration into a general recovery law.
+The defensible conclusion is specific: \emph{a past-actor intervention repairs 91.8\% of the measured mean native recovery cost in this registered Asterix PPO experiment}, with a small residual and failed matched-state practical equivalence explicitly retained. The interval is conditional on the fixed evaluation batch and jointly resamples numerator/denominator seed rows; changing the reference changes the repair fraction. The findings do \textbf{not} establish irreversible damage, preserved plasticity on new tasks, or a unique internal representation of impairment. The framework is useful because it makes these boundaries explicit, not because it turns one successful restoration into a general recovery law.
 
 \subsubsection*{Broader impact statement}
 These are controlled small-agent experiments in simulated environments. Potential use in reliable RL recovery requires evaluation of checkpoint selection, new tasks, longer horizons and deployment risks; no safety guarantee follows from this study.
 
 \bibliographystyle{tmlr}
 \bibliography{refs}
+\input{sections/repro_appendix.tex}
 \end{document}
